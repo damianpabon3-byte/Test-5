@@ -1449,25 +1449,73 @@
   function copyToClipboard(elementId) {
     var text = document.getElementById(elementId).textContent;
 
+    // Try modern clipboard API first (requires HTTPS)
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function() {
         showToast('Copied to clipboard!', 'success');
       }, function() {
-        showToast('Failed to copy. Please select and copy manually.', 'error');
+        // If clipboard API fails, fall back to legacy method
+        fallbackCopyToClipboard(text);
       });
     } else {
-      var textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      document.body.appendChild(textarea);
+      fallbackCopyToClipboard(text);
+    }
+  }
+
+  // Robust fallback for mobile, WebViews, and non-HTTPS contexts
+  function fallbackCopyToClipboard(text) {
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+
+    // Prevent zooming on iOS (font-size < 16px triggers zoom)
+    textarea.style.fontSize = '16px';
+
+    // Hide the textarea while keeping it functional
+    textarea.style.position = 'fixed';
+    textarea.style.top = '0';
+    textarea.style.left = '0';
+    textarea.style.width = '2em';
+    textarea.style.height = '2em';
+    textarea.style.padding = '0';
+    textarea.style.border = 'none';
+    textarea.style.outline = 'none';
+    textarea.style.boxShadow = 'none';
+    textarea.style.background = 'transparent';
+    textarea.style.opacity = '0';
+    textarea.style.zIndex = '-1';
+
+    // Prevent keyboard from appearing on mobile
+    textarea.setAttribute('readonly', '');
+
+    document.body.appendChild(textarea);
+
+    // iOS-specific selection method
+    if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+      textarea.contentEditable = true;
+      textarea.readOnly = true;
+      var range = document.createRange();
+      range.selectNodeContents(textarea);
+      var selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      textarea.setSelectionRange(0, 999999);
+    } else {
       textarea.select();
-      try {
-        document.execCommand('copy');
-        showToast('Copied to clipboard!', 'success');
-      } catch (err) {
-        showToast('Failed to copy. Please select and copy manually.', 'error');
-      }
-      document.body.removeChild(textarea);
+    }
+
+    var success = false;
+    try {
+      success = document.execCommand('copy');
+    } catch (err) {
+      success = false;
+    }
+
+    document.body.removeChild(textarea);
+
+    if (success) {
+      showToast('Copied to clipboard!', 'success');
+    } else {
+      showToast('Failed to copy. Please select and copy manually.', 'error');
     }
   }
 
@@ -2293,7 +2341,7 @@
     var container = document.getElementById('scoreThresholds');
     var item = document.createElement('div');
     item.className = 'dynamic-item';
-    item.innerHTML = '<input type="number" placeholder="Threshold" style="width:100px;" /><textarea placeholder="Response when score hits this threshold..." style="flex:1;"></textarea><button type="button" onclick="this.parentElement.remove()">Remove</button>';
+    item.innerHTML = '<select style="width:80px;"><option value=">=">>=</option><option value="<="><=</option><option value="==">=</option></select><input type="number" placeholder="Value" style="width:80px;" /><textarea placeholder="Response when score meets this condition..." style="flex:1;"></textarea><button type="button" onclick="this.parentElement.remove()">Remove</button>';
     container.appendChild(item);
   }
 
@@ -2386,11 +2434,12 @@
     // Thresholds
     if (hasThresholds) {
       thresholds.forEach(function(threshold) {
+        var operator = threshold.querySelector('select').value;
         var value = parseInt(threshold.querySelector('input').value, 10);
         var response = threshold.querySelector('textarea').value.trim();
 
         if (!isNaN(value) && response) {
-          script += "if (score >= " + value + ") {\n";
+          script += "if (score " + operator + " " + value + ") {\n";
           script += "  context.character.personality += '\\n" + escapeForScript(response) + "';\n";
           script += "}\n";
         }
@@ -2778,29 +2827,79 @@
 
     document.getElementById("finalOutput").textContent = finalScript;
 
-    // Copy to clipboard (with fallback for non-HTTPS / mobile)
+    // Copy to clipboard (with robust fallback for non-HTTPS / mobile / WebViews)
+    var successMsg = 'Complete script copied to clipboard! Total modules: ' + activeModuleCount;
+    var fallbackMsg = 'Script generated! Scroll down to see the combined output. Total modules: ' + activeModuleCount;
+
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(finalScript).then(function () {
-        showToast('Complete script copied to clipboard! Total modules: ' + activeModuleCount, 'success');
+        showToast(successMsg, 'success');
       }, function () {
-        showToast('Script generated! Scroll down to see the combined output. Total modules: ' + activeModuleCount, 'success');
+        // Clipboard API failed, try legacy method
+        copyFinalScriptFallback(finalScript, successMsg, fallbackMsg);
       });
     } else {
-      var textarea = document.createElement('textarea');
-      textarea.value = finalScript;
-      textarea.style.position = 'fixed';
-      document.body.appendChild(textarea);
-      textarea.select();
-      try {
-        document.execCommand('copy');
-        showToast('Complete script copied to clipboard! Total modules: ' + activeModuleCount, 'success');
-      } catch (err) {
-        showToast('Script generated! Scroll down to see the combined output. Total modules: ' + activeModuleCount, 'success');
-      }
-      document.body.removeChild(textarea);
+      copyFinalScriptFallback(finalScript, successMsg, fallbackMsg);
     }
 
     updateTokenMeter();
+  }
+
+  // Robust fallback copy for final script (mobile, WebViews, non-HTTPS)
+  function copyFinalScriptFallback(text, successMsg, fallbackMsg) {
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+
+    // Prevent zooming on iOS
+    textarea.style.fontSize = '16px';
+
+    // Hide textarea while keeping it functional
+    textarea.style.position = 'fixed';
+    textarea.style.top = '0';
+    textarea.style.left = '0';
+    textarea.style.width = '2em';
+    textarea.style.height = '2em';
+    textarea.style.padding = '0';
+    textarea.style.border = 'none';
+    textarea.style.outline = 'none';
+    textarea.style.boxShadow = 'none';
+    textarea.style.background = 'transparent';
+    textarea.style.opacity = '0';
+    textarea.style.zIndex = '-1';
+
+    // Prevent keyboard from appearing on mobile
+    textarea.setAttribute('readonly', '');
+
+    document.body.appendChild(textarea);
+
+    // iOS-specific selection method
+    if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+      textarea.contentEditable = true;
+      textarea.readOnly = true;
+      var range = document.createRange();
+      range.selectNodeContents(textarea);
+      var selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      textarea.setSelectionRange(0, 999999);
+    } else {
+      textarea.select();
+    }
+
+    var success = false;
+    try {
+      success = document.execCommand('copy');
+    } catch (err) {
+      success = false;
+    }
+
+    document.body.removeChild(textarea);
+
+    if (success) {
+      showToast(successMsg, 'success');
+    } else {
+      showToast(fallbackMsg, 'success');
+    }
   }
 
   // ===========================
