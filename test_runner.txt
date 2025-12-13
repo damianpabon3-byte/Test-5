@@ -1,0 +1,146 @@
+"use strict";
+
+// test_runner.js
+// Simple harness to load main_logic.js and run a set of test messages through it.
+
+const fs = require("fs");
+const vm = require("vm");
+
+// ============================================================
+// TOGGLES
+// ============================================================
+
+// If true, pass a history array (last_messages) into context.chat.
+// If false, only the current message is considered.
+const USE_MULTI_MESSAGE = false;
+
+// If using multi-message, decide whether to alternate roles (user/bot).
+// - If false: every message in history is marked isUser: true.
+// - If true: messages alternate isUser: true / false / true / false...
+const USE_ALTERNATING_ROLES = false;
+
+// Path to your main logic / engine script
+const ENGINE_PATH = "./main_logic.js";
+
+// ============================================================
+// Load engine code
+// ============================================================
+const code = fs.readFileSync(ENGINE_PATH, "utf8");
+
+// ============================================================
+// Test messages
+// ============================================================
+const testMessagesRelational = [
+"Morning sunlight filters across the café window as you slide into the booth. Mira looks up from her notebook, cheeks warming. “You actually came,” she murmurs, brushing a strand of hair behind her ear.",
+"She taps her pen against her cup. “I, um… might have ordered you something already.” When you ask what, she stammers, “Not because I was waiting anxiously or anything—just a guess.”",
+"You mention a compliment someone gave you earlier. Mira goes still. “Oh? That’s… nice.” She smiles, but it’s thin at the edges, like she isn’t sure how she feels about it.",
+"A breeze pushes the door open and she laughs softly. “Don’t look at me like that. I’m not blushing.” She very much is.",
+"As you reach for the sugar, your hand brushes hers. Mira freezes. “…Pretend that didn’t happen,” she whispers, not moving her hand away.",
+"She flips her notebook closed. “So, about that promise you made last night…” Her tone is playful, but the way she studies your face is anything but casual.",
+"You tease her about always taking notes on everything. She huffs. “It’s not notes. It’s… observations.” Then under her breath: “Important ones.”",
+"A server passes by, and Mira shifts closer to make room—much closer than necessary. “Oh—sorry. Small booth,” she lies, eyes flicking away.",
+"You ask why she seemed distracted earlier. She fidgets. “I wasn’t distracted. I was… planning. Strategizing.” She has clearly been worrying about something.",
+"A notification buzzes her phone and she jolts. “It’s nothing,” she says too quickly, tilting the screen away.",
+"She tries to change the subject. “Did you sleep well?” Her tone is bright, but her shoulders stay a little stiff, like she’s hiding a concern.",
+"Mira laughs when you tell her a joke, but the laugh lingers a beat too long. “See? I can be normal,” she says, which is a very not-normal thing to say.",
+"You mention meeting up again tomorrow, and she blinks. “…You want to? I mean, yes. Of course. I just didn’t think—never mind.”",
+"Her fingers graze yours again, this time deliberately. “I’m not flirting,” she lies, voice too soft to be convincing.",
+"She shifts her notebook your way. “If you were a character in one of my stories… I think I’d write you as dangerous.” Her smile is shy, but there’s a spark behind it.",
+"As the afternoon light fades, she leans her head slightly toward you. “Hey… don’t disappear after today, okay?”",
+"I'm so angry at you!",
+"I think i love you.",
+"I lie through my teeth.",
+"The sky is blue."
+
+];
+
+// ============================================================
+// Helper: build last_messages array
+// ============================================================
+function buildLastMessages(allMessages, currentIndex) {
+  if (!USE_MULTI_MESSAGE) {
+    // Only current message as a single-entry history, or none if you prefer to ignore history.
+    return [];
+  }
+
+  const slice = allMessages.slice(0, currentIndex + 1);
+
+  if (!USE_ALTERNATING_ROLES) {
+    // Every message treated as user
+    return slice.map(m => ({ message: m, isUser: true }));
+  }
+
+  // Alternate user/bot roles for debugging more realistic logs
+  return slice.map((m, i) => ({
+    message: m,
+    isUser: i % 2 === 0 // even indexes: user, odd: bot
+  }));
+}
+
+// ============================================================
+// Run each message through the engine
+// ============================================================
+testMessagesRelational.forEach((msg, idx) => {
+  const lastMessages = buildLastMessages(testMessagesRelational, idx);
+
+  // Context for this test case
+  let context = {
+    chat: {
+      last_message: msg,
+      last_messages: lastMessages,
+      message_count: USE_MULTI_MESSAGE ? lastMessages.length : 1,
+      multi_depth_enabled: USE_MULTI_MESSAGE
+    },
+    character: {
+      name: "",
+      personality: "",
+      scenario: "",
+      example_dialogues: ""
+    }
+  };
+
+  // Capture AURA's console output per test case
+  const auraLogs = [];
+  const auraConsole = {
+    log: (...args) => {
+      const line = args.map(a => String(a)).join(" ");
+      auraLogs.push(line);
+    },
+    error: (...args) => {
+      const line = args.map(a => String(a)).join(" ");
+      auraLogs.push("[ERROR] " + line);
+    },
+    warn: (...args) => {
+      const line = args.map(a => String(a)).join(" ");
+      auraLogs.push("[WARN] " + line);
+    }
+  };
+
+  const sandbox = { context, console: auraConsole, Math, Buffer };
+  vm.createContext(sandbox);
+
+  // Print header & input FIRST
+  console.log("\n=== Test Case " + (idx + 1) + " ===");
+  console.log("Input:", msg);
+
+  // Run engine for this test
+  try {
+    vm.runInContext(code, sandbox);
+  } catch (e) {
+    auraLogs.push("[AURA ERROR] " + e.message);
+  }
+
+  // Now print AURA logs neatly inside the test block
+  if (auraLogs.length > 0) {
+    auraLogs.forEach(line => console.log(line));
+  }
+
+  // Then print final scenario/personality/example from context
+  const personality = sandbox.context.character.personality || "";
+  const scenario = sandbox.context.character.scenario || "";
+  const example = sandbox.context.character.example_dialogues || "";
+
+  console.log("Personality:", personality || "(none)");
+  console.log("Scenario:", scenario || "(none)");
+  console.log("Example Dialogues:", example || "(none)");
+});
