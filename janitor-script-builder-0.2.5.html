@@ -2341,7 +2341,7 @@
     var container = document.getElementById('scoreThresholds');
     var item = document.createElement('div');
     item.className = 'dynamic-item';
-    item.innerHTML = '<input type="number" placeholder="Threshold" style="width:100px;" /><textarea placeholder="Response when score hits this threshold..." style="flex:1;"></textarea><button type="button" onclick="this.parentElement.remove()">Remove</button>';
+    item.innerHTML = '<select style="width:80px;"><option value=">=">>=</option><option value="<="><=</option><option value="==">=</option></select><input type="number" placeholder="Value" style="width:80px;" /><textarea placeholder="Response when score meets this condition..." style="flex:1;"></textarea><button type="button" onclick="this.parentElement.remove()">Remove</button>';
     container.appendChild(item);
   }
 
@@ -2434,11 +2434,12 @@
     // Thresholds
     if (hasThresholds) {
       thresholds.forEach(function(threshold) {
+        var operator = threshold.querySelector('select').value;
         var value = parseInt(threshold.querySelector('input').value, 10);
         var response = threshold.querySelector('textarea').value.trim();
 
         if (!isNaN(value) && response) {
-          script += "if (score >= " + value + ") {\n";
+          script += "if (score " + operator + " " + value + ") {\n";
           script += "  context.character.personality += '\\n" + escapeForScript(response) + "';\n";
           script += "}\n";
         }
