@@ -710,6 +710,49 @@
       font-size: 0.85rem;
       color: var(--text-muted);
     }
+
+    /* Toast notification styles */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--panel-bg);
+      color: var(--text-primary);
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: auto;
+      text-align: center;
+      max-width: 90vw;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.success {
+      border-left: 4px solid var(--success);
+    }
+
+    .toast.error {
+      border-left: 4px solid var(--danger);
+    }
+
+    .toast.warning {
+      border-left: 4px solid var(--accent);
+    }
   </style>
 </head>
 <body>
@@ -1336,13 +1379,51 @@
 
   function escapeForScript(str) {
     if (!str) return '';
-    return str
-      .replace(/\\/g, '\\\\')
-      .replace(/"/g, '\\"')
-      .replace(/'/g, "\\'")
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r')
-      .replace(/\t/g, '\\t');
+    // JSON.stringify handles quotes, newlines, special chars, and unicode safely
+    // Slice off surrounding quotes, then escape single quotes for JS string literals
+    return JSON.stringify(str).slice(1, -1).replace(/'/g, "\\'");
+  }
+
+  // Toast notification system - replaces blocking alert() dialogs
+  var toastContainer = null;
+  var toastTimeout = null;
+
+  function showToast(message, type) {
+    type = type || 'success';
+
+    // Create container if it doesn't exist
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.className = 'toast-container';
+      document.body.appendChild(toastContainer);
+    }
+
+    // Clear any existing toast
+    if (toastTimeout) {
+      clearTimeout(toastTimeout);
+    }
+    toastContainer.innerHTML = '';
+
+    // Create new toast
+    var toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+
+    // Trigger animation
+    setTimeout(function() {
+      toast.classList.add('show');
+    }, 10);
+
+    // Auto-hide after 3 seconds
+    toastTimeout = setTimeout(function() {
+      toast.classList.remove('show');
+      setTimeout(function() {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      }, 300);
+    }, 3000);
   }
 
   function escapeForRegex(str) {
@@ -1370,9 +1451,9 @@
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function() {
-        alert('✅ Copied to clipboard!');
+        showToast('Copied to clipboard!', 'success');
       }, function() {
-        alert('❌ Failed to copy. Please select and copy manually.');
+        showToast('Failed to copy. Please select and copy manually.', 'error');
       });
     } else {
       var textarea = document.createElement('textarea');
@@ -1382,9 +1463,9 @@
       textarea.select();
       try {
         document.execCommand('copy');
-        alert('✅ Copied to clipboard!');
+        showToast('Copied to clipboard!', 'success');
       } catch (err) {
-        alert('❌ Failed to copy. Please select and copy manually.');
+        showToast('Failed to copy. Please select and copy manually.', 'error');
       }
       document.body.removeChild(textarea);
     }
@@ -1521,7 +1602,7 @@
     addToneTrigger();
     addAmbientEvent();
 
-    alert('✅ All fields reset to defaults!');
+    showToast('All fields reset to defaults!', 'success');
   }
 
   function generateAllEnabledModules() {
@@ -1537,7 +1618,7 @@
     });
 
     if (enabledModules.length === 0) {
-      alert('⚠️ No modules enabled! Please enable at least one module.');
+      showToast('No modules enabled! Please enable at least one module.', 'warning');
       return;
     }
 
@@ -1561,7 +1642,7 @@
       generateFinalCombinedScript();
     }, 100);
 
-    alert('✅ Generated all ' + enabledModules.length + ' enabled modules and combined them!');
+    showToast('Generated all ' + enabledModules.length + ' enabled modules and combined them!', 'success');
   }
 
   // ===========================
@@ -1594,7 +1675,7 @@
       phases[2].querySelector('input[placeholder="Max messages"]').value = '999';
       phases[2].querySelector('textarea').value = '{{char}} feels comfortable and open, deeply engaged.';
 
-      alert('✅ Slow-Burn Romance preset loaded! Check Memory and Pacing tabs.');
+      showToast('Slow-Burn Romance preset loaded! Check Memory and Pacing tabs.', 'success');
       switchTab({target: document.querySelectorAll('.tab-btn')[1]}, 'memory');
 
     } else if (presetName === 'rpg') {
@@ -1617,7 +1698,7 @@
       entries[2].querySelector('input[placeholder="Keywords (comma-separated)"]').value = 'festival, celebration';
       entries[2].querySelector('textarea').value = 'The annual Harvest Festival brings music, dancing, and competitions to the town square.';
 
-      alert('✅ RPG Adventure preset loaded! Check Lorebook tab.');
+      showToast('RPG Adventure preset loaded! Check Lorebook tab.', 'success');
       switchTab({target: document.querySelector('.tab-btn')}, 'lorebook');
 
     } else if (presetName === 'ambient') {
@@ -1640,7 +1721,7 @@
 
       document.getElementById('ambientProbability').value = '15';
 
-      alert('✅ Ambient Flavor Pack preset loaded! Check Ambient Events tab.');
+      showToast('Ambient Flavor Pack preset loaded! Check Ambient Events tab.', 'success');
       switchTab({target: document.querySelectorAll('.tab-btn')[5]}, 'ambient');
 
     } else if (presetName === 'memory') {
@@ -1649,7 +1730,7 @@
       document.getElementById('memLikesKeywords').value = 'i like, i love, i enjoy';
       document.getElementById('memDislikesKeywords').value = 'i hate, i dislike, i don\'t like';
 
-      alert('✅ Memory Starter preset loaded! Check Memory tab.');
+      showToast('Memory Starter preset loaded! Check Memory tab.', 'success');
       switchTab({target: document.querySelectorAll('.tab-btn')[1]}, 'memory');
     }
   }
@@ -2611,7 +2692,7 @@
     });
 
     if (order.length === 0) {
-      alert('⚠️ No modules enabled! Please enable at least one module in the Module Control Panel.');
+      showToast('No modules enabled! Please enable at least one module in the Module Control Panel.', 'warning');
       return;
     }
 
@@ -2700,9 +2781,9 @@
     // Copy to clipboard (with fallback for non-HTTPS / mobile)
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(finalScript).then(function () {
-        alert('✅ Complete script copied to clipboard! Total modules: ' + activeModuleCount);
+        showToast('Complete script copied to clipboard! Total modules: ' + activeModuleCount, 'success');
       }, function () {
-        alert('✅ Script generated! Scroll down to see the combined output. Total modules: ' + activeModuleCount);
+        showToast('Script generated! Scroll down to see the combined output. Total modules: ' + activeModuleCount, 'success');
       });
     } else {
       var textarea = document.createElement('textarea');
@@ -2712,9 +2793,9 @@
       textarea.select();
       try {
         document.execCommand('copy');
-        alert('✅ Complete script copied to clipboard! Total modules: ' + activeModuleCount);
+        showToast('Complete script copied to clipboard! Total modules: ' + activeModuleCount, 'success');
       } catch (err) {
-        alert('✅ Script generated! Scroll down to see the combined output. Total modules: ' + activeModuleCount);
+        showToast('Script generated! Scroll down to see the combined output. Total modules: ' + activeModuleCount, 'success');
       }
       document.body.removeChild(textarea);
     }
