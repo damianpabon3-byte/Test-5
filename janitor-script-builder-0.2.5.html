@@ -9,22 +9,26 @@
     * { box-sizing: border-box; }
 
     :root {
-      --bg: #1A1411;
-      --panel-bg: #241B16;
-      --input-bg: #2E231D;
-      --hover-surface: #332720;
-      --text-primary: #F4E7D5;
-      --text-secondary: #D6C2A7;
-      --text-muted: #B79E86;
-      --border: #4A382E;
-      --divider: #3A2C25;
-      --accent: #E58A9A;
-      --accent-hover: #F0A3B0;
-      --accent-soft: rgba(229,138,154,0.12);
-      --button-bg: #8B4E3A;
-      --button-hover: #A25A43;
-      --success: #6E8B5C;
-      --danger: #B85A5A;
+      /* Janitor AI Color Palette */
+      --bg: #1A1A1E;
+      --panel-bg: #242428;
+      --input-bg: #2C2C32;
+      --hover-surface: #383A3F;
+      --text-primary: #FFFFFF;
+      --text-secondary: #C0C0C0;
+      --text-muted: #888888;
+      --border: #3D3D45;
+      --divider: #333338;
+      --accent: #CC6ECA;
+      --accent-hover: #D88AD6;
+      --accent-soft: rgba(204, 110, 202, 0.15);
+      --button-bg: #A06DBE;
+      --button-hover: #B080CE;
+      --success: #5CB85C;
+      --danger: #D9534F;
+      /* Additional Janitor palette colors */
+      --purple-dark: #4F2B53;
+      --purple-mid: #713D71;
     }
 
     body {
@@ -132,12 +136,13 @@
     }
 
     .onboarding-card {
-      background: linear-gradient(135deg, var(--panel-bg) 0%, var(--hover-surface) 100%);
+      background: linear-gradient(135deg, var(--purple-dark) 0%, var(--panel-bg) 100%);
       color: var(--text-primary);
       border-radius: 8px;
       padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+      border: 1px solid var(--purple-mid);
     }
 
     .onboarding-card h2 {
@@ -153,10 +158,11 @@
     }
 
     .onboarding-example {
-      background: var(--hover-surface);
+      background: var(--purple-dark);
       padding: 12px;
       border-radius: 6px;
       backdrop-filter: blur(10px);
+      border: 1px solid var(--purple-mid);
     }
 
     .onboarding-example strong {
@@ -249,11 +255,25 @@
       font-family: 'Courier New', monospace;
     }
 
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-soft);
+    }
+
     /* Placeholder styling - makes example text look muted and hint-like */
     input::placeholder,
     textarea::placeholder {
       color: var(--text-muted);
       opacity: 0.8;
+    }
+
+    /* Text selection with Janitor accent */
+    ::selection {
+      background: var(--accent);
+      color: var(--text-primary);
     }
 
     .help-text {
@@ -690,22 +710,20 @@
       }
     }
 
-    /* Tavern Banner Styles */
-    .tavern-banner-wrap {
+    /* Header Banner Styles */
+    .header-banner-wrap {
       text-align: center;
       margin-bottom: 14px;
     }
 
-    .tavern-banner {
-      width: 100%;
-      max-width: 900px;
+    .header-logo {
+      width: auto;
+      max-width: 120px;
       height: auto;
-      border-radius: 14px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-      border: 2px solid var(--accent);
+      margin-bottom: 8px;
     }
 
-    .tavern-banner-subtext {
+    .header-banner-subtext {
       margin-top: 6px;
       font-size: 0.85rem;
       color: var(--text-muted);
@@ -851,16 +869,16 @@
 <body>
 
 <div class="shell">
-  <!-- Tavern Banner -->
-  <div class="tavern-banner-wrap">
-    <img class="tavern-banner" src="tavern_banner.png" alt="Misfit's Tavern Banner">
-    <div class="tavern-banner-subtext">
-      web tool made by @mellowfllow • banner made by @re_joi_ce
+  <!-- Header Banner -->
+  <div class="header-banner-wrap">
+    <img class="header-logo" src="logo2x-1_ia066y.png" alt="Janitor AI Logo">
+    <div class="header-banner-subtext">
+      web tool made by @mellowfllow
     </div>
   </div>
 
   <h1 class="page-title">Janitor Script Builder v0.2.5</h1>
-  <p class="page-subtitle">Advanced scripts made easy – fill out simple forms, get copy-paste-ready code. Brought to you by Misfit's Tavern</p>
+  <p class="page-subtitle">Advanced scripts made easy – fill out simple forms, get copy-paste-ready code.</p>
 
   <!-- Stateless 101 Onboarding -->
   <div class="onboarding-card">
