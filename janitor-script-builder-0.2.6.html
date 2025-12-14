@@ -1554,6 +1554,7 @@
           <strong>Load Example Preset:</strong>
           <button type="button" class="btn btn-secondary" onclick="loadTesterPreset('good')" style="margin-left: 8px;">✅ Working Script</button>
           <button type="button" class="btn btn-secondary" onclick="loadTesterPreset('broken')" style="margin-left: 4px;">❌ Broken Script</button>
+          <button type="button" class="btn btn-warning" onclick="loadTesterPreset('mega')" style="margin-left: 4px;">🔥 MEGA Test (All Modules)</button>
         </div>
       </div>
 
@@ -3544,7 +3545,311 @@ var result = undefinedVariable.someMethod();
 context.character.personality += "This string never ends...
 
 // This line will never be reached
-console.log("Script completed!");`
+console.log("Script completed!");`,
+
+    mega: `// ═══════════════════════════════════════════════════════
+//        MEGA TEST SCRIPT - ALL MODULES COMBINED
+//        Tests: Lorebook, Memory, Pacing, Tone, Time,
+//               Ambient, Random, Combined, Scoring
+// ═══════════════════════════════════════════════════════
+
+var last = context.chat.last_message.toLowerCase();
+var padded = " " + last + " ";
+var count = context.chat.message_count;
+var triggeredModules = [];
+
+console.log("═══ MEGA TEST SCRIPT STARTING ═══");
+console.log("Message: " + last.substring(0, 50) + "...");
+console.log("Message Count: " + count);
+
+// ─────────────────────────────────────────────────────────
+// MODULE 1: LOREBOOK (Keyword Database)
+// ─────────────────────────────────────────────────────────
+console.log("\\n[LOREBOOK] Checking keywords...");
+
+// People
+if (padded.indexOf(" marcus ") !== -1) {
+  context.character.scenario += "\\n[LORE-PERSON] Marcus the blacksmith stands at his forge, muscles gleaming with sweat. He nods in greeting.";
+  triggeredModules.push("Lorebook:People:Marcus");
+  console.log("  ✓ Triggered: Marcus (person)");
+}
+
+// Places
+if (padded.indexOf(" tavern ") !== -1) {
+  context.character.scenario += "\\n[LORE-PLACE] The Rusty Tankard tavern is warm and inviting, filled with the smell of ale and roasting meat.";
+  triggeredModules.push("Lorebook:Places:Tavern");
+  console.log("  ✓ Triggered: Tavern (place)");
+}
+
+// Objects
+if (padded.indexOf(" sword ") !== -1 || padded.indexOf(" blade ") !== -1) {
+  context.character.scenario += "\\n[LORE-OBJECT] The ancient sword hums with magical energy, its runes glowing faintly blue.";
+  triggeredModules.push("Lorebook:Objects:Sword");
+  console.log("  ✓ Triggered: Sword (object)");
+}
+
+// Moods
+if (padded.indexOf(" danger ") !== -1 || padded.indexOf(" threat ") !== -1) {
+  context.character.scenario += "\\n[LORE-MOOD] A sense of danger permeates the air. Something is watching from the shadows.";
+  triggeredModules.push("Lorebook:Moods:Danger");
+  console.log("  ✓ Triggered: Danger (mood)");
+}
+
+// Events
+if (padded.indexOf(" festival ") !== -1 || padded.indexOf(" celebration ") !== -1) {
+  context.character.scenario += "\\n[LORE-EVENT] The annual harvest festival is in full swing! Colorful banners and music fill the streets.";
+  triggeredModules.push("Lorebook:Events:Festival");
+  console.log("  ✓ Triggered: Festival (event)");
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 2: MEMORY SYSTEM
+// ─────────────────────────────────────────────────────────
+console.log("\\n[MEMORY] Checking for memorable info...");
+
+// Name detection
+var nameMatch = last.match(/my name is ([a-z'\\-]+)/i);
+if (nameMatch) {
+  var detectedName = nameMatch[1];
+  context.character.personality += "\\n[MEMORY-NAME] User's name is " + detectedName + ".";
+  triggeredModules.push("Memory:Name:" + detectedName);
+  console.log("  ✓ Detected name: " + detectedName);
+}
+
+// Facts
+if (padded.indexOf(" i am ") !== -1 || padded.indexOf(" i work ") !== -1) {
+  context.character.personality += "\\n[MEMORY-FACT] User shared a fact about themselves.";
+  triggeredModules.push("Memory:Fact");
+  console.log("  ✓ Detected: Personal fact");
+}
+
+// Likes
+if (padded.indexOf(" i like ") !== -1 || padded.indexOf(" i love ") !== -1 || padded.indexOf(" i enjoy ") !== -1) {
+  context.character.personality += "\\n[MEMORY-LIKE] User expressed something they like.";
+  triggeredModules.push("Memory:Like");
+  console.log("  ✓ Detected: User likes something");
+}
+
+// Dislikes
+if (padded.indexOf(" i hate ") !== -1 || padded.indexOf(" i dislike ") !== -1 || padded.indexOf(" i don't like ") !== -1) {
+  context.character.personality += "\\n[MEMORY-DISLIKE] User expressed something they dislike.";
+  triggeredModules.push("Memory:Dislike");
+  console.log("  ✓ Detected: User dislikes something");
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 3: PACING SYSTEM (Message Count Phases)
+// ─────────────────────────────────────────────────────────
+console.log("\\n[PACING] Determining conversation phase...");
+
+var pacingPhase = "introduction";
+if (count > 50) pacingPhase = "climax";
+else if (count > 30) pacingPhase = "development";
+else if (count > 10) pacingPhase = "rising";
+
+context.character.personality += "\\n[PACING] Current phase: " + pacingPhase.toUpperCase();
+triggeredModules.push("Pacing:" + pacingPhase);
+console.log("  ✓ Phase: " + pacingPhase + " (count: " + count + ")");
+
+if (pacingPhase === "introduction") {
+  context.character.scenario += "\\n[PACING] The story is just beginning. Characters are being established.";
+} else if (pacingPhase === "rising") {
+  context.character.scenario += "\\n[PACING] Tension builds. The plot thickens with each exchange.";
+} else if (pacingPhase === "development") {
+  context.character.scenario += "\\n[PACING] Deep into the narrative. Relationships and conflicts are complex.";
+} else if (pacingPhase === "climax") {
+  context.character.scenario += "\\n[PACING] The story reaches its peak intensity!";
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 4: TONE/STATE DETECTION
+// ─────────────────────────────────────────────────────────
+console.log("\\n[TONE] Analyzing emotional tone...");
+
+// Romantic tone
+if (padded.indexOf(" love ") !== -1 || padded.indexOf(" kiss ") !== -1 || padded.indexOf(" heart ") !== -1) {
+  context.character.personality += "\\n[TONE-ROMANTIC] Romantic undertones detected. Respond with warmth and affection.";
+  triggeredModules.push("Tone:Romantic");
+  console.log("  ✓ Tone: Romantic");
+}
+
+// Tense tone
+if (padded.indexOf(" fight ") !== -1 || padded.indexOf(" attack ") !== -1 || padded.indexOf(" battle ") !== -1) {
+  context.character.personality += "\\n[TONE-TENSE] Combat/conflict detected. Increase tension and urgency.";
+  triggeredModules.push("Tone:Tense");
+  console.log("  ✓ Tone: Tense/Combat");
+}
+
+// Sad tone
+if (padded.indexOf(" sad ") !== -1 || padded.indexOf(" cry ") !== -1 || padded.indexOf(" tears ") !== -1) {
+  context.character.personality += "\\n[TONE-SAD] Sadness detected. Respond with empathy and gentleness.";
+  triggeredModules.push("Tone:Sad");
+  console.log("  ✓ Tone: Sad");
+}
+
+// Happy tone
+if (padded.indexOf(" happy ") !== -1 || padded.indexOf(" joy ") !== -1 || padded.indexOf(" laugh ") !== -1) {
+  context.character.personality += "\\n[TONE-HAPPY] Happiness detected. Match the upbeat energy!";
+  triggeredModules.push("Tone:Happy");
+  console.log("  ✓ Tone: Happy");
+}
+
+// Mysterious tone
+if (padded.indexOf(" secret ") !== -1 || padded.indexOf(" mystery ") !== -1 || padded.indexOf(" hidden ") !== -1) {
+  context.character.personality += "\\n[TONE-MYSTERIOUS] Mystery detected. Add intrigue and suspense.";
+  triggeredModules.push("Tone:Mysterious");
+  console.log("  ✓ Tone: Mysterious");
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 5: TIME & ENVIRONMENT (Simulated)
+// ─────────────────────────────────────────────────────────
+console.log("\\n[TIME] Checking time-related keywords...");
+
+if (padded.indexOf(" morning ") !== -1 || padded.indexOf(" sunrise ") !== -1 || padded.indexOf(" dawn ") !== -1) {
+  context.character.scenario += "\\n[TIME-MORNING] Golden morning light streams through the windows. Birds sing outside.";
+  triggeredModules.push("Time:Morning");
+  console.log("  ✓ Time: Morning");
+}
+
+if (padded.indexOf(" night ") !== -1 || padded.indexOf(" dark ") !== -1 || padded.indexOf(" moon ") !== -1) {
+  context.character.scenario += "\\n[TIME-NIGHT] Darkness blankets the land. Stars twinkle overhead and shadows dance.";
+  triggeredModules.push("Time:Night");
+  console.log("  ✓ Time: Night");
+}
+
+if (padded.indexOf(" rain ") !== -1 || padded.indexOf(" storm ") !== -1) {
+  context.character.scenario += "\\n[TIME-WEATHER] Rain patters against the windows. Thunder rumbles in the distance.";
+  triggeredModules.push("Time:Rain");
+  console.log("  ✓ Weather: Rain/Storm");
+}
+
+if (padded.indexOf(" forest ") !== -1 || padded.indexOf(" woods ") !== -1) {
+  context.character.scenario += "\\n[TIME-ENVIRONMENT] The ancient forest looms around you, filled with whispers and mystery.";
+  triggeredModules.push("Time:Forest");
+  console.log("  ✓ Environment: Forest");
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 6: AMBIENT EVENTS (Random flavor)
+// ─────────────────────────────────────────────────────────
+console.log("\\n[AMBIENT] Rolling for ambient events...");
+
+// Always trigger one ambient event for testing
+var ambientRoll = Math.random();
+var ambientEvents = [
+  "A crow caws in the distance, breaking the silence.",
+  "The wind picks up briefly, rustling nearby leaves.",
+  "Somewhere, a door creaks open on rusty hinges.",
+  "The faint smell of woodsmoke drifts on the air.",
+  "A cat watches from a windowsill with knowing eyes."
+];
+var ambientPick = ambientEvents[Math.floor(Math.random() * ambientEvents.length)];
+context.character.scenario += "\\n[AMBIENT] " + ambientPick;
+triggeredModules.push("Ambient:Random");
+console.log("  ✓ Ambient event: " + ambientPick.substring(0, 30) + "...");
+
+// ─────────────────────────────────────────────────────────
+// MODULE 7: RANDOM EVENTS (Chance-based)
+// ─────────────────────────────────────────────────────────
+console.log("\\n[RANDOM] Rolling for random events...");
+
+// 50% chance events for testing
+if (Math.random() < 0.5) {
+  context.character.scenario += "\\n[RANDOM-50%] A stranger passes by, glancing curiously in your direction.";
+  triggeredModules.push("Random:Stranger");
+  console.log("  ✓ Random event triggered (50% roll succeeded)");
+} else {
+  console.log("  ✗ Random event skipped (50% roll failed)");
+}
+
+// Keyword + chance combo
+if (padded.indexOf(" magic ") !== -1 && Math.random() < 0.7) {
+  context.character.scenario += "\\n[RANDOM-MAGIC] A spark of wild magic flickers nearby—something reacts to the arcane mention!";
+  triggeredModules.push("Random:MagicSpark");
+  console.log("  ✓ Magic + chance event triggered");
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 8: COMBINED CONDITIONS
+// ─────────────────────────────────────────────────────────
+console.log("\\n[COMBINED] Checking multi-condition triggers...");
+
+// Night + Danger = Spooky combo
+if ((padded.indexOf(" night ") !== -1 || padded.indexOf(" dark ") !== -1) &&
+    (padded.indexOf(" danger ") !== -1 || padded.indexOf(" threat ") !== -1)) {
+  context.character.scenario += "\\n[COMBINED] Night + Danger: The darkness itself seems alive with menace. Every shadow could hide a threat.";
+  triggeredModules.push("Combined:NightDanger");
+  console.log("  ✓ Combined: Night + Danger = Spooky atmosphere");
+}
+
+// Love + Sad = Bittersweet
+if ((padded.indexOf(" love ") !== -1) && (padded.indexOf(" sad ") !== -1 || padded.indexOf(" tears ") !== -1)) {
+  context.character.scenario += "\\n[COMBINED] Love + Sadness: A bittersweet moment. Love and loss intertwine.";
+  triggeredModules.push("Combined:Bittersweet");
+  console.log("  ✓ Combined: Love + Sad = Bittersweet moment");
+}
+
+// Tavern + Festival = Party!
+if (padded.indexOf(" tavern ") !== -1 && padded.indexOf(" festival ") !== -1) {
+  context.character.scenario += "\\n[COMBINED] Tavern + Festival: The tavern is PACKED! Music, dancing, and free-flowing drinks everywhere!";
+  triggeredModules.push("Combined:TavernParty");
+  console.log("  ✓ Combined: Tavern + Festival = Party time!");
+}
+
+// Magic + Sword = Enchanted weapon
+if ((padded.indexOf(" magic ") !== -1) && (padded.indexOf(" sword ") !== -1 || padded.indexOf(" blade ") !== -1)) {
+  context.character.scenario += "\\n[COMBINED] Magic + Sword: The blade resonates with magical energy, humming with ancient power!";
+  triggeredModules.push("Combined:EnchantedBlade");
+  console.log("  ✓ Combined: Magic + Sword = Enchanted weapon");
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 9: SCORING SYSTEM (Sentiment)
+// ─────────────────────────────────────────────────────────
+console.log("\\n[SCORING] Calculating sentiment score...");
+
+var sentimentScore = 0;
+
+// Positive words
+var positiveWords = [" love ", " happy ", " joy ", " good ", " great ", " wonderful ", " amazing ", " like "];
+for (var i = 0; i < positiveWords.length; i++) {
+  if (padded.indexOf(positiveWords[i]) !== -1) {
+    sentimentScore += 10;
+    console.log("  + Positive word found: " + positiveWords[i].trim());
+  }
+}
+
+// Negative words
+var negativeWords = [" hate ", " sad ", " angry ", " bad ", " terrible ", " awful ", " dislike "];
+for (var j = 0; j < negativeWords.length; j++) {
+  if (padded.indexOf(negativeWords[j]) !== -1) {
+    sentimentScore -= 10;
+    console.log("  - Negative word found: " + negativeWords[j].trim());
+  }
+}
+
+var sentimentLabel = "neutral";
+if (sentimentScore >= 20) sentimentLabel = "very positive";
+else if (sentimentScore > 0) sentimentLabel = "positive";
+else if (sentimentScore <= -20) sentimentLabel = "very negative";
+else if (sentimentScore < 0) sentimentLabel = "negative";
+
+context.character.personality += "\\n[SCORING] Sentiment: " + sentimentLabel + " (score: " + sentimentScore + ")";
+triggeredModules.push("Scoring:" + sentimentLabel);
+console.log("  ✓ Final sentiment: " + sentimentLabel + " (" + sentimentScore + " points)");
+
+// ─────────────────────────────────────────────────────────
+// FINAL SUMMARY
+// ─────────────────────────────────────────────────────────
+console.log("\\n═══════════════════════════════════════════");
+console.log("MODULES TRIGGERED: " + triggeredModules.length);
+triggeredModules.forEach(function(mod) {
+  console.log("  • " + mod);
+});
+console.log("═══════════════════════════════════════════");
+
+context.character.example_dialogues += "\\n[TEST SUMMARY] Triggered " + triggeredModules.length + " module responses: " + triggeredModules.join(", ");`
   };
 
   // Load a tester preset
@@ -3561,6 +3866,10 @@ console.log("Script completed!");`
       } else if (presetName === 'broken') {
         document.getElementById('testerMessage').value = "test message";
         showToast('Loaded broken script for error testing', 'warning');
+      } else if (presetName === 'mega') {
+        // MEGA test message designed to trigger ALL modules
+        document.getElementById('testerMessage').value = "My name is Alex and I am a traveler who works as a mage. I love magic and I like adventure but I hate danger and I dislike waiting. I walk into the tavern during the festival on this dark night. Marcus hands me a magic sword blade as rain starts to fall. I feel happy and sad with tears of joy, thinking of love and mystery. There's a secret hidden in the forest woods. Let's fight this battle! It's going to be great and wonderful but also terrible and bad.";
+        showToast('Loaded MEGA test - triggers all 9 module types!', 'success');
       }
     }
   }
