@@ -893,6 +893,90 @@
       border-left: 3px solid var(--accent);
     }
 
+    /* Batch test result items */
+    .batch-result-item {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .batch-result-item.success {
+      border-left: 4px solid var(--success);
+    }
+
+    .batch-result-item.no-trigger {
+      border-left: 4px solid var(--text-muted);
+    }
+
+    .batch-result-item.error {
+      border-left: 4px solid var(--danger);
+    }
+
+    .batch-result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .batch-result-header:hover {
+      opacity: 0.8;
+    }
+
+    .batch-result-number {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    .batch-result-status {
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--panel-bg);
+    }
+
+    .batch-result-message {
+      font-style: italic;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+      padding: 6px 8px;
+      background: var(--panel-bg);
+      border-radius: 4px;
+      max-height: 60px;
+      overflow-y: auto;
+    }
+
+    .batch-result-details {
+      display: none;
+      margin-top: 8px;
+    }
+
+    .batch-result-details.expanded {
+      display: block;
+    }
+
+    .batch-result-detail {
+      margin-bottom: 6px;
+    }
+
+    .batch-result-detail strong {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .batch-result-detail .output-box {
+      font-size: 0.75rem;
+      max-height: 80px;
+      margin-top: 0;
+    }
+
     .analyzer-summary {
       display: flex;
       gap: 16px;
@@ -1540,14 +1624,49 @@
           <option value="random">Random Events Script</option>
           <option value="combined">Combined Conditions Script</option>
           <option value="scoring">Scoring Script</option>
+          <option value="custom">Custom Script (Paste Below)</option>
         </select>
-        <div class="help-text">Choose which generated script to test</div>
+        <div class="help-text">Choose which generated script to test, or paste a custom script</div>
+      </div>
+
+      <div id="testerCustomSection" style="display: none;">
+        <div class="form-group">
+          <label>Custom Script</label>
+          <textarea id="testerCustomScript" rows="10" placeholder="Paste your script here..." style="font-family: 'Courier New', monospace; font-size: 0.85rem;"></textarea>
+        </div>
+        <div style="margin-bottom: 14px;">
+          <strong>Load Example Preset:</strong>
+          <button type="button" class="btn btn-secondary" onclick="loadTesterPreset('good')" style="margin-left: 8px;">✅ Working Script</button>
+          <button type="button" class="btn btn-secondary" onclick="loadTesterPreset('broken')" style="margin-left: 4px;">❌ Broken Script</button>
+          <button type="button" class="btn btn-warning" onclick="loadTesterPreset('mega')" style="margin-left: 4px;">🔥 MEGA Test (All Modules)</button>
+        </div>
       </div>
 
       <div class="form-group">
-        <label>Test Message</label>
-        <textarea id="testerMessage" rows="3" placeholder="Enter a message to test against the script, e.g., 'I walk into the tavern and see the bartender'"></textarea>
-        <div class="help-text">This simulates <code>context.chat.last_message</code></div>
+        <label>
+          <input type="checkbox" id="testerBatchMode" onchange="toggleBatchMode()" /> Enable Batch Testing (Multiple Messages)
+        </label>
+        <div class="help-text">Test multiple messages against the same script and see individual results for each</div>
+      </div>
+
+      <!-- Single Message Mode -->
+      <div id="testerSingleMode">
+        <div class="form-group">
+          <label>Test Message</label>
+          <textarea id="testerMessage" rows="3" placeholder="Enter a message to test against the script, e.g., 'I walk into the tavern and see the bartender'"></textarea>
+          <div class="help-text">This simulates <code>context.chat.last_message</code></div>
+        </div>
+      </div>
+
+      <!-- Batch Mode -->
+      <div id="testerBatchSection" style="display: none;">
+        <div class="form-group">
+          <label>Test Messages</label>
+          <button type="button" class="btn btn-secondary" onclick="addBatchTestMessage()" style="margin-left: 8px;">+ Add Message</button>
+          <button type="button" class="btn btn-secondary" onclick="clearBatchMessages()" style="margin-left: 4px;">Clear All</button>
+          <div id="batchTestMessages" class="dynamic-list" style="margin-top: 8px;"></div>
+          <div class="help-text">Each message will be tested separately against the script. Add as many as you need.</div>
+        </div>
       </div>
 
       <div class="form-group">
@@ -1573,9 +1692,19 @@ Third message here"></textarea>
         <div class="help-text">Pre-fills <code>context.character.name</code> if your script uses it</div>
       </div>
 
-      <button type="button" class="btn" onclick="runScriptTest()">▶️ Run Test</button>
-      <button type="button" class="btn btn-secondary" onclick="clearTestResults()">Clear Results</button>
+      <!-- Single Test Buttons -->
+      <div id="singleTestButtons">
+        <button type="button" class="btn" onclick="runScriptTest()">▶️ Run Test</button>
+        <button type="button" class="btn btn-secondary" onclick="clearTestResults()">Clear Results</button>
+      </div>
 
+      <!-- Batch Test Buttons -->
+      <div id="batchTestButtons" style="display: none;">
+        <button type="button" class="btn btn-success" onclick="runBatchTests()">🚀 Run All Tests</button>
+        <button type="button" class="btn btn-secondary" onclick="clearBatchResults()">Clear Results</button>
+      </div>
+
+      <!-- Single Test Results -->
       <div id="testerResults" class="tester-results" style="display: none;">
         <h4>📊 Test Results</h4>
 
@@ -1598,6 +1727,13 @@ Third message here"></textarea>
           <strong>Example Dialogues Changes:</strong>
           <div class="output-box" id="testerExamples" style="max-height: 100px;">(none)</div>
         </div>
+      </div>
+
+      <!-- Batch Test Results -->
+      <div id="batchResults" style="display: none;">
+        <h4>📊 Batch Test Results</h4>
+        <div id="batchResultsSummary" class="info-banner" style="margin-bottom: 12px;"></div>
+        <div id="batchResultsList"></div>
       </div>
 
       <div class="pitfall-box">
@@ -3420,6 +3556,12 @@ Third message here"></textarea>
   // Get the script content from the selected source
   function getSelectedScript() {
     var source = document.getElementById('testerScriptSource').value;
+
+    // Handle custom script option
+    if (source === 'custom') {
+      return document.getElementById('testerCustomScript').value || '';
+    }
+
     var outputMap = {
       'final': 'finalOutput',
       'lorebook': 'lorebookOutput',
@@ -3445,6 +3587,413 @@ Third message here"></textarea>
     document.getElementById('testerPersonality').textContent = '(none)';
     document.getElementById('testerScenario').textContent = '(none)';
     document.getElementById('testerExamples').textContent = '(none)';
+  }
+
+  // Tester preset scripts
+  var TESTER_PRESETS = {
+    good: `// APHRODITE - DIVINE SLIP-UPS (Simplified Demo)
+// A working script demonstrating keyword triggers and message count phases
+
+var last = context.chat.last_message.toLowerCase();
+var padded = " " + last + " ";
+var count = context.chat.message_count;
+
+// Relationship tier based on message count
+var tier = "desperate";
+if (count > 60) tier = "genuine";
+else if (count > 40) tier = "vulnerable";
+else if (count > 20) tier = "comfortable";
+
+// Divine keyword detection
+var mentionedGods = (padded.indexOf(" gods ") !== -1 || padded.indexOf(" divine ") !== -1 || padded.indexOf(" olympus ") !== -1);
+var mentionedPowers = (padded.indexOf(" magic ") !== -1 || padded.indexOf(" powers ") !== -1 || padded.indexOf(" goddess ") !== -1);
+
+// Technology failures
+if (padded.indexOf(" phone ") !== -1 || padded.indexOf(" text ") !== -1) {
+  var techFails = [
+    " 'Why does it want to know my location?! I'm RIGHT HERE!'",
+    " Her phone autocorrects everything wrong. 'It's possessed!'",
+    " 'What do you mean low battery? I charged it three days ago!'"
+  ];
+  context.character.scenario += techFails[Math.floor(Math.random() * techFails.length)];
+}
+
+// Divine slip-ups when gods mentioned
+if (mentionedGods) {
+  context.character.scenario += " She glances around nervously. 'You didn't hear that part about— never mind.'";
+}
+
+// Power manifestation when happy
+if (padded.indexOf(" happy ") !== -1 || padded.indexOf(" smile ") !== -1) {
+  if (Math.random() < 0.5) {
+    context.character.scenario += " Her hair floats slightly—she's happy. 'It's static. Totally normal.'";
+  }
+}
+
+// Food discovery
+if (padded.indexOf(" food ") !== -1 || padded.indexOf(" eat ") !== -1 || padded.indexOf(" croissant ") !== -1) {
+  context.character.scenario += " 'Why didn't anyone tell me about croissants?!' Crumbs on her face.";
+}
+
+// Relationship personality injection
+context.character.personality += " [Relationship: " + tier + "] ";
+if (tier === "desperate") {
+  context.character.personality += "Trying too hard, nervous energy, desperately attempting to seem normal.";
+} else if (tier === "genuine") {
+  context.character.personality += "Stopped pretending, real feelings evident, comfortable being herself.";
+}
+
+console.log("Script executed successfully!");
+console.log("Tier: " + tier + ", Count: " + count);
+console.log("Gods mentioned: " + mentionedGods + ", Powers: " + mentionedPowers);`,
+
+    broken: `// BROKEN SCRIPT - Intentional Errors for Testing
+// This script contains syntax and runtime errors
+
+var last = context.chat.last_message.toLowerCase();
+var padded = " " + last + " ";
+
+console.log("Starting broken script...");
+
+// ERROR 1: Missing closing parenthesis
+if (padded.indexOf("test") !== -1 {
+  context.character.scenario += "This will never run";
+}
+
+// ERROR 2: Undefined variable access
+var result = undefinedVariable.someMethod();
+
+// ERROR 3: Invalid syntax - unclosed string
+context.character.personality += "This string never ends...
+
+// This line will never be reached
+console.log("Script completed!");`,
+
+    mega: `// ═══════════════════════════════════════════════════════
+//        MEGA TEST SCRIPT - ALL MODULES COMBINED
+//        Tests: Lorebook, Memory, Pacing, Tone, Time,
+//               Ambient, Random, Combined, Scoring
+// ═══════════════════════════════════════════════════════
+
+var last = context.chat.last_message.toLowerCase();
+var padded = " " + last + " ";
+var count = context.chat.message_count;
+var triggeredModules = [];
+
+console.log("═══ MEGA TEST SCRIPT STARTING ═══");
+console.log("Message: " + last.substring(0, 50) + "...");
+console.log("Message Count: " + count);
+
+// ─────────────────────────────────────────────────────────
+// MODULE 1: LOREBOOK (Keyword Database)
+// ─────────────────────────────────────────────────────────
+console.log("\\n[LOREBOOK] Checking keywords...");
+
+// People
+if (padded.indexOf(" marcus ") !== -1) {
+  context.character.scenario += "\\n[LORE-PERSON] Marcus the blacksmith stands at his forge, muscles gleaming with sweat. He nods in greeting.";
+  triggeredModules.push("Lorebook:People:Marcus");
+  console.log("  ✓ Triggered: Marcus (person)");
+}
+
+// Places
+if (padded.indexOf(" tavern ") !== -1) {
+  context.character.scenario += "\\n[LORE-PLACE] The Rusty Tankard tavern is warm and inviting, filled with the smell of ale and roasting meat.";
+  triggeredModules.push("Lorebook:Places:Tavern");
+  console.log("  ✓ Triggered: Tavern (place)");
+}
+
+// Objects
+if (padded.indexOf(" sword ") !== -1 || padded.indexOf(" blade ") !== -1) {
+  context.character.scenario += "\\n[LORE-OBJECT] The ancient sword hums with magical energy, its runes glowing faintly blue.";
+  triggeredModules.push("Lorebook:Objects:Sword");
+  console.log("  ✓ Triggered: Sword (object)");
+}
+
+// Moods
+if (padded.indexOf(" danger ") !== -1 || padded.indexOf(" threat ") !== -1) {
+  context.character.scenario += "\\n[LORE-MOOD] A sense of danger permeates the air. Something is watching from the shadows.";
+  triggeredModules.push("Lorebook:Moods:Danger");
+  console.log("  ✓ Triggered: Danger (mood)");
+}
+
+// Events
+if (padded.indexOf(" festival ") !== -1 || padded.indexOf(" celebration ") !== -1) {
+  context.character.scenario += "\\n[LORE-EVENT] The annual harvest festival is in full swing! Colorful banners and music fill the streets.";
+  triggeredModules.push("Lorebook:Events:Festival");
+  console.log("  ✓ Triggered: Festival (event)");
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 2: MEMORY SYSTEM
+// ─────────────────────────────────────────────────────────
+console.log("\\n[MEMORY] Checking for memorable info...");
+
+// Name detection
+var nameMatch = last.match(/my name is ([a-z'\\-]+)/i);
+if (nameMatch) {
+  var detectedName = nameMatch[1];
+  context.character.personality += "\\n[MEMORY-NAME] User's name is " + detectedName + ".";
+  triggeredModules.push("Memory:Name:" + detectedName);
+  console.log("  ✓ Detected name: " + detectedName);
+}
+
+// Facts
+if (padded.indexOf(" i am ") !== -1 || padded.indexOf(" i work ") !== -1) {
+  context.character.personality += "\\n[MEMORY-FACT] User shared a fact about themselves.";
+  triggeredModules.push("Memory:Fact");
+  console.log("  ✓ Detected: Personal fact");
+}
+
+// Likes
+if (padded.indexOf(" i like ") !== -1 || padded.indexOf(" i love ") !== -1 || padded.indexOf(" i enjoy ") !== -1) {
+  context.character.personality += "\\n[MEMORY-LIKE] User expressed something they like.";
+  triggeredModules.push("Memory:Like");
+  console.log("  ✓ Detected: User likes something");
+}
+
+// Dislikes
+if (padded.indexOf(" i hate ") !== -1 || padded.indexOf(" i dislike ") !== -1 || padded.indexOf(" i don't like ") !== -1) {
+  context.character.personality += "\\n[MEMORY-DISLIKE] User expressed something they dislike.";
+  triggeredModules.push("Memory:Dislike");
+  console.log("  ✓ Detected: User dislikes something");
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 3: PACING SYSTEM (Message Count Phases)
+// ─────────────────────────────────────────────────────────
+console.log("\\n[PACING] Determining conversation phase...");
+
+var pacingPhase = "introduction";
+if (count > 50) pacingPhase = "climax";
+else if (count > 30) pacingPhase = "development";
+else if (count > 10) pacingPhase = "rising";
+
+context.character.personality += "\\n[PACING] Current phase: " + pacingPhase.toUpperCase();
+triggeredModules.push("Pacing:" + pacingPhase);
+console.log("  ✓ Phase: " + pacingPhase + " (count: " + count + ")");
+
+if (pacingPhase === "introduction") {
+  context.character.scenario += "\\n[PACING] The story is just beginning. Characters are being established.";
+} else if (pacingPhase === "rising") {
+  context.character.scenario += "\\n[PACING] Tension builds. The plot thickens with each exchange.";
+} else if (pacingPhase === "development") {
+  context.character.scenario += "\\n[PACING] Deep into the narrative. Relationships and conflicts are complex.";
+} else if (pacingPhase === "climax") {
+  context.character.scenario += "\\n[PACING] The story reaches its peak intensity!";
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 4: TONE/STATE DETECTION
+// ─────────────────────────────────────────────────────────
+console.log("\\n[TONE] Analyzing emotional tone...");
+
+// Romantic tone
+if (padded.indexOf(" love ") !== -1 || padded.indexOf(" kiss ") !== -1 || padded.indexOf(" heart ") !== -1) {
+  context.character.personality += "\\n[TONE-ROMANTIC] Romantic undertones detected. Respond with warmth and affection.";
+  triggeredModules.push("Tone:Romantic");
+  console.log("  ✓ Tone: Romantic");
+}
+
+// Tense tone
+if (padded.indexOf(" fight ") !== -1 || padded.indexOf(" attack ") !== -1 || padded.indexOf(" battle ") !== -1) {
+  context.character.personality += "\\n[TONE-TENSE] Combat/conflict detected. Increase tension and urgency.";
+  triggeredModules.push("Tone:Tense");
+  console.log("  ✓ Tone: Tense/Combat");
+}
+
+// Sad tone
+if (padded.indexOf(" sad ") !== -1 || padded.indexOf(" cry ") !== -1 || padded.indexOf(" tears ") !== -1) {
+  context.character.personality += "\\n[TONE-SAD] Sadness detected. Respond with empathy and gentleness.";
+  triggeredModules.push("Tone:Sad");
+  console.log("  ✓ Tone: Sad");
+}
+
+// Happy tone
+if (padded.indexOf(" happy ") !== -1 || padded.indexOf(" joy ") !== -1 || padded.indexOf(" laugh ") !== -1) {
+  context.character.personality += "\\n[TONE-HAPPY] Happiness detected. Match the upbeat energy!";
+  triggeredModules.push("Tone:Happy");
+  console.log("  ✓ Tone: Happy");
+}
+
+// Mysterious tone
+if (padded.indexOf(" secret ") !== -1 || padded.indexOf(" mystery ") !== -1 || padded.indexOf(" hidden ") !== -1) {
+  context.character.personality += "\\n[TONE-MYSTERIOUS] Mystery detected. Add intrigue and suspense.";
+  triggeredModules.push("Tone:Mysterious");
+  console.log("  ✓ Tone: Mysterious");
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 5: TIME & ENVIRONMENT (Simulated)
+// ─────────────────────────────────────────────────────────
+console.log("\\n[TIME] Checking time-related keywords...");
+
+if (padded.indexOf(" morning ") !== -1 || padded.indexOf(" sunrise ") !== -1 || padded.indexOf(" dawn ") !== -1) {
+  context.character.scenario += "\\n[TIME-MORNING] Golden morning light streams through the windows. Birds sing outside.";
+  triggeredModules.push("Time:Morning");
+  console.log("  ✓ Time: Morning");
+}
+
+if (padded.indexOf(" night ") !== -1 || padded.indexOf(" dark ") !== -1 || padded.indexOf(" moon ") !== -1) {
+  context.character.scenario += "\\n[TIME-NIGHT] Darkness blankets the land. Stars twinkle overhead and shadows dance.";
+  triggeredModules.push("Time:Night");
+  console.log("  ✓ Time: Night");
+}
+
+if (padded.indexOf(" rain ") !== -1 || padded.indexOf(" storm ") !== -1) {
+  context.character.scenario += "\\n[TIME-WEATHER] Rain patters against the windows. Thunder rumbles in the distance.";
+  triggeredModules.push("Time:Rain");
+  console.log("  ✓ Weather: Rain/Storm");
+}
+
+if (padded.indexOf(" forest ") !== -1 || padded.indexOf(" woods ") !== -1) {
+  context.character.scenario += "\\n[TIME-ENVIRONMENT] The ancient forest looms around you, filled with whispers and mystery.";
+  triggeredModules.push("Time:Forest");
+  console.log("  ✓ Environment: Forest");
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 6: AMBIENT EVENTS (Random flavor)
+// ─────────────────────────────────────────────────────────
+console.log("\\n[AMBIENT] Rolling for ambient events...");
+
+// Always trigger one ambient event for testing
+var ambientRoll = Math.random();
+var ambientEvents = [
+  "A crow caws in the distance, breaking the silence.",
+  "The wind picks up briefly, rustling nearby leaves.",
+  "Somewhere, a door creaks open on rusty hinges.",
+  "The faint smell of woodsmoke drifts on the air.",
+  "A cat watches from a windowsill with knowing eyes."
+];
+var ambientPick = ambientEvents[Math.floor(Math.random() * ambientEvents.length)];
+context.character.scenario += "\\n[AMBIENT] " + ambientPick;
+triggeredModules.push("Ambient:Random");
+console.log("  ✓ Ambient event: " + ambientPick.substring(0, 30) + "...");
+
+// ─────────────────────────────────────────────────────────
+// MODULE 7: RANDOM EVENTS (Chance-based)
+// ─────────────────────────────────────────────────────────
+console.log("\\n[RANDOM] Rolling for random events...");
+
+// 50% chance events for testing
+if (Math.random() < 0.5) {
+  context.character.scenario += "\\n[RANDOM-50%] A stranger passes by, glancing curiously in your direction.";
+  triggeredModules.push("Random:Stranger");
+  console.log("  ✓ Random event triggered (50% roll succeeded)");
+} else {
+  console.log("  ✗ Random event skipped (50% roll failed)");
+}
+
+// Keyword + chance combo
+if (padded.indexOf(" magic ") !== -1 && Math.random() < 0.7) {
+  context.character.scenario += "\\n[RANDOM-MAGIC] A spark of wild magic flickers nearby—something reacts to the arcane mention!";
+  triggeredModules.push("Random:MagicSpark");
+  console.log("  ✓ Magic + chance event triggered");
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 8: COMBINED CONDITIONS
+// ─────────────────────────────────────────────────────────
+console.log("\\n[COMBINED] Checking multi-condition triggers...");
+
+// Night + Danger = Spooky combo
+if ((padded.indexOf(" night ") !== -1 || padded.indexOf(" dark ") !== -1) &&
+    (padded.indexOf(" danger ") !== -1 || padded.indexOf(" threat ") !== -1)) {
+  context.character.scenario += "\\n[COMBINED] Night + Danger: The darkness itself seems alive with menace. Every shadow could hide a threat.";
+  triggeredModules.push("Combined:NightDanger");
+  console.log("  ✓ Combined: Night + Danger = Spooky atmosphere");
+}
+
+// Love + Sad = Bittersweet
+if ((padded.indexOf(" love ") !== -1) && (padded.indexOf(" sad ") !== -1 || padded.indexOf(" tears ") !== -1)) {
+  context.character.scenario += "\\n[COMBINED] Love + Sadness: A bittersweet moment. Love and loss intertwine.";
+  triggeredModules.push("Combined:Bittersweet");
+  console.log("  ✓ Combined: Love + Sad = Bittersweet moment");
+}
+
+// Tavern + Festival = Party!
+if (padded.indexOf(" tavern ") !== -1 && padded.indexOf(" festival ") !== -1) {
+  context.character.scenario += "\\n[COMBINED] Tavern + Festival: The tavern is PACKED! Music, dancing, and free-flowing drinks everywhere!";
+  triggeredModules.push("Combined:TavernParty");
+  console.log("  ✓ Combined: Tavern + Festival = Party time!");
+}
+
+// Magic + Sword = Enchanted weapon
+if ((padded.indexOf(" magic ") !== -1) && (padded.indexOf(" sword ") !== -1 || padded.indexOf(" blade ") !== -1)) {
+  context.character.scenario += "\\n[COMBINED] Magic + Sword: The blade resonates with magical energy, humming with ancient power!";
+  triggeredModules.push("Combined:EnchantedBlade");
+  console.log("  ✓ Combined: Magic + Sword = Enchanted weapon");
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE 9: SCORING SYSTEM (Sentiment)
+// ─────────────────────────────────────────────────────────
+console.log("\\n[SCORING] Calculating sentiment score...");
+
+var sentimentScore = 0;
+
+// Positive words
+var positiveWords = [" love ", " happy ", " joy ", " good ", " great ", " wonderful ", " amazing ", " like "];
+for (var i = 0; i < positiveWords.length; i++) {
+  if (padded.indexOf(positiveWords[i]) !== -1) {
+    sentimentScore += 10;
+    console.log("  + Positive word found: " + positiveWords[i].trim());
+  }
+}
+
+// Negative words
+var negativeWords = [" hate ", " sad ", " angry ", " bad ", " terrible ", " awful ", " dislike "];
+for (var j = 0; j < negativeWords.length; j++) {
+  if (padded.indexOf(negativeWords[j]) !== -1) {
+    sentimentScore -= 10;
+    console.log("  - Negative word found: " + negativeWords[j].trim());
+  }
+}
+
+var sentimentLabel = "neutral";
+if (sentimentScore >= 20) sentimentLabel = "very positive";
+else if (sentimentScore > 0) sentimentLabel = "positive";
+else if (sentimentScore <= -20) sentimentLabel = "very negative";
+else if (sentimentScore < 0) sentimentLabel = "negative";
+
+context.character.personality += "\\n[SCORING] Sentiment: " + sentimentLabel + " (score: " + sentimentScore + ")";
+triggeredModules.push("Scoring:" + sentimentLabel);
+console.log("  ✓ Final sentiment: " + sentimentLabel + " (" + sentimentScore + " points)");
+
+// ─────────────────────────────────────────────────────────
+// FINAL SUMMARY
+// ─────────────────────────────────────────────────────────
+console.log("\\n═══════════════════════════════════════════");
+console.log("MODULES TRIGGERED: " + triggeredModules.length);
+triggeredModules.forEach(function(mod) {
+  console.log("  • " + mod);
+});
+console.log("═══════════════════════════════════════════");
+
+context.character.example_dialogues += "\\n[TEST SUMMARY] Triggered " + triggeredModules.length + " module responses: " + triggeredModules.join(", ");`
+  };
+
+  // Load a tester preset
+  function loadTesterPreset(presetName) {
+    var script = TESTER_PRESETS[presetName];
+    if (script) {
+      document.getElementById('testerCustomScript').value = script;
+      clearTestResults();
+
+      // Also set a relevant test message
+      if (presetName === 'good') {
+        document.getElementById('testerMessage').value = "I'm so happy! Let me check my phone real quick.";
+        showToast('Loaded working Aphrodite demo script', 'success');
+      } else if (presetName === 'broken') {
+        document.getElementById('testerMessage').value = "test message";
+        showToast('Loaded broken script for error testing', 'warning');
+      } else if (presetName === 'mega') {
+        // MEGA test message designed to trigger ALL modules
+        document.getElementById('testerMessage').value = "My name is Alex and I am a traveler who works as a mage. I love magic and I like adventure but I hate danger and I dislike waiting. I walk into the tavern during the festival on this dark night. Marcus hands me a magic sword blade as rain starts to fall. I feel happy and sad with tears of joy, thinking of love and mystery. There's a secret hidden in the forest woods. Let's fight this battle! It's going to be great and wonderful but also terrible and bad.";
+        showToast('Loaded MEGA test - triggers all 9 module types!', 'success');
+      }
+    }
   }
 
   // Build message history array for multi-message testing
@@ -3603,9 +4152,260 @@ Third message here"></textarea>
     }
   }
 
-  // Optional: update UI when script source changes
+  // Update UI when script source changes
   function updateTesterScript() {
+    var source = document.getElementById('testerScriptSource').value;
+    var customSection = document.getElementById('testerCustomSection');
+
+    // Show/hide custom script section
+    if (source === 'custom') {
+      customSection.style.display = 'block';
+    } else {
+      customSection.style.display = 'none';
+    }
+
     clearTestResults();
+  }
+
+  // ===========================
+  //   BATCH TESTING FUNCTIONS
+  // ===========================
+
+  // Toggle batch mode UI
+  function toggleBatchMode() {
+    var batchMode = document.getElementById('testerBatchMode').checked;
+    var singleMode = document.getElementById('testerSingleMode');
+    var batchSection = document.getElementById('testerBatchSection');
+    var singleButtons = document.getElementById('singleTestButtons');
+    var batchButtons = document.getElementById('batchTestButtons');
+
+    if (batchMode) {
+      singleMode.style.display = 'none';
+      batchSection.style.display = 'block';
+      singleButtons.style.display = 'none';
+      batchButtons.style.display = 'block';
+      // Add initial message box if empty
+      if (document.getElementById('batchTestMessages').children.length === 0) {
+        addBatchTestMessage();
+      }
+    } else {
+      singleMode.style.display = 'block';
+      batchSection.style.display = 'none';
+      singleButtons.style.display = 'block';
+      batchButtons.style.display = 'none';
+    }
+
+    // Clear results when switching modes
+    clearTestResults();
+    clearBatchResults();
+  }
+
+  // Add a new batch test message input
+  var batchMessageCounter = 0;
+  function addBatchTestMessage(prefillText) {
+    batchMessageCounter++;
+    var container = document.getElementById('batchTestMessages');
+    var item = document.createElement('div');
+    item.className = 'dynamic-item';
+    item.style.flexDirection = 'column';
+    item.style.alignItems = 'stretch';
+    item.innerHTML =
+      '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">' +
+        '<span style="font-weight: 600; color: var(--accent);">Message #' + batchMessageCounter + '</span>' +
+        '<button type="button" onclick="this.parentElement.parentElement.remove()" style="padding: 4px 8px; background: var(--danger); color: var(--text-primary); border: none; border-radius: 3px; cursor: pointer; font-size: 0.8rem;">Remove</button>' +
+      '</div>' +
+      '<textarea class="batch-message-input" rows="2" placeholder="Enter test message..." style="width: 100%; font-family: inherit; resize: vertical;"></textarea>';
+    container.appendChild(item);
+
+    // Prefill if text provided
+    if (prefillText) {
+      item.querySelector('textarea').value = prefillText;
+    }
+
+    return item;
+  }
+
+  // Clear all batch messages
+  function clearBatchMessages() {
+    document.getElementById('batchTestMessages').innerHTML = '';
+    batchMessageCounter = 0;
+    addBatchTestMessage(); // Add one empty one
+  }
+
+  // Clear batch results
+  function clearBatchResults() {
+    document.getElementById('batchResults').style.display = 'none';
+    document.getElementById('batchResultsSummary').innerHTML = '';
+    document.getElementById('batchResultsList').innerHTML = '';
+  }
+
+  // Execute a single test and return results (refactored for reuse)
+  function executeScriptTest(scriptCode, testMessage, charName) {
+    var context = {
+      chat: {
+        last_message: testMessage,
+        last_messages: [],
+        message_count: 1,
+        multi_depth_enabled: false
+      },
+      character: {
+        name: charName || '',
+        personality: '',
+        scenario: '',
+        example_dialogues: ''
+      }
+    };
+
+    var consoleLogs = [];
+    var mockConsole = {
+      log: function() {
+        var args = Array.prototype.slice.call(arguments);
+        consoleLogs.push(args.map(String).join(' '));
+      },
+      error: function() {
+        var args = Array.prototype.slice.call(arguments);
+        consoleLogs.push('[ERROR] ' + args.map(String).join(' '));
+      },
+      warn: function() {
+        var args = Array.prototype.slice.call(arguments);
+        consoleLogs.push('[WARN] ' + args.map(String).join(' '));
+      },
+      info: function() {
+        var args = Array.prototype.slice.call(arguments);
+        consoleLogs.push('[INFO] ' + args.map(String).join(' '));
+      }
+    };
+
+    var errorOccurred = false;
+    var errorMessage = '';
+
+    try {
+      var wrappedCode = '(function(context, console, Math) {\n' + scriptCode + '\n})';
+      var scriptFn = eval(wrappedCode);
+      scriptFn(context, mockConsole, Math);
+    } catch (e) {
+      errorOccurred = true;
+      errorMessage = e.toString();
+      consoleLogs.push('[EXECUTION ERROR] ' + errorMessage);
+    }
+
+    return {
+      message: testMessage,
+      consoleLogs: consoleLogs,
+      personality: context.character.personality,
+      scenario: context.character.scenario,
+      examples: context.character.example_dialogues,
+      error: errorOccurred,
+      errorMessage: errorMessage,
+      hasChanges: !!(context.character.personality || context.character.scenario || context.character.example_dialogues)
+    };
+  }
+
+  // Run all batch tests
+  function runBatchTests() {
+    var scriptCode = getSelectedScript();
+    var charName = document.getElementById('testerCharName').value || '';
+
+    // Validate script
+    if (!scriptCode || scriptCode.indexOf('// Script will appear') === 0) {
+      showToast('Please generate or paste a script first', 'error');
+      return;
+    }
+
+    // Get all messages
+    var messageInputs = document.querySelectorAll('#batchTestMessages .batch-message-input');
+    var messages = [];
+    messageInputs.forEach(function(input) {
+      var msg = input.value.trim();
+      if (msg) messages.push(msg);
+    });
+
+    if (messages.length === 0) {
+      showToast('Please add at least one test message', 'error');
+      return;
+    }
+
+    // Run all tests
+    var results = [];
+    var successCount = 0;
+    var noTriggerCount = 0;
+    var errorCount = 0;
+
+    messages.forEach(function(msg, idx) {
+      var result = executeScriptTest(scriptCode, msg, charName);
+      result.index = idx + 1;
+      results.push(result);
+
+      if (result.error) {
+        errorCount++;
+      } else if (result.hasChanges) {
+        successCount++;
+      } else {
+        noTriggerCount++;
+      }
+    });
+
+    // Display results
+    displayBatchResults(results, successCount, noTriggerCount, errorCount);
+  }
+
+  // Display batch test results
+  function displayBatchResults(results, successCount, noTriggerCount, errorCount) {
+    var container = document.getElementById('batchResults');
+    var summary = document.getElementById('batchResultsSummary');
+    var list = document.getElementById('batchResultsList');
+
+    // Summary
+    summary.innerHTML =
+      '<strong>Batch Test Complete:</strong> ' + results.length + ' messages tested — ' +
+      '<span style="color: var(--success);">' + successCount + ' triggered</span>, ' +
+      '<span style="color: var(--text-muted);">' + noTriggerCount + ' no triggers</span>, ' +
+      '<span style="color: var(--danger);">' + errorCount + ' errors</span>';
+
+    // Individual results
+    list.innerHTML = '';
+    results.forEach(function(result) {
+      var statusClass = result.error ? 'error' : (result.hasChanges ? 'success' : 'no-trigger');
+      var statusText = result.error ? '❌ Error' : (result.hasChanges ? '✅ Triggered' : '⚪ No Trigger');
+
+      var item = document.createElement('div');
+      item.className = 'batch-result-item ' + statusClass;
+      item.innerHTML =
+        '<div class="batch-result-header" onclick="this.nextElementSibling.nextElementSibling.classList.toggle(\'expanded\')">' +
+          '<span class="batch-result-number">Test #' + result.index + '</span>' +
+          '<span class="batch-result-status">' + statusText + ' (click to expand)</span>' +
+        '</div>' +
+        '<div class="batch-result-message">"' + escapeHtml(result.message.substring(0, 150)) + (result.message.length > 150 ? '...' : '') + '"</div>' +
+        '<div class="batch-result-details">' +
+          '<div class="batch-result-detail">' +
+            '<strong>Console Output:</strong>' +
+            '<div class="output-box">' + (result.consoleLogs.length > 0 ? escapeHtml(result.consoleLogs.join('\n')) : '(none)') + '</div>' +
+          '</div>' +
+          '<div class="batch-result-detail">' +
+            '<strong>Personality:</strong>' +
+            '<div class="output-box">' + (result.personality ? escapeHtml(result.personality) : '(no changes)') + '</div>' +
+          '</div>' +
+          '<div class="batch-result-detail">' +
+            '<strong>Scenario:</strong>' +
+            '<div class="output-box">' + (result.scenario ? escapeHtml(result.scenario) : '(no changes)') + '</div>' +
+          '</div>' +
+          '<div class="batch-result-detail">' +
+            '<strong>Example Dialogues:</strong>' +
+            '<div class="output-box">' + (result.examples ? escapeHtml(result.examples) : '(no changes)') + '</div>' +
+          '</div>' +
+        '</div>';
+      list.appendChild(item);
+    });
+
+    container.style.display = 'block';
+    showToast('Batch test complete: ' + results.length + ' messages processed', 'success');
+  }
+
+  // Helper to escape HTML
+  function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 </script>
 
