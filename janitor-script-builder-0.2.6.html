@@ -1670,23 +1670,6 @@
       </div>
 
       <div class="form-group">
-        <label>
-          <input type="checkbox" id="testerMultiMessage" onchange="toggleMessageHistory()" /> Enable Message History
-        </label>
-        <div class="help-text">Test with multiple messages (simulates <code>context.chat.last_messages</code>)</div>
-      </div>
-
-      <div id="testerHistorySection" style="display: none;">
-        <div class="form-group">
-          <label>Message History (one per line, oldest first)</label>
-          <textarea id="testerHistory" rows="5" placeholder="First message here
-Second message here
-Third message here"></textarea>
-          <div class="help-text">Each line becomes a message in history. Current test message will be added as the latest.</div>
-        </div>
-      </div>
-
-      <div class="form-group">
         <label>Character Name (optional)</label>
         <input type="text" id="testerCharName" placeholder="e.g., Luna" />
         <div class="help-text">Pre-fills <code>context.character.name</code> if your script uses it</div>
@@ -3545,14 +3528,6 @@ Third message here"></textarea>
   // ===========================
   //   SCRIPT TESTER FUNCTIONS
   // ===========================
-
-  // Toggle message history visibility
-  function toggleMessageHistory() {
-    var checkbox = document.getElementById('testerMultiMessage');
-    var section = document.getElementById('testerHistorySection');
-    section.style.display = checkbox.checked ? 'block' : 'none';
-  }
-
   // Get the script content from the selected source
   function getSelectedScript() {
     var source = document.getElementById('testerScriptSource').value;
@@ -3996,37 +3971,11 @@ context.character.example_dialogues += "\\n[TEST SUMMARY] Triggered " + triggere
     }
   }
 
-  // Build message history array for multi-message testing
-  function buildMessageHistory(historyText, currentMessage) {
-    var messages = [];
-    if (historyText && historyText.trim()) {
-      var lines = historyText.split('\n').filter(function(line) {
-        return line.trim() !== '';
-      });
-      lines.forEach(function(line, idx) {
-        messages.push({
-          message: line.trim(),
-          isUser: idx % 2 === 0  // Alternate user/bot
-        });
-      });
-    }
-    // Add current message as the latest (always user)
-    if (currentMessage && currentMessage.trim()) {
-      messages.push({
-        message: currentMessage.trim(),
-        isUser: true
-      });
-    }
-    return messages;
-  }
-
   // Run the script test
   function runScriptTest() {
     var scriptCode = getSelectedScript();
     var testMessage = document.getElementById('testerMessage').value || '';
     var charName = document.getElementById('testerCharName').value || '';
-    var useMultiMessage = document.getElementById('testerMultiMessage').checked;
-    var historyText = document.getElementById('testerHistory').value || '';
 
     // Validate
     if (!scriptCode || scriptCode.indexOf('// Script will appear') === 0) {
@@ -4039,14 +3988,12 @@ context.character.example_dialogues += "\\n[TEST SUMMARY] Triggered " + triggere
     }
 
     // Build context similar to JanitorAI
-    var lastMessages = useMultiMessage ? buildMessageHistory(historyText, testMessage) : [];
-
     var context = {
       chat: {
         last_message: testMessage,
-        last_messages: lastMessages,
-        message_count: useMultiMessage ? lastMessages.length : 1,
-        multi_depth_enabled: useMultiMessage
+        last_messages: [],
+        message_count: 1,
+        multi_depth_enabled: false
       },
       character: {
         name: charName,
