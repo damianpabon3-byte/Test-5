@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>JanitorAI Script Builder v0.2.5 – Production Ready</title>
+  <title>JanitorAI Script Builder v0.2.6 – Production Ready</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -847,6 +847,52 @@
       padding: 20px;
     }
 
+    /* Script Tester styles */
+    .tester-results {
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .tester-results h4 {
+      margin: 0 0 12px 0;
+      color: var(--accent);
+    }
+
+    .tester-result-section {
+      margin-bottom: 12px;
+    }
+
+    .tester-result-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .tester-result-section strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .tester-result-section .output-box {
+      margin-top: 0;
+      font-size: 0.8rem;
+    }
+
+    .tester-success {
+      border-left: 3px solid var(--success);
+    }
+
+    .tester-error {
+      border-left: 3px solid var(--danger);
+    }
+
+    .tester-warning {
+      border-left: 3px solid var(--accent);
+    }
+
     .analyzer-summary {
       display: flex;
       gap: 16px;
@@ -877,7 +923,7 @@
     </div>
   </div>
 
-  <h1 class="page-title">Janitor Script Builder v0.2.5</h1>
+  <h1 class="page-title">Janitor Script Builder v0.2.6</h1>
   <p class="page-subtitle">Advanced scripts made easy – fill out simple forms, get copy-paste-ready code.</p>
 
   <!-- Stateless 101 Onboarding -->
@@ -1080,6 +1126,7 @@
       <button class="tab-btn" onclick="switchTab(event, 'random')">Random Events</button>
       <button class="tab-btn" onclick="switchTab(event, 'combined')">Combined Conditions</button>
       <button class="tab-btn experimental" onclick="switchTab(event, 'scoring')">⚠️ Scoring (Experimental)</button>
+      <button class="tab-btn experimental" onclick="switchTab(event, 'tester')">🧪 Script Tester</button>
     </div>
 
     <!-- LOREBOOK TAB -->
@@ -1467,6 +1514,99 @@
           <li>Keyword sentiment too simplistic for nuanced emotion</li>
           <li>Score thresholds never reached with stateless mode</li>
           <li>No decay → persistent scores grow forever</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SCRIPT TESTER TAB -->
+    <div id="tester" class="tab-panel">
+      <h3>🧪 Script Tester</h3>
+      <p>Test your generated script with sample messages to verify triggers work correctly before deploying to JanitorAI.</p>
+
+      <div class="warning-banner">
+        <strong>⚠️ Experimental Feature:</strong> This tester simulates the JanitorAI context environment. Results should match real behavior, but edge cases may differ.
+      </div>
+
+      <div class="form-group">
+        <label>Script Source</label>
+        <select id="testerScriptSource" onchange="updateTesterScript()">
+          <option value="final">Final Combined Output</option>
+          <option value="lorebook">Lorebook Script</option>
+          <option value="memory">Memory Script</option>
+          <option value="pacing">Pacing Script</option>
+          <option value="tone">Tone/State Script</option>
+          <option value="time">Time & Environment Script</option>
+          <option value="ambient">Ambient Events Script</option>
+          <option value="random">Random Events Script</option>
+          <option value="combined">Combined Conditions Script</option>
+          <option value="scoring">Scoring Script</option>
+        </select>
+        <div class="help-text">Choose which generated script to test</div>
+      </div>
+
+      <div class="form-group">
+        <label>Test Message</label>
+        <textarea id="testerMessage" rows="3" placeholder="Enter a message to test against the script, e.g., 'I walk into the tavern and see the bartender'"></textarea>
+        <div class="help-text">This simulates <code>context.chat.last_message</code></div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="testerMultiMessage" onchange="toggleMessageHistory()" /> Enable Message History
+        </label>
+        <div class="help-text">Test with multiple messages (simulates <code>context.chat.last_messages</code>)</div>
+      </div>
+
+      <div id="testerHistorySection" style="display: none;">
+        <div class="form-group">
+          <label>Message History (one per line, oldest first)</label>
+          <textarea id="testerHistory" rows="5" placeholder="First message here
+Second message here
+Third message here"></textarea>
+          <div class="help-text">Each line becomes a message in history. Current test message will be added as the latest.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Character Name (optional)</label>
+        <input type="text" id="testerCharName" placeholder="e.g., Luna" />
+        <div class="help-text">Pre-fills <code>context.character.name</code> if your script uses it</div>
+      </div>
+
+      <button type="button" class="btn" onclick="runScriptTest()">▶️ Run Test</button>
+      <button type="button" class="btn btn-secondary" onclick="clearTestResults()">Clear Results</button>
+
+      <div id="testerResults" class="tester-results" style="display: none;">
+        <h4>📊 Test Results</h4>
+
+        <div class="tester-result-section">
+          <strong>Console Output:</strong>
+          <div class="output-box" id="testerConsoleOutput" style="max-height: 150px;">// Console logs will appear here</div>
+        </div>
+
+        <div class="tester-result-section">
+          <strong>Personality Changes:</strong>
+          <div class="output-box" id="testerPersonality" style="max-height: 100px;">(none)</div>
+        </div>
+
+        <div class="tester-result-section">
+          <strong>Scenario Changes:</strong>
+          <div class="output-box" id="testerScenario" style="max-height: 100px;">(none)</div>
+        </div>
+
+        <div class="tester-result-section">
+          <strong>Example Dialogues Changes:</strong>
+          <div class="output-box" id="testerExamples" style="max-height: 100px;">(none)</div>
+        </div>
+      </div>
+
+      <div class="pitfall-box">
+        <strong>💡 Tips:</strong>
+        <ul>
+          <li>Generate your script first in the relevant tab before testing</li>
+          <li>Test edge cases: keywords with punctuation, different capitalizations</li>
+          <li>Try messages that should NOT trigger to verify specificity</li>
+          <li>Check console output for any errors or debug logs from your script</li>
         </ul>
       </div>
     </div>
@@ -2867,7 +3007,7 @@
     var finalScript = "";
     finalScript += "// ============================================\n";
     finalScript += "// COMBINED SCRIPT - All Enabled Modules\n";
-    finalScript += "// Generated by JanitorAI Script Builder v0.2.5\n";
+    finalScript += "// Generated by JanitorAI Script Builder v0.2.6\n";
     finalScript += "// ============================================\n\n";
 
     // Shared init function (only once for combined script)
@@ -3265,6 +3405,208 @@
 
     updateTokenMeter();
   });
+
+  // ===========================
+  //   SCRIPT TESTER FUNCTIONS
+  // ===========================
+
+  // Toggle message history visibility
+  function toggleMessageHistory() {
+    var checkbox = document.getElementById('testerMultiMessage');
+    var section = document.getElementById('testerHistorySection');
+    section.style.display = checkbox.checked ? 'block' : 'none';
+  }
+
+  // Get the script content from the selected source
+  function getSelectedScript() {
+    var source = document.getElementById('testerScriptSource').value;
+    var outputMap = {
+      'final': 'finalOutput',
+      'lorebook': 'lorebookOutput',
+      'memory': 'memoryOutput',
+      'pacing': 'pacingOutput',
+      'tone': 'toneOutput',
+      'time': 'timeOutput',
+      'ambient': 'ambientOutput',
+      'random': 'randomOutput',
+      'combined': 'combinedOutput',
+      'scoring': 'scoringOutput'
+    };
+    var outputId = outputMap[source];
+    if (!outputId) return '';
+    var el = document.getElementById(outputId);
+    return el ? el.textContent : '';
+  }
+
+  // Clear test results
+  function clearTestResults() {
+    document.getElementById('testerResults').style.display = 'none';
+    document.getElementById('testerConsoleOutput').textContent = '// Console logs will appear here';
+    document.getElementById('testerPersonality').textContent = '(none)';
+    document.getElementById('testerScenario').textContent = '(none)';
+    document.getElementById('testerExamples').textContent = '(none)';
+  }
+
+  // Build message history array for multi-message testing
+  function buildMessageHistory(historyText, currentMessage) {
+    var messages = [];
+    if (historyText && historyText.trim()) {
+      var lines = historyText.split('\n').filter(function(line) {
+        return line.trim() !== '';
+      });
+      lines.forEach(function(line, idx) {
+        messages.push({
+          message: line.trim(),
+          isUser: idx % 2 === 0  // Alternate user/bot
+        });
+      });
+    }
+    // Add current message as the latest (always user)
+    if (currentMessage && currentMessage.trim()) {
+      messages.push({
+        message: currentMessage.trim(),
+        isUser: true
+      });
+    }
+    return messages;
+  }
+
+  // Run the script test
+  function runScriptTest() {
+    var scriptCode = getSelectedScript();
+    var testMessage = document.getElementById('testerMessage').value || '';
+    var charName = document.getElementById('testerCharName').value || '';
+    var useMultiMessage = document.getElementById('testerMultiMessage').checked;
+    var historyText = document.getElementById('testerHistory').value || '';
+
+    // Validate
+    if (!scriptCode || scriptCode.indexOf('// Script will appear') === 0) {
+      showToast('Please generate a script first before testing', 'error');
+      return;
+    }
+    if (!testMessage.trim()) {
+      showToast('Please enter a test message', 'error');
+      return;
+    }
+
+    // Build context similar to JanitorAI
+    var lastMessages = useMultiMessage ? buildMessageHistory(historyText, testMessage) : [];
+
+    var context = {
+      chat: {
+        last_message: testMessage,
+        last_messages: lastMessages,
+        message_count: useMultiMessage ? lastMessages.length : 1,
+        multi_depth_enabled: useMultiMessage
+      },
+      character: {
+        name: charName,
+        personality: '',
+        scenario: '',
+        example_dialogues: ''
+      }
+    };
+
+    // Capture console output
+    var consoleLogs = [];
+    var mockConsole = {
+      log: function() {
+        var args = Array.prototype.slice.call(arguments);
+        consoleLogs.push(args.map(String).join(' '));
+      },
+      error: function() {
+        var args = Array.prototype.slice.call(arguments);
+        consoleLogs.push('[ERROR] ' + args.map(String).join(' '));
+      },
+      warn: function() {
+        var args = Array.prototype.slice.call(arguments);
+        consoleLogs.push('[WARN] ' + args.map(String).join(' '));
+      },
+      info: function() {
+        var args = Array.prototype.slice.call(arguments);
+        consoleLogs.push('[INFO] ' + args.map(String).join(' '));
+      }
+    };
+
+    // Execute the script in a sandboxed way
+    var errorOccurred = false;
+    var errorMessage = '';
+
+    try {
+      // Create a function that has access to context and mock console
+      var wrappedCode = '(function(context, console, Math) {\n' + scriptCode + '\n})';
+      var scriptFn = eval(wrappedCode);
+      scriptFn(context, mockConsole, Math);
+    } catch (e) {
+      errorOccurred = true;
+      errorMessage = e.toString();
+      consoleLogs.push('[EXECUTION ERROR] ' + errorMessage);
+    }
+
+    // Display results
+    document.getElementById('testerResults').style.display = 'block';
+
+    // Console output
+    var consoleEl = document.getElementById('testerConsoleOutput');
+    if (consoleLogs.length > 0) {
+      consoleEl.textContent = consoleLogs.join('\n');
+      consoleEl.className = 'output-box' + (errorOccurred ? ' tester-error' : ' tester-success');
+    } else {
+      consoleEl.textContent = '(no console output)';
+      consoleEl.className = 'output-box';
+    }
+
+    // Personality
+    var personalityEl = document.getElementById('testerPersonality');
+    if (context.character.personality) {
+      personalityEl.textContent = context.character.personality;
+      personalityEl.className = 'output-box tester-success';
+    } else {
+      personalityEl.textContent = '(no changes)';
+      personalityEl.className = 'output-box';
+    }
+
+    // Scenario
+    var scenarioEl = document.getElementById('testerScenario');
+    if (context.character.scenario) {
+      scenarioEl.textContent = context.character.scenario;
+      scenarioEl.className = 'output-box tester-success';
+    } else {
+      scenarioEl.textContent = '(no changes)';
+      scenarioEl.className = 'output-box';
+    }
+
+    // Example dialogues
+    var examplesEl = document.getElementById('testerExamples');
+    if (context.character.example_dialogues) {
+      examplesEl.textContent = context.character.example_dialogues;
+      examplesEl.className = 'output-box tester-success';
+    } else {
+      examplesEl.textContent = '(no changes)';
+      examplesEl.className = 'output-box';
+    }
+
+    // Show success/error toast
+    if (errorOccurred) {
+      showToast('Script error: ' + errorMessage, 'error');
+    } else {
+      var changes = [];
+      if (context.character.personality) changes.push('personality');
+      if (context.character.scenario) changes.push('scenario');
+      if (context.character.example_dialogues) changes.push('examples');
+
+      if (changes.length > 0) {
+        showToast('Test complete! Modified: ' + changes.join(', '), 'success');
+      } else {
+        showToast('Test complete - no triggers matched', 'warning');
+      }
+    }
+  }
+
+  // Optional: update UI when script source changes
+  function updateTesterScript() {
+    clearTestResults();
+  }
 </script>
 
 </body>
