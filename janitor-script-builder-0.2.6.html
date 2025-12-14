@@ -1540,8 +1540,21 @@
           <option value="random">Random Events Script</option>
           <option value="combined">Combined Conditions Script</option>
           <option value="scoring">Scoring Script</option>
+          <option value="custom">Custom Script (Paste Below)</option>
         </select>
-        <div class="help-text">Choose which generated script to test</div>
+        <div class="help-text">Choose which generated script to test, or paste a custom script</div>
+      </div>
+
+      <div id="testerCustomSection" style="display: none;">
+        <div class="form-group">
+          <label>Custom Script</label>
+          <textarea id="testerCustomScript" rows="10" placeholder="Paste your script here..." style="font-family: 'Courier New', monospace; font-size: 0.85rem;"></textarea>
+        </div>
+        <div style="margin-bottom: 14px;">
+          <strong>Load Example Preset:</strong>
+          <button type="button" class="btn btn-secondary" onclick="loadTesterPreset('good')" style="margin-left: 8px;">✅ Working Script</button>
+          <button type="button" class="btn btn-secondary" onclick="loadTesterPreset('broken')" style="margin-left: 4px;">❌ Broken Script</button>
+        </div>
       </div>
 
       <div class="form-group">
@@ -3420,6 +3433,12 @@ Third message here"></textarea>
   // Get the script content from the selected source
   function getSelectedScript() {
     var source = document.getElementById('testerScriptSource').value;
+
+    // Handle custom script option
+    if (source === 'custom') {
+      return document.getElementById('testerCustomScript').value || '';
+    }
+
     var outputMap = {
       'final': 'finalOutput',
       'lorebook': 'lorebookOutput',
@@ -3445,6 +3464,105 @@ Third message here"></textarea>
     document.getElementById('testerPersonality').textContent = '(none)';
     document.getElementById('testerScenario').textContent = '(none)';
     document.getElementById('testerExamples').textContent = '(none)';
+  }
+
+  // Tester preset scripts
+  var TESTER_PRESETS = {
+    good: `// APHRODITE - DIVINE SLIP-UPS (Simplified Demo)
+// A working script demonstrating keyword triggers and message count phases
+
+var last = context.chat.last_message.toLowerCase();
+var padded = " " + last + " ";
+var count = context.chat.message_count;
+
+// Relationship tier based on message count
+var tier = "desperate";
+if (count > 60) tier = "genuine";
+else if (count > 40) tier = "vulnerable";
+else if (count > 20) tier = "comfortable";
+
+// Divine keyword detection
+var mentionedGods = (padded.indexOf(" gods ") !== -1 || padded.indexOf(" divine ") !== -1 || padded.indexOf(" olympus ") !== -1);
+var mentionedPowers = (padded.indexOf(" magic ") !== -1 || padded.indexOf(" powers ") !== -1 || padded.indexOf(" goddess ") !== -1);
+
+// Technology failures
+if (padded.indexOf(" phone ") !== -1 || padded.indexOf(" text ") !== -1) {
+  var techFails = [
+    " 'Why does it want to know my location?! I'm RIGHT HERE!'",
+    " Her phone autocorrects everything wrong. 'It's possessed!'",
+    " 'What do you mean low battery? I charged it three days ago!'"
+  ];
+  context.character.scenario += techFails[Math.floor(Math.random() * techFails.length)];
+}
+
+// Divine slip-ups when gods mentioned
+if (mentionedGods) {
+  context.character.scenario += " She glances around nervously. 'You didn't hear that part about— never mind.'";
+}
+
+// Power manifestation when happy
+if (padded.indexOf(" happy ") !== -1 || padded.indexOf(" smile ") !== -1) {
+  if (Math.random() < 0.5) {
+    context.character.scenario += " Her hair floats slightly—she's happy. 'It's static. Totally normal.'";
+  }
+}
+
+// Food discovery
+if (padded.indexOf(" food ") !== -1 || padded.indexOf(" eat ") !== -1 || padded.indexOf(" croissant ") !== -1) {
+  context.character.scenario += " 'Why didn't anyone tell me about croissants?!' Crumbs on her face.";
+}
+
+// Relationship personality injection
+context.character.personality += " [Relationship: " + tier + "] ";
+if (tier === "desperate") {
+  context.character.personality += "Trying too hard, nervous energy, desperately attempting to seem normal.";
+} else if (tier === "genuine") {
+  context.character.personality += "Stopped pretending, real feelings evident, comfortable being herself.";
+}
+
+console.log("Script executed successfully!");
+console.log("Tier: " + tier + ", Count: " + count);
+console.log("Gods mentioned: " + mentionedGods + ", Powers: " + mentionedPowers);`,
+
+    broken: `// BROKEN SCRIPT - Intentional Errors for Testing
+// This script contains syntax and runtime errors
+
+var last = context.chat.last_message.toLowerCase();
+var padded = " " + last + " ";
+
+console.log("Starting broken script...");
+
+// ERROR 1: Missing closing parenthesis
+if (padded.indexOf("test") !== -1 {
+  context.character.scenario += "This will never run";
+}
+
+// ERROR 2: Undefined variable access
+var result = undefinedVariable.someMethod();
+
+// ERROR 3: Invalid syntax - unclosed string
+context.character.personality += "This string never ends...
+
+// This line will never be reached
+console.log("Script completed!");`
+  };
+
+  // Load a tester preset
+  function loadTesterPreset(presetName) {
+    var script = TESTER_PRESETS[presetName];
+    if (script) {
+      document.getElementById('testerCustomScript').value = script;
+      clearTestResults();
+
+      // Also set a relevant test message
+      if (presetName === 'good') {
+        document.getElementById('testerMessage').value = "I'm so happy! Let me check my phone real quick.";
+        showToast('Loaded working Aphrodite demo script', 'success');
+      } else if (presetName === 'broken') {
+        document.getElementById('testerMessage').value = "test message";
+        showToast('Loaded broken script for error testing', 'warning');
+      }
+    }
   }
 
   // Build message history array for multi-message testing
@@ -3603,8 +3721,18 @@ Third message here"></textarea>
     }
   }
 
-  // Optional: update UI when script source changes
+  // Update UI when script source changes
   function updateTesterScript() {
+    var source = document.getElementById('testerScriptSource').value;
+    var customSection = document.getElementById('testerCustomSection');
+
+    // Show/hide custom script section
+    if (source === 'custom') {
+      customSection.style.display = 'block';
+    } else {
+      customSection.style.display = 'none';
+    }
+
     clearTestResults();
   }
 </script>
