@@ -893,6 +893,90 @@
       border-left: 3px solid var(--accent);
     }
 
+    /* Batch test result items */
+    .batch-result-item {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .batch-result-item.success {
+      border-left: 4px solid var(--success);
+    }
+
+    .batch-result-item.no-trigger {
+      border-left: 4px solid var(--text-muted);
+    }
+
+    .batch-result-item.error {
+      border-left: 4px solid var(--danger);
+    }
+
+    .batch-result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .batch-result-header:hover {
+      opacity: 0.8;
+    }
+
+    .batch-result-number {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    .batch-result-status {
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--panel-bg);
+    }
+
+    .batch-result-message {
+      font-style: italic;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+      padding: 6px 8px;
+      background: var(--panel-bg);
+      border-radius: 4px;
+      max-height: 60px;
+      overflow-y: auto;
+    }
+
+    .batch-result-details {
+      display: none;
+      margin-top: 8px;
+    }
+
+    .batch-result-details.expanded {
+      display: block;
+    }
+
+    .batch-result-detail {
+      margin-bottom: 6px;
+    }
+
+    .batch-result-detail strong {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .batch-result-detail .output-box {
+      font-size: 0.75rem;
+      max-height: 80px;
+      margin-top: 0;
+    }
+
     .analyzer-summary {
       display: flex;
       gap: 16px;
@@ -1559,9 +1643,30 @@
       </div>
 
       <div class="form-group">
-        <label>Test Message</label>
-        <textarea id="testerMessage" rows="3" placeholder="Enter a message to test against the script, e.g., 'I walk into the tavern and see the bartender'"></textarea>
-        <div class="help-text">This simulates <code>context.chat.last_message</code></div>
+        <label>
+          <input type="checkbox" id="testerBatchMode" onchange="toggleBatchMode()" /> Enable Batch Testing (Multiple Messages)
+        </label>
+        <div class="help-text">Test multiple messages against the same script and see individual results for each</div>
+      </div>
+
+      <!-- Single Message Mode -->
+      <div id="testerSingleMode">
+        <div class="form-group">
+          <label>Test Message</label>
+          <textarea id="testerMessage" rows="3" placeholder="Enter a message to test against the script, e.g., 'I walk into the tavern and see the bartender'"></textarea>
+          <div class="help-text">This simulates <code>context.chat.last_message</code></div>
+        </div>
+      </div>
+
+      <!-- Batch Mode -->
+      <div id="testerBatchSection" style="display: none;">
+        <div class="form-group">
+          <label>Test Messages</label>
+          <button type="button" class="btn btn-secondary" onclick="addBatchTestMessage()" style="margin-left: 8px;">+ Add Message</button>
+          <button type="button" class="btn btn-secondary" onclick="clearBatchMessages()" style="margin-left: 4px;">Clear All</button>
+          <div id="batchTestMessages" class="dynamic-list" style="margin-top: 8px;"></div>
+          <div class="help-text">Each message will be tested separately against the script. Add as many as you need.</div>
+        </div>
       </div>
 
       <div class="form-group">
@@ -1587,9 +1692,19 @@ Third message here"></textarea>
         <div class="help-text">Pre-fills <code>context.character.name</code> if your script uses it</div>
       </div>
 
-      <button type="button" class="btn" onclick="runScriptTest()">▶️ Run Test</button>
-      <button type="button" class="btn btn-secondary" onclick="clearTestResults()">Clear Results</button>
+      <!-- Single Test Buttons -->
+      <div id="singleTestButtons">
+        <button type="button" class="btn" onclick="runScriptTest()">▶️ Run Test</button>
+        <button type="button" class="btn btn-secondary" onclick="clearTestResults()">Clear Results</button>
+      </div>
 
+      <!-- Batch Test Buttons -->
+      <div id="batchTestButtons" style="display: none;">
+        <button type="button" class="btn btn-success" onclick="runBatchTests()">🚀 Run All Tests</button>
+        <button type="button" class="btn btn-secondary" onclick="clearBatchResults()">Clear Results</button>
+      </div>
+
+      <!-- Single Test Results -->
       <div id="testerResults" class="tester-results" style="display: none;">
         <h4>📊 Test Results</h4>
 
@@ -1612,6 +1727,13 @@ Third message here"></textarea>
           <strong>Example Dialogues Changes:</strong>
           <div class="output-box" id="testerExamples" style="max-height: 100px;">(none)</div>
         </div>
+      </div>
+
+      <!-- Batch Test Results -->
+      <div id="batchResults" style="display: none;">
+        <h4>📊 Batch Test Results</h4>
+        <div id="batchResultsSummary" class="info-banner" style="margin-bottom: 12px;"></div>
+        <div id="batchResultsList"></div>
       </div>
 
       <div class="pitfall-box">
@@ -4043,6 +4165,247 @@ context.character.example_dialogues += "\\n[TEST SUMMARY] Triggered " + triggere
     }
 
     clearTestResults();
+  }
+
+  // ===========================
+  //   BATCH TESTING FUNCTIONS
+  // ===========================
+
+  // Toggle batch mode UI
+  function toggleBatchMode() {
+    var batchMode = document.getElementById('testerBatchMode').checked;
+    var singleMode = document.getElementById('testerSingleMode');
+    var batchSection = document.getElementById('testerBatchSection');
+    var singleButtons = document.getElementById('singleTestButtons');
+    var batchButtons = document.getElementById('batchTestButtons');
+
+    if (batchMode) {
+      singleMode.style.display = 'none';
+      batchSection.style.display = 'block';
+      singleButtons.style.display = 'none';
+      batchButtons.style.display = 'block';
+      // Add initial message box if empty
+      if (document.getElementById('batchTestMessages').children.length === 0) {
+        addBatchTestMessage();
+      }
+    } else {
+      singleMode.style.display = 'block';
+      batchSection.style.display = 'none';
+      singleButtons.style.display = 'block';
+      batchButtons.style.display = 'none';
+    }
+
+    // Clear results when switching modes
+    clearTestResults();
+    clearBatchResults();
+  }
+
+  // Add a new batch test message input
+  var batchMessageCounter = 0;
+  function addBatchTestMessage(prefillText) {
+    batchMessageCounter++;
+    var container = document.getElementById('batchTestMessages');
+    var item = document.createElement('div');
+    item.className = 'dynamic-item';
+    item.style.flexDirection = 'column';
+    item.style.alignItems = 'stretch';
+    item.innerHTML =
+      '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">' +
+        '<span style="font-weight: 600; color: var(--accent);">Message #' + batchMessageCounter + '</span>' +
+        '<button type="button" onclick="this.parentElement.parentElement.remove()" style="padding: 4px 8px; background: var(--danger); color: var(--text-primary); border: none; border-radius: 3px; cursor: pointer; font-size: 0.8rem;">Remove</button>' +
+      '</div>' +
+      '<textarea class="batch-message-input" rows="2" placeholder="Enter test message..." style="width: 100%; font-family: inherit; resize: vertical;"></textarea>';
+    container.appendChild(item);
+
+    // Prefill if text provided
+    if (prefillText) {
+      item.querySelector('textarea').value = prefillText;
+    }
+
+    return item;
+  }
+
+  // Clear all batch messages
+  function clearBatchMessages() {
+    document.getElementById('batchTestMessages').innerHTML = '';
+    batchMessageCounter = 0;
+    addBatchTestMessage(); // Add one empty one
+  }
+
+  // Clear batch results
+  function clearBatchResults() {
+    document.getElementById('batchResults').style.display = 'none';
+    document.getElementById('batchResultsSummary').innerHTML = '';
+    document.getElementById('batchResultsList').innerHTML = '';
+  }
+
+  // Execute a single test and return results (refactored for reuse)
+  function executeScriptTest(scriptCode, testMessage, charName) {
+    var context = {
+      chat: {
+        last_message: testMessage,
+        last_messages: [],
+        message_count: 1,
+        multi_depth_enabled: false
+      },
+      character: {
+        name: charName || '',
+        personality: '',
+        scenario: '',
+        example_dialogues: ''
+      }
+    };
+
+    var consoleLogs = [];
+    var mockConsole = {
+      log: function() {
+        var args = Array.prototype.slice.call(arguments);
+        consoleLogs.push(args.map(String).join(' '));
+      },
+      error: function() {
+        var args = Array.prototype.slice.call(arguments);
+        consoleLogs.push('[ERROR] ' + args.map(String).join(' '));
+      },
+      warn: function() {
+        var args = Array.prototype.slice.call(arguments);
+        consoleLogs.push('[WARN] ' + args.map(String).join(' '));
+      },
+      info: function() {
+        var args = Array.prototype.slice.call(arguments);
+        consoleLogs.push('[INFO] ' + args.map(String).join(' '));
+      }
+    };
+
+    var errorOccurred = false;
+    var errorMessage = '';
+
+    try {
+      var wrappedCode = '(function(context, console, Math) {\n' + scriptCode + '\n})';
+      var scriptFn = eval(wrappedCode);
+      scriptFn(context, mockConsole, Math);
+    } catch (e) {
+      errorOccurred = true;
+      errorMessage = e.toString();
+      consoleLogs.push('[EXECUTION ERROR] ' + errorMessage);
+    }
+
+    return {
+      message: testMessage,
+      consoleLogs: consoleLogs,
+      personality: context.character.personality,
+      scenario: context.character.scenario,
+      examples: context.character.example_dialogues,
+      error: errorOccurred,
+      errorMessage: errorMessage,
+      hasChanges: !!(context.character.personality || context.character.scenario || context.character.example_dialogues)
+    };
+  }
+
+  // Run all batch tests
+  function runBatchTests() {
+    var scriptCode = getSelectedScript();
+    var charName = document.getElementById('testerCharName').value || '';
+
+    // Validate script
+    if (!scriptCode || scriptCode.indexOf('// Script will appear') === 0) {
+      showToast('Please generate or paste a script first', 'error');
+      return;
+    }
+
+    // Get all messages
+    var messageInputs = document.querySelectorAll('#batchTestMessages .batch-message-input');
+    var messages = [];
+    messageInputs.forEach(function(input) {
+      var msg = input.value.trim();
+      if (msg) messages.push(msg);
+    });
+
+    if (messages.length === 0) {
+      showToast('Please add at least one test message', 'error');
+      return;
+    }
+
+    // Run all tests
+    var results = [];
+    var successCount = 0;
+    var noTriggerCount = 0;
+    var errorCount = 0;
+
+    messages.forEach(function(msg, idx) {
+      var result = executeScriptTest(scriptCode, msg, charName);
+      result.index = idx + 1;
+      results.push(result);
+
+      if (result.error) {
+        errorCount++;
+      } else if (result.hasChanges) {
+        successCount++;
+      } else {
+        noTriggerCount++;
+      }
+    });
+
+    // Display results
+    displayBatchResults(results, successCount, noTriggerCount, errorCount);
+  }
+
+  // Display batch test results
+  function displayBatchResults(results, successCount, noTriggerCount, errorCount) {
+    var container = document.getElementById('batchResults');
+    var summary = document.getElementById('batchResultsSummary');
+    var list = document.getElementById('batchResultsList');
+
+    // Summary
+    summary.innerHTML =
+      '<strong>Batch Test Complete:</strong> ' + results.length + ' messages tested — ' +
+      '<span style="color: var(--success);">' + successCount + ' triggered</span>, ' +
+      '<span style="color: var(--text-muted);">' + noTriggerCount + ' no triggers</span>, ' +
+      '<span style="color: var(--danger);">' + errorCount + ' errors</span>';
+
+    // Individual results
+    list.innerHTML = '';
+    results.forEach(function(result) {
+      var statusClass = result.error ? 'error' : (result.hasChanges ? 'success' : 'no-trigger');
+      var statusText = result.error ? '❌ Error' : (result.hasChanges ? '✅ Triggered' : '⚪ No Trigger');
+
+      var item = document.createElement('div');
+      item.className = 'batch-result-item ' + statusClass;
+      item.innerHTML =
+        '<div class="batch-result-header" onclick="this.nextElementSibling.nextElementSibling.classList.toggle(\'expanded\')">' +
+          '<span class="batch-result-number">Test #' + result.index + '</span>' +
+          '<span class="batch-result-status">' + statusText + ' (click to expand)</span>' +
+        '</div>' +
+        '<div class="batch-result-message">"' + escapeHtml(result.message.substring(0, 150)) + (result.message.length > 150 ? '...' : '') + '"</div>' +
+        '<div class="batch-result-details">' +
+          '<div class="batch-result-detail">' +
+            '<strong>Console Output:</strong>' +
+            '<div class="output-box">' + (result.consoleLogs.length > 0 ? escapeHtml(result.consoleLogs.join('\n')) : '(none)') + '</div>' +
+          '</div>' +
+          '<div class="batch-result-detail">' +
+            '<strong>Personality:</strong>' +
+            '<div class="output-box">' + (result.personality ? escapeHtml(result.personality) : '(no changes)') + '</div>' +
+          '</div>' +
+          '<div class="batch-result-detail">' +
+            '<strong>Scenario:</strong>' +
+            '<div class="output-box">' + (result.scenario ? escapeHtml(result.scenario) : '(no changes)') + '</div>' +
+          '</div>' +
+          '<div class="batch-result-detail">' +
+            '<strong>Example Dialogues:</strong>' +
+            '<div class="output-box">' + (result.examples ? escapeHtml(result.examples) : '(no changes)') + '</div>' +
+          '</div>' +
+        '</div>';
+      list.appendChild(item);
+    });
+
+    container.style.display = 'block';
+    showToast('Batch test complete: ' + results.length + ' messages processed', 'success');
+  }
+
+  // Helper to escape HTML
+  function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 </script>
 
