@@ -2,13 +2,760 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0; url=janitor-script-builder-0.2.5.html" />
-  <title>Redirecting...</title>
-  <script>
-    window.location.href = "janitor-script-builder-0.2.5.html";
-  </script>
+  <title>JanitorAI Script Builder v0.2.6 – Production Ready</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <p>Redirecting to <a href="janitor-script-builder-0.2.5.html">JanitorAI Script Builder</a>...</p>
+
+<div class="shell">
+  <!-- Header Banner -->
+  <div class="header-banner-wrap">
+    <img class="header-logo" src="logo2x-1_ia066y.png" alt="Janitor AI Logo">
+    <div class="header-banner-subtext">
+      web tool made by @mellowfllow
+    </div>
+  </div>
+
+  <h1 class="page-title">Janitor Script Builder v0.2.6</h1>
+  <p class="page-subtitle">Advanced scripts made easy – fill out simple forms, get copy-paste-ready code.</p>
+
+  <!-- Stateless 101 Onboarding -->
+  <div class="onboarding-card">
+    <h2>🎓 Stateless 101: Understanding How Scripts Work</h2>
+    <p style="margin-bottom: 12px;">
+      <strong>Key Concept:</strong> JanitorAI scripts run fresh on <em>every single message</em>. Variables don't persist between messages unless you store them in scenario/personality notes.
+    </p>
+    <div class="onboarding-examples">
+      <div class="onboarding-example">
+        <strong>❌ Won't Work:</strong>
+        <code>var score = 0; score++;</code>
+        <small style="display:block; margin-top:4px;">Score resets to 0 every message</small>
+      </div>
+      <div class="onboarding-example">
+        <strong>✅ Will Work:</strong>
+        <code>Memory → adds to scenario notes</code>
+        <small style="display:block; margin-top:4px;">Scenario persists between messages</small>
+      </div>
+      <div class="onboarding-example">
+        <strong>⚠️ Experimental:</strong>
+        <code>Using {{char}} tags for variables</code>
+        <small style="display:block; margin-top:4px;">Fragile, can break with updates</small>
+      </div>
+    </div>
+    <p style="margin-top: 12px; font-size: 0.9rem; opacity: 0.95;">
+      <strong>Pro Tip:</strong> Scripts only check the <em>latest user message</em> by default. To check history, you need experimental methods (which may break).
+    </p>
+  </div>
+
+  <!-- Test Checklist -->
+  <div class="card">
+    <h3>✅ Pre-Launch Test Checklist</h3>
+    <div class="checklist">
+      <h4>Before using your script in JanitorAI:</h4>
+      <ul>
+        <li>✓ Enable <strong>Debug Mode</strong> in Module Control Panel for first test</li>
+        <li>✓ Start with 1-2 modules, add more once working</li>
+        <li>✓ Test each trigger keyword/phrase in a real conversation</li>
+        <li>✓ Check scenario notes after 5-10 messages for bloat</li>
+        <li>✓ Verify message_count increments correctly (rerolls don't count)</li>
+        <li>✓ Disable debug mode before final deployment</li>
+        <li>✓ Keep total script under 10,000 characters for best performance</li>
+      </ul>
+    </div>
+    <div class="info-banner" style="margin-top: 12px;">
+      <strong>💡 Reroll Behavior:</strong> When you reroll a character response, <code>message_count</code> does NOT increment. Only new user messages increase the count.
+    </div>
+  </div>
+
+  <!-- Recommended Build Order -->
+  <div class="card">
+    <h3>📋 Recommended Build Order (Pro Workflow)</h3>
+    <p>Follow this order for the most reliable and maintainable scripts:</p>
+    <ol style="line-height: 1.8;">
+      <li><strong>Lorebook</strong> → Foundation for rich context (most stable)</li>
+      <li><strong>Memory System</strong> → Track user info (stable)</li>
+      <li><strong>Pacing</strong> → Gate story progression (stable)</li>
+      <li><strong>Tone/State Engine</strong> → Dynamic mood shifts (stable)</li>
+      <li><strong>Time & Environment</strong> → Hour-based behaviors (stable)</li>
+      <li><strong>Ambient Events</strong> → Add flavor (watch token growth)</li>
+      <li><strong>Random Events</strong> → Weighted reactions (moderate complexity)</li>
+      <li><strong>Combined Conditions</strong> → Multi-trigger rules (advanced)</li>
+      <li><strong>Scoring (Stateless only)</strong> → Sentiment analysis (experimental)</li>
+    </ol>
+    <div class="info-banner">
+      <strong>💡 Why this order?</strong> Lorebook and Memory are stable and token-efficient. Add complexity gradually, testing at each step. The Module Control Panel below is pre-ordered to match this workflow.
+    </div>
+  </div>
+
+  <!-- Scenario Maintenance Tips -->
+  <div class="card">
+    <h3>🧹 Scenario Maintenance Best Practices</h3>
+    <div class="warning-banner">
+      <strong>⚠️ Token Bloat Warning:</strong> Scripts that only append to scenario will cause slowdowns over long conversations.
+    </div>
+    <p><strong>Pro strategies to prevent bloat:</strong></p>
+    <ul style="line-height: 1.6;">
+      <li><strong>Use personality for moods/states</strong> instead of scenario (personality can be overwritten)</li>
+      <li><strong>Summarize old notes periodically</strong> instead of endless appending</li>
+      <li><strong>Use lorebooks for static info</strong> that only triggers when relevant</li>
+      <li><strong>Prefer "replace" over "append"</strong> for things that change (time, mood)</li>
+      <li><strong>Test scenario length</strong> after 20-30 messages and clean if needed</li>
+    </ul>
+    <div class="example-text">
+      <strong>Example:</strong> Instead of appending "User is happy" every time, <em>replace</em> the mood line or store it in personality which naturally gets refreshed.
+    </div>
+  </div>
+
+  <!-- Module Control Panel -->
+  <div class="card">
+    <h3>⚙️ Module Control Panel</h3>
+    <div class="debug-toggle">
+      <input type="checkbox" id="debugMode" />
+      <label for="debugMode">
+        <strong>🐛 Debug Mode:</strong> Add "(debug: module fired)" notes to scenario output for testing
+      </label>
+    </div>
+    <div class="warning-banner">
+      <strong>⚠️ Execution Order Matters!</strong> Modules run in the order below. Later modules can override earlier ones. Drag to reorder. This panel is pre-ordered to match the recommended pro workflow above.
+    </div>
+    <div id="moduleOrder" class="module-order">
+      <div class="order-item" draggable="true" data-module="lorebook">
+        <span class="drag-handle">⋮⋮</span>
+        <input type="checkbox" id="toggle-lorebook" checked />
+        <label for="toggle-lorebook">Lorebook</label>
+      </div>
+      <div class="order-item" draggable="true" data-module="memory">
+        <span class="drag-handle">⋮⋮</span>
+        <input type="checkbox" id="toggle-memory" checked />
+        <label for="toggle-memory">Memory System</label>
+      </div>
+      <div class="order-item" draggable="true" data-module="pacing">
+        <span class="drag-handle">⋮⋮</span>
+        <input type="checkbox" id="toggle-pacing" checked />
+        <label for="toggle-pacing">Pacing</label>
+      </div>
+      <div class="order-item" draggable="true" data-module="tone">
+        <span class="drag-handle">⋮⋮</span>
+        <input type="checkbox" id="toggle-tone" checked />
+        <label for="toggle-tone">Tone/State Engine</label>
+      </div>
+      <div class="order-item" draggable="true" data-module="time">
+        <span class="drag-handle">⋮⋮</span>
+        <input type="checkbox" id="toggle-time" />
+        <label for="toggle-time">Time & Environment</label>
+      </div>
+      <div class="order-item" draggable="true" data-module="ambient">
+        <span class="drag-handle">⋮⋮</span>
+        <input type="checkbox" id="toggle-ambient" />
+        <label for="toggle-ambient">Ambient Events</label>
+      </div>
+      <div class="order-item" draggable="true" data-module="random">
+        <span class="drag-handle">⋮⋮</span>
+        <input type="checkbox" id="toggle-random" />
+        <label for="toggle-random">Random Events</label>
+      </div>
+      <div class="order-item" draggable="true" data-module="combined">
+        <span class="drag-handle">⋮⋮</span>
+        <input type="checkbox" id="toggle-combined" />
+        <label for="toggle-combined">Combined Conditions</label>
+      </div>
+      <div class="order-item" draggable="true" data-module="scoring">
+        <span class="drag-handle">⋮⋮</span>
+        <input type="checkbox" id="toggle-scoring" />
+        <label for="toggle-scoring">Scoring Engine (Experimental)</label>
+      </div>
+    </div>
+    <button type="button" class="btn btn-success" onclick="generateFinalCombinedScript()">
+      📦 Copy All Enabled Modules
+    </button>
+    <button type="button" class="btn btn-warning" onclick="generateAllEnabledModules()">
+      ⚡ Generate All Enabled (then combine)
+    </button>
+    <button type="button" class="btn btn-danger" onclick="resetAllFields()">
+      🔄 Reset All Fields
+    </button>
+    <div class="token-meter" id="tokenMeter">
+      <span>Estimated Script Size: <strong id="tokenCount">0</strong> characters</span>
+      <div class="bar">
+        <div class="fill" id="tokenFill" style="width: 0%"></div>
+      </div>
+      <small style="display:block; margin-top:4px;">Keep under 10,000 characters for best performance</small>
+    </div>
+  </div>
+
+  <!-- Preset Library -->
+  <div class="card">
+    <h3>📚 Load Preset Templates</h3>
+    <p>Click a preset to auto-fill the form with starter values. You can customize them after loading.</p>
+    <div class="preset-grid">
+      <div class="preset-card" onclick="loadPreset('slowburn')">
+        <h4>🌹 Slow-Burn Romance</h4>
+        <p>Gradual relationship progression with memory tracking</p>
+      </div>
+      <div class="preset-card" onclick="loadPreset('rpg')">
+        <h4>⚔️ RPG Adventure</h4>
+        <p>Lorebook-heavy with locations, NPCs, and events</p>
+      </div>
+      <div class="preset-card" onclick="loadPreset('ambient')">
+        <h4>🌿 Ambient Flavor Pack</h4>
+        <p>Random environmental details for immersion</p>
+      </div>
+      <div class="preset-card" onclick="loadPreset('memory')">
+        <h4>🧠 Memory Starter</h4>
+        <p>Simple name + facts tracking for any scenario</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Module Tabs -->
+  <div class="card">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(event, 'lorebook')">Lorebook</button>
+      <button class="tab-btn" onclick="switchTab(event, 'memory')">Memory</button>
+      <button class="tab-btn" onclick="switchTab(event, 'pacing')">Pacing</button>
+      <button class="tab-btn" onclick="switchTab(event, 'tone')">Tone/State</button>
+      <button class="tab-btn" onclick="switchTab(event, 'time')">Time & Environment</button>
+      <button class="tab-btn" onclick="switchTab(event, 'ambient')">Ambient Events</button>
+      <button class="tab-btn" onclick="switchTab(event, 'random')">Random Events</button>
+      <button class="tab-btn" onclick="switchTab(event, 'combined')">Combined Conditions</button>
+      <button class="tab-btn experimental" onclick="switchTab(event, 'scoring')">⚠️ Scoring (Experimental)</button>
+      <button class="tab-btn experimental" onclick="switchTab(event, 'tester')">🧪 Script Tester</button>
+    </div>
+
+    <!-- LOREBOOK TAB -->
+    <div id="lorebook" class="tab-panel active">
+      <h3>📖 Lorebook (Hierarchical Keyword Database)</h3>
+      <p>Create a rich world with people, places, objects, moods, and events that trigger based on keywords.</p>
+
+      <div class="warning-banner">
+        <strong>⚠️ Token Warning:</strong> Keep entries 2-4 short paragraphs each. Too many long entries can cause slowdowns.
+      </div>
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="lorePadded" checked /> Use Padded Matching
+        </label>
+        <div class="help-text">Prevents partial word matches (e.g., "cat" won't trigger on "catch"). Note: Works best with single-word keywords. Multi-word phrases may need exact spacing.</div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="loreBreakEarly" checked /> Break After First Match
+        </label>
+        <div class="help-text">Stop after the first lore entry triggers (saves tokens, prevents multiple entries firing at once)</div>
+      </div>
+
+      <h4>📝 Lore Entries</h4>
+      <button type="button" class="btn btn-secondary" onclick="addLoreEntry()">+ Add Entry</button>
+      <div id="loreEntries" class="dynamic-list"></div>
+
+      <button type="button" class="btn" onclick="generateLorebookScript()">Generate Lorebook Script</button>
+      <button type="button" class="btn btn-secondary" onclick="copyToClipboard('lorebookOutput')">Copy to Clipboard</button>
+
+      <div class="output-box" id="lorebookOutput">// Script will appear here after clicking Generate</div>
+
+      <div class="pitfall-box">
+        <strong>⚠️ Common Pitfalls:</strong>
+        <ul>
+          <li>Keywords too broad (e.g., "is", "the") trigger constantly</li>
+          <li>Entries too long cause token bloat</li>
+          <li>Without break-early, multiple entries can fire and overwhelm context</li>
+          <li>Not using padded matching causes false triggers on partial words</li>
+          <li>Same entry can trigger repeatedly → enable deduplication below</li>
+        </ul>
+      </div>
+
+      <div class="glossary">
+        <h4>📘 Lorebook Glossary</h4>
+        <dl>
+          <dt>Keywords</dt>
+          <dd>Words that trigger this lore entry (comma-separated, case-insensitive)</dd>
+          <dt>Category</dt>
+          <dd>Organizes entries: people, places, objects, moods, events</dd>
+          <dt>Content</dt>
+          <dd>Text injected into scenario when keywords match</dd>
+          <dt>Padded Matching</dt>
+          <dd>Requires spaces around keywords to avoid "cat" matching "scatter"</dd>
+          <dt>Break-Early</dt>
+          <dd>Stops checking after first match (recommended for performance)</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- MEMORY TAB -->
+    <div id="memory" class="tab-panel">
+      <h3>🧠 Memory System</h3>
+      <p>Automatically detect and remember the user's name, facts about them, likes, and dislikes.</p>
+
+      <div class="form-group">
+        <label>Name Detection Trigger Phrase</label>
+        <input type="text" id="memNamePhrase" placeholder="my name is" />
+        <div class="help-text">The phrase that triggers name detection (case-insensitive)</div>
+        <div class="example-text">Example: If user says "Hi, my name is María García", the script will remember "María García" (supports accents, hyphens, apostrophes, up to 40 characters)</div>
+      </div>
+
+      <div class="form-group">
+        <label>Facts Keywords (comma-separated)</label>
+        <input type="text" id="memFactsKeywords" placeholder="fact, i am, i work as, i study" />
+        <div class="help-text">Keywords that trigger fact storage</div>
+        <div class="example-text">Example: "Here's a fact: I love programming" → saved as fact</div>
+      </div>
+
+      <div class="form-group">
+        <label>Likes Keywords (comma-separated)</label>
+        <input type="text" id="memLikesKeywords" placeholder="i like, i love, i enjoy, favorite" />
+        <div class="help-text">Keywords that trigger likes storage</div>
+        <div class="example-text">Example: "I love pizza" → saved as like</div>
+      </div>
+
+      <div class="form-group">
+        <label>Dislikes Keywords (comma-separated)</label>
+        <input type="text" id="memDislikesKeywords" placeholder="i hate, i dislike, i don't like, can't stand" />
+        <div class="help-text">Keywords that trigger dislikes storage</div>
+        <div class="example-text">Example: "I hate mornings" → saved as dislike</div>
+      </div>
+
+      <button type="button" class="btn" onclick="generateMemoryScript()">Generate Memory Script</button>
+      <button type="button" class="btn btn-secondary" onclick="copyToClipboard('memoryOutput')">Copy to Clipboard</button>
+
+      <div class="output-box" id="memoryOutput">// Script will appear here after clicking Generate</div>
+
+      <div class="pitfall-box">
+        <strong>⚠️ Common Pitfalls:</strong>
+        <ul>
+          <li>Trigger phrases too specific → never fire</li>
+          <li>No deduplication → same fact saved multiple times (v3 includes basic dedupe)</li>
+          <li>Scenario grows forever without maintenance</li>
+          <li>Name regex may miss very long names (limited to 40 chars for safety)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PACING TAB -->
+    <div id="pacing" class="tab-panel">
+      <h3>📊 Pacing System (Message Count Gates)</h3>
+      <p>Control story progression based on how many messages have been sent.</p>
+
+      <div class="info-banner">
+        <strong>💡 Pro Tip:</strong> Use pacing to gate major story beats. Combine with one-time events for reveals.
+      </div>
+
+      <div class="warning-banner">
+        <strong>⚠️ Reroll Behavior:</strong> When you reroll a character response, <code>message_count</code> does NOT increment. Only new user messages count.
+      </div>
+
+      <h4>📈 Message Count Phases</h4>
+      <button type="button" class="btn btn-secondary" onclick="addPacingPhase()">+ Add Phase</button>
+      <div id="pacingPhases" class="dynamic-list"></div>
+
+      <h4>🎯 One-Time Events (Exact Message Count)</h4>
+      <button type="button" class="btn btn-secondary" onclick="addOneTimeEvent()">+ Add Event</button>
+      <div id="oneTimeEvents" class="dynamic-list"></div>
+
+      <button type="button" class="btn" onclick="generatePacingScript()">Generate Pacing Script</button>
+      <button type="button" class="btn btn-secondary" onclick="copyToClipboard('pacingOutput')">Copy to Clipboard</button>
+
+      <div class="output-box" id="pacingOutput">// Script will appear here after clicking Generate</div>
+
+      <div class="pitfall-box">
+        <strong>⚠️ Common Pitfalls:</strong>
+        <ul>
+          <li>Forgetting that rerolls don't increment message_count</li>
+          <li>Overlapping phases causing conflicts</li>
+          <li>One-time events at count 1 may miss if bot speaks first</li>
+        </ul>
+      </div>
+
+      <div class="glossary">
+        <h4>📘 Pacing Glossary</h4>
+        <dl>
+          <dt>message_count</dt>
+          <dd>Built-in JanitorAI variable tracking total user messages sent (rerolls don't increment)</dd>
+          <dt>Phases</dt>
+          <dd>Ranges of messages (e.g., 1-10, 11-30) with associated behavior</dd>
+          <dt>One-Time Events</dt>
+          <dd>Fire exactly once at a specific message number</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- TONE/STATE TAB -->
+    <div id="tone" class="tab-panel">
+      <h3>🎭 Tone/State Engine</h3>
+      <p>Dynamically shift character personality based on keywords in user messages.</p>
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="tonePadded" checked /> Use Padded Matching
+        </label>
+        <div class="help-text">Prevents "angry" matching "danger". Note: Works best with single-word keywords.</div>
+      </div>
+
+      <h4>🎨 Tone Triggers</h4>
+      <button type="button" class="btn btn-secondary" onclick="addToneTrigger()">+ Add Trigger</button>
+      <div id="toneTriggers" class="dynamic-list"></div>
+
+      <button type="button" class="btn" onclick="generateToneScript()">Generate Tone Script</button>
+      <button type="button" class="btn btn-secondary" onclick="copyToClipboard('toneOutput')">Copy to Clipboard</button>
+
+      <div class="output-box" id="toneOutput">// Script will appear here after clicking Generate</div>
+
+      <div class="pitfall-box">
+        <strong>⚠️ Common Pitfalls:</strong>
+        <ul>
+          <li>Without padded matching, "sad" triggers on "salad"</li>
+          <li>Multiple triggers fire → personality bloats</li>
+          <li>Mood doesn't reset between messages (use replace, not append)</li>
+        </ul>
+      </div>
+
+      <div class="example-text">
+        <strong>Example Trigger:</strong><br>
+        Keywords: <code>angry, mad, furious</code><br>
+        Personality Add-on: <code>{{char}} is currently angry and speaking tersely.</code>
+      </div>
+    </div>
+
+    <!-- TIME & ENVIRONMENT TAB -->
+    <div id="time" class="tab-panel">
+      <h3>🌅 Time & Environment System</h3>
+      <p>Change character behavior and environment based on time of day.</p>
+
+      <div class="warning-banner">
+        <strong>⚠️ Time Source:</strong> Uses server time + your timezone offset. Time changes happen once per hour. Supports wrap-around (e.g., 22:00 to 03:00 for night).
+      </div>
+
+      <div class="form-group">
+        <label>Timezone Offset (hours from UTC)</label>
+        <input type="number" id="timeOffset" value="0" min="-12" max="14" />
+        <div class="help-text">e.g., PST = -8, EST = -5, GMT = 0, JST = +9</div>
+        <div class="example-text">Example: If server time is 14:00 UTC and offset is -8, local time is 06:00</div>
+      </div>
+
+      <h4>⏰ Time-Based Behaviors</h4>
+      <button type="button" class="btn btn-secondary" onclick="addTimeSlot()">+ Add Time Slot</button>
+      <div id="timeSlots" class="dynamic-list"></div>
+
+      <button type="button" class="btn" onclick="generateTimeScript()">Generate Time Script</button>
+      <button type="button" class="btn btn-secondary" onclick="copyToClipboard('timeOutput')">Copy to Clipboard</button>
+
+      <div class="output-box" id="timeOutput">// Script will appear here after clicking Generate</div>
+
+      <div class="pitfall-box">
+        <strong>⚠️ Common Pitfalls:</strong>
+        <ul>
+          <li>Server time may not match your local time without offset</li>
+          <li>Overlapping time slots cause conflicts</li>
+          <li>Hour-based checks only update once per hour</li>
+          <li>Forgot to handle wrap-around (e.g., 22:00-03:00) → v3 handles this automatically</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- AMBIENT EVENTS TAB -->
+    <div id="ambient" class="tab-panel">
+      <h3>🌿 Ambient Events (Random Flavor Text)</h3>
+      <p>Add random environmental details to make the world feel alive.</p>
+
+      <div class="warning-banner">
+        <strong>⚠️ Scenario Growth:</strong> These add to scenario notes. Use sparingly to avoid bloat.
+      </div>
+
+      <div class="form-group">
+        <label>Trigger Probability (%)</label>
+        <input type="number" id="ambientProbability" value="10" min="1" max="100" />
+        <div class="help-text">Chance each message triggers an ambient event (1-100)</div>
+        <div class="example-text">Example: 10% = roughly 1 in 10 messages adds flavor text</div>
+      </div>
+
+      <h4>🎲 Ambient Event Pool</h4>
+      <button type="button" class="btn btn-secondary" onclick="addAmbientEvent()">+ Add Event</button>
+      <div id="ambientEvents" class="dynamic-list"></div>
+
+      <button type="button" class="btn" onclick="generateAmbientScript()">Generate Ambient Script</button>
+      <button type="button" class="btn btn-secondary" onclick="copyToClipboard('ambientOutput')">Copy to Clipboard</button>
+
+      <div class="output-box" id="ambientOutput">// Script will appear here after clicking Generate</div>
+
+      <div class="pitfall-box">
+        <strong>⚠️ Common Pitfalls:</strong>
+        <ul>
+          <li>High probability (>20%) causes rapid scenario bloat</li>
+          <li>Events append forever without cleanup</li>
+          <li>Same event can trigger multiple times (expected behavior)</li>
+        </ul>
+      </div>
+
+      <div class="example-text">
+        <strong>Example Event:</strong><br>
+        <code>A bird chirps in the distance. The cafe smells of fresh coffee.</code>
+      </div>
+    </div>
+
+    <!-- RANDOM EVENTS TAB -->
+    <div id="random" class="tab-panel">
+      <h3>🎲 Random Events (Weighted Reactions)</h3>
+      <p>Trigger random character reactions when user says specific phrases.</p>
+
+      <h4>🎯 Event Triggers</h4>
+      <button type="button" class="btn btn-secondary" onclick="addRandomEvent()">+ Add Event</button>
+      <div id="randomEvents" class="dynamic-list"></div>
+
+      <button type="button" class="btn" onclick="generateRandomScript()">Generate Random Events Script</button>
+      <button type="button" class="btn btn-secondary" onclick="copyToClipboard('randomOutput')">Copy to Clipboard</button>
+
+      <div class="output-box" id="randomOutput">// Script will appear here after clicking Generate</div>
+
+      <div class="pitfall-box">
+        <strong>⚠️ Common Pitfalls:</strong>
+        <ul>
+          <li>Trigger phrases too common → fires constantly</li>
+          <li>Responses not pipe-separated correctly</li>
+          <li>Adding to personality instead of scenario</li>
+        </ul>
+      </div>
+
+      <div class="example-text">
+        <strong>Example Event:</strong><br>
+        Trigger Phrase: <code>what do you think</code><br>
+        Responses: <code>I think it's interesting|I'm not sure|That's a tough one</code> (pipe-separated, chosen randomly)
+      </div>
+    </div>
+
+    <!-- COMBINED CONDITIONS TAB -->
+    <div id="combined" class="tab-panel">
+      <h3>🔗 Combined Conditions (Multi-Trigger Rules)</h3>
+      <p>Create rules that fire when multiple conditions are met (keywords + time + message count).</p>
+
+      <div class="warning-banner">
+        <strong>⚠️ Stateless Only:</strong> Combined rules work best with stateless checks (time + message_count + keywords). Time wrap-around supported (e.g., 22:00-03:00).
+      </div>
+
+      <h4>⚡ Combined Rules</h4>
+      <button type="button" class="btn btn-secondary" onclick="addCombinedRule()">+ Add Rule</button>
+      <div id="combinedRules" class="dynamic-list"></div>
+
+      <button type="button" class="btn" onclick="generateCombinedConditionsScript()">Generate Combined Script</button>
+      <button type="button" class="btn btn-secondary" onclick="copyToClipboard('combinedOutput')">Copy to Clipboard</button>
+
+      <div class="output-box" id="combinedOutput">// Script will appear here after clicking Generate</div>
+
+      <div class="pitfall-box">
+        <strong>⚠️ Common Pitfalls:</strong>
+        <ul>
+          <li>Conditions too strict → never triggers</li>
+          <li>Time checks without timezone offset mismatch user's local time</li>
+          <li>Multiple rules fire at once causing bloat</li>
+        </ul>
+      </div>
+
+      <div class="example-text">
+        <strong>Example Rule:</strong><br>
+        Keywords: <code>romantic, dinner</code><br>
+        Min Hour: <code>18</code> Max Hour: <code>22</code><br>
+        Min Messages: <code>20</code><br>
+        Result: <code>{{char}} suggests a romantic candlelit dinner.</code><br>
+        → Only fires if user mentions "romantic" or "dinner" between 6pm-10pm after 20+ messages
+      </div>
+    </div>
+
+    <!-- SCORING TAB -->
+    <div id="scoring" class="tab-panel">
+      <h3>🎯 Scoring Engine (EXPERIMENTAL)</h3>
+
+      <div class="danger-banner">
+        <strong>⚠️ EXPERIMENTAL FEATURE:</strong> Scoring is complex due to stateless constraints. Persistent mode uses fragile tag-based storage that may break. Use with extreme caution.
+      </div>
+
+      <div class="form-group">
+        <label>Scoring Mode</label>
+        <select id="scoringMode">
+          <option value="stateless">Stateless (Single-Turn Sentiment) - RECOMMENDED</option>
+          <option value="persistent">Persistent (Experimental Tag-Based) - FRAGILE</option>
+        </select>
+        <div class="help-text">
+          <strong>Stateless:</strong> Analyzes current message only (safe)<br>
+          <strong>Persistent:</strong> Uses {{char}} tags to store scores (fragile, may break with platform updates)
+        </div>
+      </div>
+
+      <h4>➕ Positive Keywords</h4>
+      <div class="form-group">
+        <input type="text" id="scoringPositive" placeholder="love, great, wonderful, amazing" />
+        <div class="example-text">Example: "You're amazing!" → positive sentiment detected</div>
+      </div>
+
+      <h4>➖ Negative Keywords</h4>
+      <div class="form-group">
+        <input type="text" id="scoringNegative" placeholder="hate, awful, terrible, horrible" />
+        <div class="example-text">Example: "This is terrible" → negative sentiment detected</div>
+      </div>
+
+      <h4>📊 Score Thresholds & Responses</h4>
+      <button type="button" class="btn btn-secondary" onclick="addScoreThreshold()">+ Add Threshold</button>
+      <div id="scoreThresholds" class="dynamic-list"></div>
+
+      <button type="button" class="btn" onclick="generateScoringScript()">Generate Scoring Script</button>
+      <button type="button" class="btn btn-secondary" onclick="copyToClipboard('scoringOutput')">Copy to Clipboard</button>
+
+      <div class="output-box" id="scoringOutput">// Script will appear here after clicking Generate</div>
+
+      <div class="pitfall-box">
+        <strong>⚠️ Common Pitfalls:</strong>
+        <ul>
+          <li>Persistent mode tags can be stripped by platform updates</li>
+          <li>Keyword sentiment too simplistic for nuanced emotion</li>
+          <li>Score thresholds never reached with stateless mode</li>
+          <li>No decay → persistent scores grow forever</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SCRIPT TESTER TAB -->
+    <div id="tester" class="tab-panel">
+      <h3>🧪 Script Tester</h3>
+      <p>Test your generated script with sample messages to verify triggers work correctly before deploying to JanitorAI.</p>
+
+      <div class="warning-banner">
+        <strong>⚠️ Experimental Feature:</strong> This tester simulates the JanitorAI context environment. Results should match real behavior, but edge cases may differ.
+      </div>
+
+      <div class="form-group">
+        <label>Script Source</label>
+        <select id="testerScriptSource" onchange="updateTesterScript()">
+          <option value="final">Final Combined Output</option>
+          <option value="lorebook">Lorebook Script</option>
+          <option value="memory">Memory Script</option>
+          <option value="pacing">Pacing Script</option>
+          <option value="tone">Tone/State Script</option>
+          <option value="time">Time & Environment Script</option>
+          <option value="ambient">Ambient Events Script</option>
+          <option value="random">Random Events Script</option>
+          <option value="combined">Combined Conditions Script</option>
+          <option value="scoring">Scoring Script</option>
+          <option value="custom">Custom Script (Paste Below)</option>
+        </select>
+        <div class="help-text">Choose which generated script to test, or paste a custom script</div>
+      </div>
+
+      <div id="testerCustomSection" style="display: none;">
+        <div class="form-group">
+          <label>Custom Script</label>
+          <textarea id="testerCustomScript" rows="10" placeholder="Paste your script here..." style="font-family: 'Courier New', monospace; font-size: 0.85rem;"></textarea>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="testerBatchMode" onchange="toggleBatchMode()" /> Enable Batch Testing (Multiple Messages)
+        </label>
+        <div class="help-text">Test multiple messages against the same script and see individual results for each</div>
+      </div>
+
+      <!-- Single Message Mode -->
+      <div id="testerSingleMode">
+        <div class="form-group">
+          <label>Test Message</label>
+          <textarea id="testerMessage" rows="3" placeholder="Enter a message to test against the script, e.g., 'I walk into the tavern and see the bartender'"></textarea>
+          <div class="help-text">This simulates <code>context.chat.last_message</code></div>
+        </div>
+      </div>
+
+      <!-- Batch Mode -->
+      <div id="testerBatchSection" style="display: none;">
+        <div class="form-group">
+          <label>Test Messages</label>
+          <button type="button" class="btn btn-secondary" onclick="addBatchTestMessage()" style="margin-left: 8px;">+ Add Message</button>
+          <button type="button" class="btn btn-secondary" onclick="clearBatchMessages()" style="margin-left: 4px;">Clear All</button>
+          <div id="batchTestMessages" class="dynamic-list" style="margin-top: 8px;"></div>
+          <div class="help-text">Each message will be tested separately against the script. Add as many as you need.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Character Name (optional)</label>
+        <input type="text" id="testerCharName" placeholder="e.g., Luna" />
+        <div class="help-text">Pre-fills <code>context.character.name</code> if your script uses it</div>
+      </div>
+
+      <!-- Single Test Buttons -->
+      <div id="singleTestButtons">
+        <button type="button" class="btn" onclick="runScriptTest()">▶️ Run Test</button>
+        <button type="button" class="btn btn-secondary" onclick="clearTestResults()">Clear Results</button>
+      </div>
+
+      <!-- Batch Test Buttons -->
+      <div id="batchTestButtons" style="display: none;">
+        <button type="button" class="btn btn-success" onclick="runBatchTests()">🚀 Run All Tests</button>
+        <button type="button" class="btn btn-secondary" onclick="clearBatchResults()">Clear Results</button>
+      </div>
+
+      <!-- Single Test Results -->
+      <div id="testerResults" class="tester-results" style="display: none;">
+        <h4>📊 Test Results</h4>
+
+        <div class="tester-result-section">
+          <strong>Console Output:</strong>
+          <div class="output-box" id="testerConsoleOutput" style="max-height: 150px;">// Console logs will appear here</div>
+        </div>
+
+        <div class="tester-result-section">
+          <strong>Personality Changes:</strong>
+          <div class="output-box" id="testerPersonality" style="max-height: 100px;">(none)</div>
+        </div>
+
+        <div class="tester-result-section">
+          <strong>Scenario Changes:</strong>
+          <div class="output-box" id="testerScenario" style="max-height: 100px;">(none)</div>
+        </div>
+
+        <div class="tester-result-section">
+          <strong>Example Dialogues Changes:</strong>
+          <div class="output-box" id="testerExamples" style="max-height: 100px;">(none)</div>
+        </div>
+      </div>
+
+      <!-- Batch Test Results -->
+      <div id="batchResults" style="display: none;">
+        <h4>📊 Batch Test Results</h4>
+        <div id="batchResultsSummary" class="info-banner" style="margin-bottom: 12px;"></div>
+        <div id="batchResultsList"></div>
+      </div>
+
+      <div class="pitfall-box">
+        <strong>💡 Tips:</strong>
+        <ul>
+          <li>Generate your script first in the relevant tab before testing</li>
+          <li>Test edge cases: keywords with punctuation, different capitalizations</li>
+          <li>Try messages that should NOT trigger to verify specificity</li>
+          <li>Check console output for any errors or debug logs from your script</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRIGGER ANALYZER -->
+  <div class="card">
+    <h3>🔍 Trigger Analyzer</h3>
+    <p>Scan all modules for potential keyword conflicts, overlaps, and bottlenecks.</p>
+    <button type="button" class="btn" onclick="analyzeTriggers()">Analyze Triggers</button>
+    <div id="analyzerResults"></div>
+  </div>
+
+  <!-- FINAL COMBINED OUTPUT -->
+  <div class="card">
+    <h3>📦 Final Combined Output</h3>
+    <p>This is the complete script with all enabled modules merged in your chosen order.</p>
+    <button type="button" class="btn btn-success" onclick="generateFinalCombinedScript()">🔄 Regenerate Combined Script</button>
+    <button type="button" class="btn btn-secondary" onclick="copyToClipboard('finalOutput')">Copy to Clipboard</button>
+    <div class="output-box" id="finalOutput">// Combined script will appear here after clicking "Copy All Enabled Modules"</div>
+  </div>
+
+</div>
+
+<script type="module" src="js/app.js"></script>
+
 </body>
 </html>
