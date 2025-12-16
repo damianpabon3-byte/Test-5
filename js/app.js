@@ -3,7 +3,7 @@
 // Main Application Entry Point
 // ============================================
 
-// Import utilities
+// Utilities
 import {
   showToast,
   copyToClipboard,
@@ -13,7 +13,7 @@ import {
   switchTab
 } from './utils.js';
 
-// Import modules
+// Modules
 import { addLoreEntry, buildLorebookScript, generateLorebookScript } from './modules/lorebook.js';
 import { buildMemoryScript, generateMemoryScript } from './modules/memory.js';
 import { addPacingPhase, addOneTimeEvent, buildPacingScript, generatePacingScript } from './modules/pacing.js';
@@ -24,7 +24,7 @@ import { addRandomEvent, buildRandomScript, generateRandomScript } from './modul
 import { addCombinedRule, buildCombinedConditionsScript, generateCombinedConditionsScript } from './modules/combined.js';
 import { addScoreThreshold, buildScoringScript, generateScoringScript } from './modules/scoring.js';
 
-// Import tools
+// Tools
 import { analyzeTriggers } from './tools/analyzer.js';
 import {
   runScriptTest,
