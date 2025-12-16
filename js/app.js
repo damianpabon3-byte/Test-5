@@ -388,108 +388,188 @@ function setupDragAndDrop() {
 }
 
 // ============================================
+// MOBILE MENU
+// ============================================
+
+function setupMobileMenu() {
+  var toggle = document.getElementById('mobileMenuToggle');
+  var sidebar = document.getElementById('janitorSidebar');
+  var backdrop = document.getElementById('sidebarBackdrop');
+
+  if (!toggle || !sidebar || !backdrop) return;
+
+  function openMenu() {
+    sidebar.classList.add('open');
+    backdrop.classList.add('visible');
+  }
+
+  function closeMenu() {
+    sidebar.classList.remove('open');
+    backdrop.classList.remove('visible');
+  }
+
+  toggle.addEventListener('click', function() {
+    if (sidebar.classList.contains('open')) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
+
+  backdrop.addEventListener('click', closeMenu);
+
+  // Close menu when a nav item is clicked (on mobile)
+  document.querySelectorAll('.janitor-nav-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      if (window.innerWidth <= 768) {
+        closeMenu();
+      }
+    });
+  });
+}
+
+// ============================================
+// SIDEBAR NAVIGATION HELPERS
+// ============================================
+
+function scrollToSection(sectionId, clickedElement) {
+  var element = document.getElementById(sectionId);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Update active state in sidebar
+    document.querySelectorAll('.janitor-nav-item').forEach(function(item) {
+      item.classList.remove('active');
+    });
+    if (clickedElement) {
+      clickedElement.classList.add('active');
+    }
+  }
+}
+
+function switchTabFromSidebar(tabId, clickedElement) {
+  // First scroll to the module tabs section
+  var tabsSection = document.getElementById('moduletabs');
+  if (tabsSection) {
+    tabsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Then switch the tab
+  setTimeout(function() {
+    // Direct panel switching
+    document.querySelectorAll('.tab-panel').forEach(function(panel) {
+      panel.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.classList.remove('active');
+    });
+
+    var panel = document.getElementById(tabId);
+    if (panel) {
+      panel.classList.add('active');
+    }
+
+    // Find and activate the matching tab button
+    document.querySelectorAll('.tab-btn[data-tab-switch]').forEach(function(btn) {
+      if (btn.getAttribute('data-tab-switch') === tabId) {
+        btn.classList.add('active');
+      }
+    });
+  }, 300);
+
+  // Update sidebar active state
+  document.querySelectorAll('.janitor-nav-item').forEach(function(item) {
+    item.classList.remove('active');
+  });
+  if (clickedElement) {
+    clickedElement.classList.add('active');
+  }
+}
+
+// ============================================
 // EVENT LISTENERS SETUP
 // ============================================
 
 function setupEventListeners() {
-  // Tab buttons
-  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  // Sidebar navigation - scroll buttons
+  document.querySelectorAll('.janitor-nav-item[data-scroll]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var sectionId = this.getAttribute('data-scroll');
+      scrollToSection(sectionId, this);
+    });
+  });
+
+  // Sidebar navigation - tab buttons
+  document.querySelectorAll('.janitor-nav-item[data-tab]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tabId = this.getAttribute('data-tab');
+      switchTabFromSidebar(tabId, this);
+    });
+  });
+
+  // Tab buttons (main content area)
+  document.querySelectorAll('.tab-btn[data-tab-switch]').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
-      var tabName = this.textContent.toLowerCase()
-        .replace('⚠️ ', '')
-        .replace('🧪 ', '')
-        .replace('scoring (experimental)', 'scoring')
-        .replace('script tester', 'tester')
-        .replace('tone/state', 'tone')
-        .replace('time & environment', 'time')
-        .replace('ambient events', 'ambient')
-        .replace('random events', 'random')
-        .replace('combined conditions', 'combined')
-        .trim();
+      var tabName = this.getAttribute('data-tab-switch');
       switchTab(e, tabName);
     });
   });
 
   // Preset cards
-  document.querySelectorAll('.preset-card').forEach(function(card) {
+  document.querySelectorAll('.preset-card[data-preset]').forEach(function(card) {
     card.addEventListener('click', function() {
-      var presetName = this.querySelector('h4').textContent;
-      if (presetName.includes('Slow-Burn')) loadPreset('slowburn');
-      else if (presetName.includes('RPG')) loadPreset('rpg');
-      else if (presetName.includes('Ambient')) loadPreset('ambient');
-      else if (presetName.includes('Memory')) loadPreset('memory');
+      var presetName = this.getAttribute('data-preset');
+      loadPreset(presetName);
     });
   });
 
   // Module control panel buttons
-  document.querySelector('.btn-success[onclick*="generateFinalCombinedScript"]')?.addEventListener('click', generateFinalCombinedScript);
-  document.querySelector('.btn-warning[onclick*="generateAllEnabledModules"]')?.addEventListener('click', generateAllEnabledModules);
-  document.querySelector('.btn-danger[onclick*="resetAllFields"]')?.addEventListener('click', resetAllFields);
+  document.getElementById('btnCopyAllModules')?.addEventListener('click', generateFinalCombinedScript);
+  document.getElementById('btnGenerateAllModules')?.addEventListener('click', generateAllEnabledModules);
+  document.getElementById('btnResetAll')?.addEventListener('click', resetAllFields);
 
-  // Add entry buttons - using event delegation for dynamic buttons
-  document.getElementById('lorebook')?.querySelector('.btn-secondary')?.addEventListener('click', addLoreEntry);
-  document.getElementById('pacing')?.querySelectorAll('.btn-secondary').forEach(function(btn, idx) {
-    if (idx === 0) btn.addEventListener('click', addPacingPhase);
-    else if (idx === 1) btn.addEventListener('click', addOneTimeEvent);
-  });
-  document.getElementById('tone')?.querySelector('.btn-secondary')?.addEventListener('click', addToneTrigger);
-  document.getElementById('time')?.querySelector('.btn-secondary')?.addEventListener('click', addTimeSlot);
-  document.getElementById('ambient')?.querySelector('.btn-secondary')?.addEventListener('click', addAmbientEvent);
-  document.getElementById('random')?.querySelector('.btn-secondary')?.addEventListener('click', addRandomEvent);
-  document.getElementById('combined')?.querySelector('.btn-secondary')?.addEventListener('click', addCombinedRule);
-  document.getElementById('scoring')?.querySelector('.btn-secondary')?.addEventListener('click', addScoreThreshold);
+  // Add entry buttons
+  document.getElementById('btnAddLoreEntry')?.addEventListener('click', addLoreEntry);
+  document.getElementById('btnAddPacingPhase')?.addEventListener('click', addPacingPhase);
+  document.getElementById('btnAddOneTimeEvent')?.addEventListener('click', addOneTimeEvent);
+  document.getElementById('btnAddToneTrigger')?.addEventListener('click', addToneTrigger);
+  document.getElementById('btnAddTimeSlot')?.addEventListener('click', addTimeSlot);
+  document.getElementById('btnAddAmbientEvent')?.addEventListener('click', addAmbientEvent);
+  document.getElementById('btnAddRandomEvent')?.addEventListener('click', addRandomEvent);
+  document.getElementById('btnAddCombinedRule')?.addEventListener('click', addCombinedRule);
+  document.getElementById('btnAddScoreThreshold')?.addEventListener('click', addScoreThreshold);
 
   // Generate script buttons
-  document.querySelectorAll('.btn').forEach(function(btn) {
-    var text = btn.textContent;
-    if (text.includes('Generate Lorebook')) btn.addEventListener('click', generateLorebookScript);
-    else if (text.includes('Generate Memory')) btn.addEventListener('click', generateMemoryScript);
-    else if (text.includes('Generate Pacing')) btn.addEventListener('click', generatePacingScript);
-    else if (text.includes('Generate Tone')) btn.addEventListener('click', generateToneScript);
-    else if (text.includes('Generate Time')) btn.addEventListener('click', generateTimeScript);
-    else if (text.includes('Generate Ambient')) btn.addEventListener('click', generateAmbientScript);
-    else if (text.includes('Generate Random Events')) btn.addEventListener('click', generateRandomScript);
-    else if (text.includes('Generate Combined')) btn.addEventListener('click', generateCombinedConditionsScript);
-    else if (text.includes('Generate Scoring')) btn.addEventListener('click', generateScoringScript);
-    else if (text.includes('Analyze Triggers')) btn.addEventListener('click', analyzeTriggers);
-    else if (text.includes('Regenerate Combined')) btn.addEventListener('click', generateFinalCombinedScript);
-  });
+  document.getElementById('btnGenerateLorebook')?.addEventListener('click', generateLorebookScript);
+  document.getElementById('btnGenerateMemory')?.addEventListener('click', generateMemoryScript);
+  document.getElementById('btnGeneratePacing')?.addEventListener('click', generatePacingScript);
+  document.getElementById('btnGenerateTone')?.addEventListener('click', generateToneScript);
+  document.getElementById('btnGenerateTime')?.addEventListener('click', generateTimeScript);
+  document.getElementById('btnGenerateAmbient')?.addEventListener('click', generateAmbientScript);
+  document.getElementById('btnGenerateRandom')?.addEventListener('click', generateRandomScript);
+  document.getElementById('btnGenerateCombined')?.addEventListener('click', generateCombinedConditionsScript);
+  document.getElementById('btnGenerateScoring')?.addEventListener('click', generateScoringScript);
 
-  // Copy to clipboard buttons
-  document.querySelectorAll('.btn-secondary').forEach(function(btn) {
-    if (btn.textContent.includes('Copy to Clipboard')) {
-      btn.addEventListener('click', function() {
-        var outputId = this.previousElementSibling?.textContent.includes('Generate') ?
-          this.nextElementSibling?.id : null;
-        if (!outputId) {
-          // Find the output box in the same parent
-          var parent = this.closest('.card') || this.closest('.tab-panel');
-          var output = parent?.querySelector('.output-box');
-          if (output) copyToClipboard(output.id);
-        } else {
-          copyToClipboard(outputId);
-        }
-      });
-    }
+  // Analyzer and final output
+  document.getElementById('btnAnalyzeTriggers')?.addEventListener('click', analyzeTriggers);
+  document.getElementById('btnRegenerateCombined')?.addEventListener('click', generateFinalCombinedScript);
+
+  // Copy to clipboard buttons (using data-copy attribute)
+  document.querySelectorAll('[data-copy]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var outputId = this.getAttribute('data-copy');
+      copyToClipboard(outputId);
+    });
   });
 
   // Tester controls
   document.getElementById('testerScriptSource')?.addEventListener('change', updateTesterScript);
   document.getElementById('testerBatchMode')?.addEventListener('change', toggleBatchMode);
-  document.querySelector('#singleTestButtons .btn')?.addEventListener('click', runScriptTest);
-  document.querySelector('#singleTestButtons .btn-secondary')?.addEventListener('click', clearTestResults);
-  document.querySelector('#batchTestButtons .btn-success')?.addEventListener('click', runBatchTests);
-  document.querySelector('#batchTestButtons .btn-secondary')?.addEventListener('click', clearBatchResults);
-
-  // Batch test message buttons
-  var batchSection = document.getElementById('testerBatchSection');
-  if (batchSection) {
-    var btns = batchSection.querySelectorAll('.btn-secondary');
-    btns.forEach(function(btn) {
-      if (btn.textContent.includes('Add Message')) btn.addEventListener('click', function() { addBatchTestMessage(); });
-      else if (btn.textContent.includes('Clear All')) btn.addEventListener('click', clearBatchMessages);
-    });
-  }
+  document.getElementById('btnRunTest')?.addEventListener('click', runScriptTest);
+  document.getElementById('btnClearTestResults')?.addEventListener('click', clearTestResults);
+  document.getElementById('btnRunBatchTests')?.addEventListener('click', runBatchTests);
+  document.getElementById('btnClearBatchResults')?.addEventListener('click', clearBatchResults);
+  document.getElementById('btnAddBatchMessage')?.addEventListener('click', addBatchTestMessage);
+  document.getElementById('btnClearBatchMessages')?.addEventListener('click', clearBatchMessages);
 }
 
 // ============================================
@@ -524,6 +604,9 @@ document.addEventListener('DOMContentLoaded', function () {
   addPacingPhase();
   addToneTrigger();
   addAmbientEvent();
+
+  // Setup mobile menu
+  setupMobileMenu();
 
   // Setup event listeners
   setupEventListeners();
