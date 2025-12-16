@@ -1,16 +1,15 @@
 /* ============================================
- * JanitorAI Script Builder v0.2.6 - Janitor AI Theme
- * Based on official Janitor AI CSS
+ * JanitorAI Script Builder v0.2.6
  * ============================================ */
 
 /* ============================================
- * FONTS - Jura (Official Janitor AI Font)
+ * FONTS - Jura
  * ============================================ */
 @import url('https://fonts.googleapis.com/css2?family=Jura:wght@300..700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 /* ============================================
- * ROOT VARIABLES - From Global_Styles.txt
+ * ROOT VARIABLES
  * ============================================ */
 :root {
   /* Base Colors */
@@ -332,7 +331,7 @@ body {
 }
 
 /* ============================================
- * CARDS - From Global Styles
+ * CARDS
  * ============================================ */
 .card, .janitor-card {
   background: var(--scripts-bg-primary);
@@ -367,7 +366,7 @@ body {
 }
 
 /* ============================================
- * FORM INPUTS - From Form_Inputs.txt
+ * FORM INPUTS
  * ============================================ */
 .form-group {
   margin-bottom: 1.5rem;
@@ -549,7 +548,7 @@ body {
 }
 
 /* ============================================
- * SWITCHES - From Switches.txt
+ * SWITCHES
  * ============================================ */
 .janitor-switch-container {
   display: flex;
@@ -796,7 +795,7 @@ body {
 }
 
 /* ============================================
- * MODALS - From Modals.txt
+ * MODALS
  * ============================================ */
 .janitor-modal-overlay {
   position: fixed;
