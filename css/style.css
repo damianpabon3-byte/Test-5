@@ -718,6 +718,92 @@ body {
   color: var(--white-100);
 }
 
+/* --- MOBILE HEADER & HAMBURGER MENU --- */
+
+/* Mobile Header (hidden on desktop) */
+.mobile-header {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #121212;
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.mobile-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mobile-header-logo {
+  height: 32px;
+  width: auto;
+}
+
+.mobile-header-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+/* Hamburger Button */
+.hamburger-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s ease;
+}
+
+.hamburger-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hamburger-btn:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hamburger-line {
+  width: 22px;
+  height: 2px;
+  background: var(--text-main);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.hamburger-line:nth-child(2) {
+  margin: 5px 0;
+}
+
+/* Hamburger animation when sidebar is open */
+.hamburger-btn.open .hamburger-line:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-btn.open .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-btn.open .hamburger-line:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Sidebar Backdrop */
+.sidebar-backdrop {
 .btn-success:hover, .janitor-btn-success:hover {
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
 }
@@ -806,6 +892,108 @@ body {
   z-index: 999999;
   padding: 5vh 1rem;
   background: rgba(0, 0, 0, 0.6);
+<<<<<< claude/janitor-ai-theme-VhIUf
+  backdrop-filter: blur(4px);
+  z-index: 101;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar-backdrop.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Legacy mobile overlay (for backwards compatibility) */
+.mobile-overlay {
+  display: none;
+}
+
+/* --- MOBILE RESPONSIVE STYLES --- */
+
+@media (max-width: 768px) {
+  /* Show mobile header */
+  .mobile-header {
+    display: flex;
+  }
+
+  /* Show backdrop element (JS controls visibility) */
+  .sidebar-backdrop {
+    display: block;
+  }
+
+  /* Hide desktop header */
+  .content-header {
+    display: none;
+  }
+
+  /* Sidebar becomes slide-in overlay */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 102;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* Main content adjustments */
+  .main-content {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .scrollable-area {
+    padding: 16px;
+    height: auto;
+  }
+
+  /* Buttons stack on mobile */
+  .btn {
+    width: 100%;
+    margin-bottom: 8px;
+    justify-content: center;
+  }
+
+  /* Cards get less padding */
+  .card {
+    padding: 16px;
+  }
+}
+
+/* Small mobile adjustments */
+@media (max-width: 480px) {
+  .mobile-header {
+    padding: 0.625rem 0.75rem;
+  }
+
+  .mobile-header-logo {
+    height: 28px;
+  }
+
+  .mobile-header-title {
+    font-size: 0.8rem;
+  }
+
+  .hamburger-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .hamburger-line {
+    width: 20px;
+  }
+
+  .sidebar {
+    width: 260px;
+  }
+=======
   animation: janitor-fadeIn 0.2s ease;
   overflow-y: auto;
 }
@@ -1757,4 +1945,5 @@ body {
 .shell {
   max-width: 100%;
   margin: 0;
+  main
 }

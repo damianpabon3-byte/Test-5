@@ -8,6 +8,28 @@
 </head>
 <body>
 
+<!-- Mobile Header (visible only on mobile) -->
+<header class="mobile-header">
+  <div class="mobile-header-left">
+    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+    <img class="mobile-header-logo" src="logo2x-1_ia066y.png" alt="Janitor AI">
+  </div>
+  <span class="mobile-header-title">Script Builder</span>
+</header>
+
+<!-- Sidebar Backdrop (dims background when sidebar is open) -->
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<div class="app-container">
+    
+    <aside class="sidebar" id="appSidebar">
+      <div class="logo-area">
+        <img src="logo2x-1_ia066y.png" alt="Logo" class="logo-img">
+        <p class="logo-text">Script Builder v0.2.6</p>
 <div class="janitor-app">
   <!-- Sidebar Navigation -->
   <aside class="janitor-sidebar">
@@ -831,6 +853,67 @@
         <div class="output-box" id="finalOutput">// Combined script will appear here after clicking "Copy All Enabled Modules"</div>
       </div>
 
+<script>
+// ============================================
+// MOBILE SIDEBAR TOGGLE
+// ============================================
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const sidebar = document.getElementById('appSidebar');
+const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+function openSidebar() {
+  sidebar.classList.add('mobile-open');
+  sidebarBackdrop.classList.add('visible');
+  hamburgerBtn.classList.add('open');
+  hamburgerBtn.setAttribute('aria-expanded', 'true');
+  document.body.style.overflow = 'hidden'; // Prevent background scroll
+}
+
+function closeSidebar() {
+  sidebar.classList.remove('mobile-open');
+  sidebarBackdrop.classList.remove('visible');
+  hamburgerBtn.classList.remove('open');
+  hamburgerBtn.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = ''; // Restore scroll
+}
+
+function toggleSidebar() {
+  if (sidebar.classList.contains('mobile-open')) {
+    closeSidebar();
+  } else {
+    openSidebar();
+  }
+}
+
+// Event listeners for mobile sidebar
+hamburgerBtn.addEventListener('click', toggleSidebar);
+sidebarBackdrop.addEventListener('click', closeSidebar);
+
+// Close sidebar on escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && sidebar.classList.contains('mobile-open')) {
+    closeSidebar();
+  }
+});
+
+// Close sidebar when clicking a nav button (mobile only)
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (window.innerWidth <= 768) {
+      closeSidebar();
+    }
+  });
+});
+
+// Close sidebar when window is resized to desktop size
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 768 && sidebar.classList.contains('mobile-open')) {
+    closeSidebar();
+  }
+});
+</script>
+
+  <script type="module" src="js/app.js"></script>
     </div>
   </main>
 </div>
