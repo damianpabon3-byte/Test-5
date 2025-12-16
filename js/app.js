@@ -3,7 +3,7 @@
 // Main Application Entry Point
 // ============================================
 
-// Utilities
+// Import utilities
 import {
   showToast,
   copyToClipboard,
@@ -13,7 +13,7 @@ import {
   switchTab
 } from './utils.js';
 
-// Modules
+// Import modules
 import { addLoreEntry, buildLorebookScript, generateLorebookScript } from './modules/lorebook.js';
 import { buildMemoryScript, generateMemoryScript } from './modules/memory.js';
 import { addPacingPhase, addOneTimeEvent, buildPacingScript, generatePacingScript } from './modules/pacing.js';
@@ -24,7 +24,7 @@ import { addRandomEvent, buildRandomScript, generateRandomScript } from './modul
 import { addCombinedRule, buildCombinedConditionsScript, generateCombinedConditionsScript } from './modules/combined.js';
 import { addScoreThreshold, buildScoringScript, generateScoringScript } from './modules/scoring.js';
 
-// Tools
+// Import tools
 import { analyzeTriggers } from './tools/analyzer.js';
 import {
   runScriptTest,
@@ -572,3 +572,40 @@ window.addBatchTestMessage = addBatchTestMessage;
 window.clearBatchMessages = clearBatchMessages;
 window.clearBatchResults = clearBatchResults;
 window.runBatchTests = runBatchTests;
+// Mobile Sidebar Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const menuBtn = document.getElementById('menuBtn');
+    const sidebar = document.getElementById('appSidebar');
+    const overlay = document.getElementById('mobileOverlay');
+    const navLinks = document.querySelectorAll('.nav-btn');
+
+    function toggleSidebar() {
+        sidebar.classList.toggle('mobile-open');
+        overlay.classList.toggle('active');
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+    }
+
+    // Toggle on hamburger click
+    if (menuBtn) {
+        menuBtn.addEventListener('click', toggleSidebar);
+    }
+
+    // Close when clicking background
+    if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
+    }
+
+    // Close when clicking a nav item (UX Best Practice)
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            // Only close if we are actually on mobile
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
+        });
+    });
+});
