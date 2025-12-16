@@ -9,8 +9,14 @@
 <body>
 
 <div class="janitor-app">
+  <!-- Mobile Menu Toggle Button -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle navigation menu">&#9776;</button>
+
+  <!-- Sidebar Backdrop (for mobile) -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
   <!-- Sidebar Navigation -->
-  <aside class="janitor-sidebar">
+  <aside class="janitor-sidebar" id="janitorSidebar">
     <div class="janitor-sidebar-header">
       <img class="janitor-sidebar-logo" src="logo2x-1_ia066y.png" alt="Janitor AI Logo">
       <p class="janitor-sidebar-title">Script Builder v0.2.6</p>
@@ -18,67 +24,67 @@
     <nav class="janitor-sidebar-nav">
       <div class="janitor-nav-section">
         <h3 class="janitor-nav-section-title">Getting Started</h3>
-        <button class="janitor-nav-item active" onclick="scrollToSection('onboarding')">
+        <button class="janitor-nav-item active" data-scroll="onboarding">
           Stateless 101
         </button>
-        <button class="janitor-nav-item" onclick="scrollToSection('checklist')">
+        <button class="janitor-nav-item" data-scroll="checklist">
           Test Checklist
         </button>
-        <button class="janitor-nav-item" onclick="scrollToSection('buildorder')">
+        <button class="janitor-nav-item" data-scroll="buildorder">
           Build Order
         </button>
       </div>
       <div class="janitor-nav-section">
         <h3 class="janitor-nav-section-title">Configuration</h3>
-        <button class="janitor-nav-item" onclick="scrollToSection('maintenance')">
+        <button class="janitor-nav-item" data-scroll="maintenance">
           Maintenance Tips
         </button>
-        <button class="janitor-nav-item" onclick="scrollToSection('modulepanel')">
+        <button class="janitor-nav-item" data-scroll="modulepanel">
           Module Control
         </button>
-        <button class="janitor-nav-item" onclick="scrollToSection('presets')">
+        <button class="janitor-nav-item" data-scroll="presets">
           Preset Templates
         </button>
       </div>
       <div class="janitor-nav-section">
         <h3 class="janitor-nav-section-title">Modules</h3>
-        <button class="janitor-nav-item" onclick="switchTabFromSidebar('lorebook')">
+        <button class="janitor-nav-item" data-tab="lorebook">
           Lorebook
         </button>
-        <button class="janitor-nav-item" onclick="switchTabFromSidebar('memory')">
+        <button class="janitor-nav-item" data-tab="memory">
           Memory
         </button>
-        <button class="janitor-nav-item" onclick="switchTabFromSidebar('pacing')">
+        <button class="janitor-nav-item" data-tab="pacing">
           Pacing
         </button>
-        <button class="janitor-nav-item" onclick="switchTabFromSidebar('tone')">
+        <button class="janitor-nav-item" data-tab="tone">
           Tone/State
         </button>
-        <button class="janitor-nav-item" onclick="switchTabFromSidebar('time')">
+        <button class="janitor-nav-item" data-tab="time">
           Time & Environment
         </button>
-        <button class="janitor-nav-item" onclick="switchTabFromSidebar('ambient')">
+        <button class="janitor-nav-item" data-tab="ambient">
           Ambient Events
         </button>
-        <button class="janitor-nav-item" onclick="switchTabFromSidebar('random')">
+        <button class="janitor-nav-item" data-tab="random">
           Random Events
         </button>
-        <button class="janitor-nav-item" onclick="switchTabFromSidebar('combined')">
+        <button class="janitor-nav-item" data-tab="combined">
           Combined Conditions
         </button>
-        <button class="janitor-nav-item experimental" onclick="switchTabFromSidebar('scoring')">
+        <button class="janitor-nav-item experimental" data-tab="scoring">
           Scoring (Experimental)
         </button>
-        <button class="janitor-nav-item experimental" onclick="switchTabFromSidebar('tester')">
+        <button class="janitor-nav-item experimental" data-tab="tester">
           Script Tester
         </button>
       </div>
       <div class="janitor-nav-section">
         <h3 class="janitor-nav-section-title">Output</h3>
-        <button class="janitor-nav-item" onclick="scrollToSection('analyzer')">
+        <button class="janitor-nav-item" data-scroll="analyzer">
           Trigger Analyzer
         </button>
-        <button class="janitor-nav-item" onclick="scrollToSection('finaloutput')">
+        <button class="janitor-nav-item" data-scroll="finaloutput">
           Final Output
         </button>
       </div>
@@ -245,13 +251,13 @@
             <label for="toggle-scoring">Scoring Engine (Experimental)</label>
           </div>
         </div>
-        <button type="button" class="btn btn-success" onclick="generateFinalCombinedScript()">
+        <button type="button" class="btn btn-success" id="btnCopyAllModules">
           Copy All Enabled Modules
         </button>
-        <button type="button" class="btn btn-warning" onclick="generateAllEnabledModules()">
+        <button type="button" class="btn btn-warning" id="btnGenerateAllModules">
           Generate All Enabled (then combine)
         </button>
-        <button type="button" class="btn btn-danger" onclick="resetAllFields()">
+        <button type="button" class="btn btn-danger" id="btnResetAll">
           Reset All Fields
         </button>
         <div class="token-meter" id="tokenMeter">
@@ -268,19 +274,19 @@
         <h3>Load Preset Templates</h3>
         <p>Click a preset to auto-fill the form with starter values. You can customize them after loading.</p>
         <div class="preset-grid">
-          <div class="preset-card" onclick="loadPreset('slowburn')">
+          <div class="preset-card" data-preset="slowburn">
             <h4>Slow-Burn Romance</h4>
             <p>Gradual relationship progression with memory tracking</p>
           </div>
-          <div class="preset-card" onclick="loadPreset('rpg')">
+          <div class="preset-card" data-preset="rpg">
             <h4>RPG Adventure</h4>
             <p>Lorebook-heavy with locations, NPCs, and events</p>
           </div>
-          <div class="preset-card" onclick="loadPreset('ambient')">
+          <div class="preset-card" data-preset="ambient">
             <h4>Ambient Flavor Pack</h4>
             <p>Random environmental details for immersion</p>
           </div>
-          <div class="preset-card" onclick="loadPreset('memory')">
+          <div class="preset-card" data-preset="memory">
             <h4>Memory Starter</h4>
             <p>Simple name + facts tracking for any scenario</p>
           </div>
@@ -290,16 +296,16 @@
       <!-- Module Tabs -->
       <div id="moduletabs" class="card janitor-card">
         <div class="tabs">
-          <button class="tab-btn active" onclick="switchTab(event, 'lorebook')">Lorebook</button>
-          <button class="tab-btn" onclick="switchTab(event, 'memory')">Memory</button>
-          <button class="tab-btn" onclick="switchTab(event, 'pacing')">Pacing</button>
-          <button class="tab-btn" onclick="switchTab(event, 'tone')">Tone/State</button>
-          <button class="tab-btn" onclick="switchTab(event, 'time')">Time & Environment</button>
-          <button class="tab-btn" onclick="switchTab(event, 'ambient')">Ambient Events</button>
-          <button class="tab-btn" onclick="switchTab(event, 'random')">Random Events</button>
-          <button class="tab-btn" onclick="switchTab(event, 'combined')">Combined Conditions</button>
-          <button class="tab-btn experimental" onclick="switchTab(event, 'scoring')">Scoring (Experimental)</button>
-          <button class="tab-btn experimental" onclick="switchTab(event, 'tester')">Script Tester</button>
+          <button class="tab-btn active" data-tab-switch="lorebook">Lorebook</button>
+          <button class="tab-btn" data-tab-switch="memory">Memory</button>
+          <button class="tab-btn" data-tab-switch="pacing">Pacing</button>
+          <button class="tab-btn" data-tab-switch="tone">Tone/State</button>
+          <button class="tab-btn" data-tab-switch="time">Time & Environment</button>
+          <button class="tab-btn" data-tab-switch="ambient">Ambient Events</button>
+          <button class="tab-btn" data-tab-switch="random">Random Events</button>
+          <button class="tab-btn" data-tab-switch="combined">Combined Conditions</button>
+          <button class="tab-btn experimental" data-tab-switch="scoring">Scoring (Experimental)</button>
+          <button class="tab-btn experimental" data-tab-switch="tester">Script Tester</button>
         </div>
 
         <!-- LOREBOOK TAB -->
@@ -326,11 +332,11 @@
           </div>
 
           <h4>Lore Entries</h4>
-          <button type="button" class="btn btn-secondary" onclick="addLoreEntry()">+ Add Entry</button>
+          <button type="button" class="btn btn-secondary" id="btnAddLoreEntry">+ Add Entry</button>
           <div id="loreEntries" class="dynamic-list"></div>
 
-          <button type="button" class="btn" onclick="generateLorebookScript()">Generate Lorebook Script</button>
-          <button type="button" class="btn btn-secondary" onclick="copyToClipboard('lorebookOutput')">Copy to Clipboard</button>
+          <button type="button" class="btn" id="btnGenerateLorebook">Generate Lorebook Script</button>
+          <button type="button" class="btn btn-secondary" data-copy="lorebookOutput">Copy to Clipboard</button>
 
           <div class="output-box" id="lorebookOutput">// Script will appear here after clicking Generate</div>
 
@@ -395,8 +401,8 @@
             <div class="example-text">Example: "I hate mornings" → saved as dislike</div>
           </div>
 
-          <button type="button" class="btn" onclick="generateMemoryScript()">Generate Memory Script</button>
-          <button type="button" class="btn btn-secondary" onclick="copyToClipboard('memoryOutput')">Copy to Clipboard</button>
+          <button type="button" class="btn" id="btnGenerateMemory">Generate Memory Script</button>
+          <button type="button" class="btn btn-secondary" data-copy="memoryOutput">Copy to Clipboard</button>
 
           <div class="output-box" id="memoryOutput">// Script will appear here after clicking Generate</div>
 
@@ -425,15 +431,15 @@
           </div>
 
           <h4>Message Count Phases</h4>
-          <button type="button" class="btn btn-secondary" onclick="addPacingPhase()">+ Add Phase</button>
+          <button type="button" class="btn btn-secondary" id="btnAddPacingPhase">+ Add Phase</button>
           <div id="pacingPhases" class="dynamic-list"></div>
 
           <h4>One-Time Events (Exact Message Count)</h4>
-          <button type="button" class="btn btn-secondary" onclick="addOneTimeEvent()">+ Add Event</button>
+          <button type="button" class="btn btn-secondary" id="btnAddOneTimeEvent">+ Add Event</button>
           <div id="oneTimeEvents" class="dynamic-list"></div>
 
-          <button type="button" class="btn" onclick="generatePacingScript()">Generate Pacing Script</button>
-          <button type="button" class="btn btn-secondary" onclick="copyToClipboard('pacingOutput')">Copy to Clipboard</button>
+          <button type="button" class="btn" id="btnGeneratePacing">Generate Pacing Script</button>
+          <button type="button" class="btn btn-secondary" data-copy="pacingOutput">Copy to Clipboard</button>
 
           <div class="output-box" id="pacingOutput">// Script will appear here after clicking Generate</div>
 
@@ -472,11 +478,11 @@
           </div>
 
           <h4>Tone Triggers</h4>
-          <button type="button" class="btn btn-secondary" onclick="addToneTrigger()">+ Add Trigger</button>
+          <button type="button" class="btn btn-secondary" id="btnAddToneTrigger">+ Add Trigger</button>
           <div id="toneTriggers" class="dynamic-list"></div>
 
-          <button type="button" class="btn" onclick="generateToneScript()">Generate Tone Script</button>
-          <button type="button" class="btn btn-secondary" onclick="copyToClipboard('toneOutput')">Copy to Clipboard</button>
+          <button type="button" class="btn" id="btnGenerateTone">Generate Tone Script</button>
+          <button type="button" class="btn btn-secondary" data-copy="toneOutput">Copy to Clipboard</button>
 
           <div class="output-box" id="toneOutput">// Script will appear here after clicking Generate</div>
 
@@ -513,11 +519,11 @@
           </div>
 
           <h4>Time-Based Behaviors</h4>
-          <button type="button" class="btn btn-secondary" onclick="addTimeSlot()">+ Add Time Slot</button>
+          <button type="button" class="btn btn-secondary" id="btnAddTimeSlot">+ Add Time Slot</button>
           <div id="timeSlots" class="dynamic-list"></div>
 
-          <button type="button" class="btn" onclick="generateTimeScript()">Generate Time Script</button>
-          <button type="button" class="btn btn-secondary" onclick="copyToClipboard('timeOutput')">Copy to Clipboard</button>
+          <button type="button" class="btn" id="btnGenerateTime">Generate Time Script</button>
+          <button type="button" class="btn btn-secondary" data-copy="timeOutput">Copy to Clipboard</button>
 
           <div class="output-box" id="timeOutput">// Script will appear here after clicking Generate</div>
 
@@ -549,11 +555,11 @@
           </div>
 
           <h4>Ambient Event Pool</h4>
-          <button type="button" class="btn btn-secondary" onclick="addAmbientEvent()">+ Add Event</button>
+          <button type="button" class="btn btn-secondary" id="btnAddAmbientEvent">+ Add Event</button>
           <div id="ambientEvents" class="dynamic-list"></div>
 
-          <button type="button" class="btn" onclick="generateAmbientScript()">Generate Ambient Script</button>
-          <button type="button" class="btn btn-secondary" onclick="copyToClipboard('ambientOutput')">Copy to Clipboard</button>
+          <button type="button" class="btn" id="btnGenerateAmbient">Generate Ambient Script</button>
+          <button type="button" class="btn btn-secondary" data-copy="ambientOutput">Copy to Clipboard</button>
 
           <div class="output-box" id="ambientOutput">// Script will appear here after clicking Generate</div>
 
@@ -578,11 +584,11 @@
           <p>Trigger random character reactions when user says specific phrases.</p>
 
           <h4>Event Triggers</h4>
-          <button type="button" class="btn btn-secondary" onclick="addRandomEvent()">+ Add Event</button>
+          <button type="button" class="btn btn-secondary" id="btnAddRandomEvent">+ Add Event</button>
           <div id="randomEvents" class="dynamic-list"></div>
 
-          <button type="button" class="btn" onclick="generateRandomScript()">Generate Random Events Script</button>
-          <button type="button" class="btn btn-secondary" onclick="copyToClipboard('randomOutput')">Copy to Clipboard</button>
+          <button type="button" class="btn" id="btnGenerateRandom">Generate Random Events Script</button>
+          <button type="button" class="btn btn-secondary" data-copy="randomOutput">Copy to Clipboard</button>
 
           <div class="output-box" id="randomOutput">// Script will appear here after clicking Generate</div>
 
@@ -612,11 +618,11 @@
           </div>
 
           <h4>Combined Rules</h4>
-          <button type="button" class="btn btn-secondary" onclick="addCombinedRule()">+ Add Rule</button>
+          <button type="button" class="btn btn-secondary" id="btnAddCombinedRule">+ Add Rule</button>
           <div id="combinedRules" class="dynamic-list"></div>
 
-          <button type="button" class="btn" onclick="generateCombinedConditionsScript()">Generate Combined Script</button>
-          <button type="button" class="btn btn-secondary" onclick="copyToClipboard('combinedOutput')">Copy to Clipboard</button>
+          <button type="button" class="btn" id="btnGenerateCombined">Generate Combined Script</button>
+          <button type="button" class="btn btn-secondary" data-copy="combinedOutput">Copy to Clipboard</button>
 
           <div class="output-box" id="combinedOutput">// Script will appear here after clicking Generate</div>
 
@@ -672,11 +678,11 @@
           </div>
 
           <h4>Score Thresholds & Responses</h4>
-          <button type="button" class="btn btn-secondary" onclick="addScoreThreshold()">+ Add Threshold</button>
+          <button type="button" class="btn btn-secondary" id="btnAddScoreThreshold">+ Add Threshold</button>
           <div id="scoreThresholds" class="dynamic-list"></div>
 
-          <button type="button" class="btn" onclick="generateScoringScript()">Generate Scoring Script</button>
-          <button type="button" class="btn btn-secondary" onclick="copyToClipboard('scoringOutput')">Copy to Clipboard</button>
+          <button type="button" class="btn" id="btnGenerateScoring">Generate Scoring Script</button>
+          <button type="button" class="btn btn-secondary" data-copy="scoringOutput">Copy to Clipboard</button>
 
           <div class="output-box" id="scoringOutput">// Script will appear here after clicking Generate</div>
 
@@ -702,7 +708,7 @@
 
           <div class="form-group">
             <label>Script Source</label>
-            <select id="testerScriptSource" onchange="updateTesterScript()">
+            <select id="testerScriptSource">
               <option value="final">Final Combined Output</option>
               <option value="lorebook">Lorebook Script</option>
               <option value="memory">Memory Script</option>
@@ -727,7 +733,7 @@
 
           <div class="form-group">
             <label>
-              <input type="checkbox" id="testerBatchMode" onchange="toggleBatchMode()" /> Enable Batch Testing (Multiple Messages)
+              <input type="checkbox" id="testerBatchMode" /> Enable Batch Testing (Multiple Messages)
             </label>
             <div class="help-text">Test multiple messages against the same script and see individual results for each</div>
           </div>
@@ -745,8 +751,8 @@
           <div id="testerBatchSection" style="display: none;">
             <div class="form-group">
               <label>Test Messages</label>
-              <button type="button" class="btn btn-secondary" onclick="addBatchTestMessage()" style="margin-left: 8px;">+ Add Message</button>
-              <button type="button" class="btn btn-secondary" onclick="clearBatchMessages()" style="margin-left: 4px;">Clear All</button>
+              <button type="button" class="btn btn-secondary" id="btnAddBatchMessage" style="margin-left: 8px;">+ Add Message</button>
+              <button type="button" class="btn btn-secondary" id="btnClearBatchMessages" style="margin-left: 4px;">Clear All</button>
               <div id="batchTestMessages" class="dynamic-list" style="margin-top: 8px;"></div>
               <div class="help-text">Each message will be tested separately against the script. Add as many as you need.</div>
             </div>
@@ -760,14 +766,14 @@
 
           <!-- Single Test Buttons -->
           <div id="singleTestButtons">
-            <button type="button" class="btn" onclick="runScriptTest()">Run Test</button>
-            <button type="button" class="btn btn-secondary" onclick="clearTestResults()">Clear Results</button>
+            <button type="button" class="btn" id="btnRunTest">Run Test</button>
+            <button type="button" class="btn btn-secondary" id="btnClearTestResults">Clear Results</button>
           </div>
 
           <!-- Batch Test Buttons -->
           <div id="batchTestButtons" style="display: none;">
-            <button type="button" class="btn btn-success" onclick="runBatchTests()">Run All Tests</button>
-            <button type="button" class="btn btn-secondary" onclick="clearBatchResults()">Clear Results</button>
+            <button type="button" class="btn btn-success" id="btnRunBatchTests">Run All Tests</button>
+            <button type="button" class="btn btn-secondary" id="btnClearBatchResults">Clear Results</button>
           </div>
 
           <!-- Single Test Results -->
@@ -818,7 +824,7 @@
       <div id="analyzer" class="card janitor-card">
         <h3>Trigger Analyzer</h3>
         <p>Scan all modules for potential keyword conflicts, overlaps, and bottlenecks.</p>
-        <button type="button" class="btn" onclick="analyzeTriggers()">Analyze Triggers</button>
+        <button type="button" class="btn" id="btnAnalyzeTriggers">Analyze Triggers</button>
         <div id="analyzerResults"></div>
       </div>
 
@@ -826,68 +832,14 @@
       <div id="finaloutput" class="card janitor-card">
         <h3>Final Combined Output</h3>
         <p>This is the complete script with all enabled modules merged in your chosen order.</p>
-        <button type="button" class="btn btn-success" onclick="generateFinalCombinedScript()">Regenerate Combined Script</button>
-        <button type="button" class="btn btn-secondary" onclick="copyToClipboard('finalOutput')">Copy to Clipboard</button>
+        <button type="button" class="btn btn-success" id="btnRegenerateCombined">Regenerate Combined Script</button>
+        <button type="button" class="btn btn-secondary" data-copy="finalOutput">Copy to Clipboard</button>
         <div class="output-box" id="finalOutput">// Combined script will appear here after clicking "Copy All Enabled Modules"</div>
       </div>
 
     </div>
   </main>
 </div>
-
-<script>
-// Sidebar navigation helper functions
-function scrollToSection(sectionId) {
-  const element = document.getElementById(sectionId);
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    // Update active state in sidebar
-    document.querySelectorAll('.janitor-nav-item').forEach(item => item.classList.remove('active'));
-    event.target.classList.add('active');
-  }
-}
-
-function switchTabFromSidebar(tabId) {
-  // First scroll to the module tabs section
-  const tabsSection = document.getElementById('moduletabs');
-  if (tabsSection) {
-    tabsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  // Then switch the tab
-  setTimeout(() => {
-    // Find the tab button and click it
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => {
-      if (btn.textContent.toLowerCase().includes(tabId.toLowerCase()) ||
-          btn.onclick.toString().includes(`'${tabId}'`)) {
-        btn.click();
-      }
-    });
-
-    // Direct panel switching as fallback
-    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-
-    const panel = document.getElementById(tabId);
-    if (panel) {
-      panel.classList.add('active');
-    }
-
-    // Find and activate the matching button
-    tabBtns.forEach(btn => {
-      const onclickStr = btn.getAttribute('onclick') || '';
-      if (onclickStr.includes(`'${tabId}'`)) {
-        btn.classList.add('active');
-      }
-    });
-  }, 300);
-
-  // Update sidebar active state
-  document.querySelectorAll('.janitor-nav-item').forEach(item => item.classList.remove('active'));
-  event.target.classList.add('active');
-}
-</script>
 
 <script type="module" src="js/app.js"></script>
 
