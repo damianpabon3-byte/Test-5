@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Janitor Script Builder</title>
+  <title>JanitorAI Script Builder – Production Ready</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧹</text></svg>">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -42,6 +41,9 @@
         </button>
         <button class="janitor-nav-item" data-scroll="modulepanel">
           Module Control
+        </button>
+        <button class="janitor-nav-item" data-scroll="presets">
+          Preset Templates
         </button>
       </div>
       <div class="janitor-nav-section">
@@ -315,12 +317,35 @@
         </div>
       </div>
 
+      <!-- Preset Library -->
+      <div id="presets" class="card janitor-card">
+        <h3>Load Preset Templates</h3>
+        <p>Click a preset to auto-fill the form with starter values. You can customize them after loading.</p>
+        <div class="preset-grid">
+          <div class="preset-card" data-preset="slowburn">
+            <h4>Slow-Burn Romance</h4>
+            <p>Gradual relationship progression with memory tracking</p>
+          </div>
+          <div class="preset-card" data-preset="rpg">
+            <h4>RPG Adventure</h4>
+            <p>Lorebook-heavy with locations, NPCs, and events</p>
+          </div>
+          <div class="preset-card" data-preset="ambient">
+            <h4>Ambient Flavor Pack</h4>
+            <p>Random environmental details for immersion</p>
+          </div>
+          <div class="preset-card" data-preset="memory">
+            <h4>Memory Starter</h4>
+            <p>Simple name + facts tracking for any scenario</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Module Sections (Scroll Spy Layout) -->
       <div id="moduletabs" class="card janitor-card">
         <!-- LOREBOOK SECTION -->
         <div id="lorebook" class="tab-panel">
           <h3>Lorebook (Hierarchical Keyword Database)</h3>
-          <p class="module-subtitle">A modular library that injects specific world info only when relevant keywords appear.</p>
           <p>Create a rich world with people, places, objects, moods, and events that trigger based on keywords.</p>
 
           <div class="warning-banner">
@@ -389,7 +414,6 @@
         <!-- MEMORY TAB -->
         <div id="memory" class="tab-panel">
           <h3>Memory System</h3>
-          <p class="module-subtitle">Simulates long-term memory by tracking names, likes, and dislikes in the background.</p>
           <p>Automatically detect and remember the user's name, facts about them, likes, and dislikes.</p>
 
           <div class="form-group">
@@ -439,7 +463,6 @@
         <!-- PACING TAB -->
         <div id="pacing" class="tab-panel">
           <h3>Pacing System (Message Count Gates)</h3>
-          <p class="module-subtitle">Evolves the character's personality and story 'acts' based on the conversation length.</p>
           <p>Control story progression based on how many messages have been sent.</p>
 
           <div class="info-banner">
@@ -488,7 +511,6 @@
         <!-- TONE/STATE TAB -->
         <div id="tone" class="tab-panel">
           <h3>Tone/State Engine</h3>
-          <p class="module-subtitle">Dynamically switches the character's mood or state based on emotional triggers.</p>
           <p>Dynamically shift character personality based on keywords in user messages.</p>
 
           <div class="form-group">
@@ -530,7 +552,6 @@
         <!-- TIME & ENVIRONMENT TAB -->
         <div id="time" class="tab-panel">
           <h3>Time & Environment System</h3>
-          <p class="module-subtitle">Syncs the atmosphere and character behavior with real-world Day/Night cycles.</p>
           <p>Change character behavior and environment based on time of day.</p>
 
           <div class="warning-banner">
@@ -567,7 +588,6 @@
         <!-- AMBIENT EVENTS TAB -->
         <div id="ambient" class="tab-panel">
           <h3>Ambient Events (Random Flavor Text)</h3>
-          <p class="module-subtitle">Adds unpredictable ambient events and randomized story beats to the narrative.</p>
           <p>Add random environmental details to make the world feel alive.</p>
 
           <div class="warning-banner">
@@ -608,7 +628,6 @@
         <!-- RANDOM EVENTS TAB -->
         <div id="random" class="tab-panel">
           <h3>Random Events (Weighted Reactions)</h3>
-          <p class="module-subtitle">Adds unpredictable ambient events and randomized story beats to the narrative.</p>
           <p>Trigger random character reactions when user says specific phrases.</p>
 
           <h4>Event Triggers</h4>
