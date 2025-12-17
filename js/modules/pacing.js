@@ -6,10 +6,42 @@
 import { escapeForScript, updateTokenMeter } from '../utils.js';
 
 /**
+ * Flash validation feedback on elements.
+ * @param {HTMLElement} element - Element to flash
+ * @param {string} type - 'green' for success, 'red' for error
+ */
+function flashFeedback(element, type) {
+  element.classList.remove('flash-green', 'flash-red');
+  void element.offsetWidth;
+  element.classList.add('flash-' + type);
+  setTimeout(function() {
+    element.classList.remove('flash-' + type);
+  }, 600);
+}
+
+/**
  * Add a new pacing phase to the UI.
  */
 export function addPacingPhase() {
   var container = document.getElementById('pacingPhases');
+
+  // Check if the last entry is empty (validation)
+  var existingItems = container.querySelectorAll('.dynamic-item');
+  if (existingItems.length > 0) {
+    var lastItem = existingItems[existingItems.length - 1];
+    var inputs = lastItem.querySelectorAll('input');
+    var lastMin = inputs[0].value.trim();
+    var lastMax = inputs[1].value.trim();
+    var lastContent = lastItem.querySelector('textarea').value.trim();
+
+    if (!lastMin && !lastMax && !lastContent) {
+      flashFeedback(inputs[0], 'red');
+      flashFeedback(inputs[1], 'red');
+      flashFeedback(lastItem.querySelector('textarea'), 'red');
+      return;
+    }
+  }
+
   var item = document.createElement('div');
   item.className = 'dynamic-item';
   item.innerHTML = '<input type="number" placeholder="Min messages" min="1" style="width:120px;" /><input type="number" placeholder="Max messages" min="1" style="width:120px;" /><textarea placeholder="Scenario add-on for this phase..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
@@ -20,6 +52,7 @@ export function addPacingPhase() {
   });
 
   container.appendChild(item);
+  flashFeedback(item, 'green');
 }
 
 /**
@@ -27,6 +60,21 @@ export function addPacingPhase() {
  */
 export function addOneTimeEvent() {
   var container = document.getElementById('oneTimeEvents');
+
+  // Check if the last entry is empty (validation)
+  var existingItems = container.querySelectorAll('.dynamic-item');
+  if (existingItems.length > 0) {
+    var lastItem = existingItems[existingItems.length - 1];
+    var lastExact = lastItem.querySelector('input').value.trim();
+    var lastContent = lastItem.querySelector('textarea').value.trim();
+
+    if (!lastExact && !lastContent) {
+      flashFeedback(lastItem.querySelector('input'), 'red');
+      flashFeedback(lastItem.querySelector('textarea'), 'red');
+      return;
+    }
+  }
+
   var item = document.createElement('div');
   item.className = 'dynamic-item';
   item.innerHTML = '<input type="number" placeholder="Exact message #" min="1" style="width:120px;" /><textarea placeholder="One-time event content..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
@@ -37,6 +85,7 @@ export function addOneTimeEvent() {
   });
 
   container.appendChild(item);
+  flashFeedback(item, 'green');
 }
 
 /**

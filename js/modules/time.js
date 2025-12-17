@@ -6,10 +6,42 @@
 import { escapeForScript, generateHourInRangeFunction, updateTokenMeter } from '../utils.js';
 
 /**
+ * Flash validation feedback on elements.
+ * @param {HTMLElement} element - Element to flash
+ * @param {string} type - 'green' for success, 'red' for error
+ */
+function flashFeedback(element, type) {
+  element.classList.remove('flash-green', 'flash-red');
+  void element.offsetWidth;
+  element.classList.add('flash-' + type);
+  setTimeout(function() {
+    element.classList.remove('flash-' + type);
+  }, 600);
+}
+
+/**
  * Add a new time slot to the UI.
  */
 export function addTimeSlot() {
   var container = document.getElementById('timeSlots');
+
+  // Check if the last entry is empty (validation)
+  var existingItems = container.querySelectorAll('.dynamic-item');
+  if (existingItems.length > 0) {
+    var lastItem = existingItems[existingItems.length - 1];
+    var inputs = lastItem.querySelectorAll('input');
+    var lastStart = inputs[0].value.trim();
+    var lastEnd = inputs[1].value.trim();
+    var lastContent = lastItem.querySelector('textarea').value.trim();
+
+    if (!lastStart && !lastEnd && !lastContent) {
+      flashFeedback(inputs[0], 'red');
+      flashFeedback(inputs[1], 'red');
+      flashFeedback(lastItem.querySelector('textarea'), 'red');
+      return;
+    }
+  }
+
   var item = document.createElement('div');
   item.className = 'dynamic-item';
   item.innerHTML = '<input type="number" placeholder="Start hour (0-23)" min="0" max="23" style="width:120px;" /><input type="number" placeholder="End hour (0-23)" min="0" max="23" style="width:120px;" /><textarea placeholder="Scenario add-on for this time range..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
@@ -20,6 +52,7 @@ export function addTimeSlot() {
   });
 
   container.appendChild(item);
+  flashFeedback(item, 'green');
 }
 
 /**

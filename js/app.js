@@ -446,6 +446,48 @@ function scrollToSection(sectionId, clickedElement) {
 }
 
 // ============================================
+// SECTION VISIBILITY TOGGLE (View Controller)
+// ============================================
+
+/**
+ * Toggle the visibility of a module section based on its Control Panel switch.
+ * @param {string} moduleId - The module ID (e.g., 'lorebook', 'memory')
+ * @param {boolean} visible - Whether the section should be visible
+ */
+function toggleSectionVisibility(moduleId, visible) {
+  var section = document.getElementById(moduleId);
+  if (!section) return;
+
+  if (visible) {
+    section.classList.remove('section-hidden');
+    section.classList.add('section-visible');
+  } else {
+    section.classList.remove('section-visible');
+    section.classList.add('section-hidden');
+  }
+}
+
+/**
+ * Setup event listeners for all Control Panel toggle switches to show/hide sections.
+ */
+function setupSectionToggles() {
+  var modules = ['lorebook', 'memory', 'pacing', 'tone', 'time', 'ambient', 'random', 'combined', 'scoring'];
+
+  modules.forEach(function(moduleId) {
+    var toggle = document.getElementById('toggle-' + moduleId);
+    if (toggle) {
+      // Set initial visibility based on toggle state
+      toggleSectionVisibility(moduleId, toggle.checked);
+
+      // Listen for changes
+      toggle.addEventListener('change', function() {
+        toggleSectionVisibility(moduleId, this.checked);
+      });
+    }
+  });
+}
+
+// ============================================
 // SCROLL SPY - Auto-highlight sidebar on scroll
 // ============================================
 
@@ -613,6 +655,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Setup scroll spy for sidebar navigation
   setupScrollSpy();
+
+  // Setup section visibility toggles (View Controller)
+  setupSectionToggles();
 
   updateTokenMeter();
 });

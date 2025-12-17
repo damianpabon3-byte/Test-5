@@ -6,10 +6,41 @@
 import { escapeForScript, updateTokenMeter } from '../utils.js';
 
 /**
+ * Flash validation feedback on elements.
+ * @param {HTMLElement} element - Element to flash
+ * @param {string} type - 'green' for success, 'red' for error
+ */
+function flashFeedback(element, type) {
+  element.classList.remove('flash-green', 'flash-red');
+  // Trigger reflow to restart animation
+  void element.offsetWidth;
+  element.classList.add('flash-' + type);
+  setTimeout(function() {
+    element.classList.remove('flash-' + type);
+  }, 600);
+}
+
+/**
  * Add a new lore entry to the UI.
  */
 export function addLoreEntry() {
   var container = document.getElementById('loreEntries');
+
+  // Check if the last entry is empty (validation)
+  var existingItems = container.querySelectorAll('.dynamic-item');
+  if (existingItems.length > 0) {
+    var lastItem = existingItems[existingItems.length - 1];
+    var lastKeywords = lastItem.querySelector('input').value.trim();
+    var lastContent = lastItem.querySelector('textarea').value.trim();
+
+    if (!lastKeywords && !lastContent) {
+      // Flash empty fields red
+      flashFeedback(lastItem.querySelector('input'), 'red');
+      flashFeedback(lastItem.querySelector('textarea'), 'red');
+      return; // Don't add new entry
+    }
+  }
+
   var item = document.createElement('div');
   item.className = 'dynamic-item';
   item.innerHTML = '<select style="width:120px;"><option value="people">People</option><option value="places">Places</option><option value="objects">Objects</option><option value="moods">Moods</option><option value="events">Events</option></select><input type="text" placeholder="Keywords (comma-separated)" style="flex:1;" /><textarea placeholder="Lore content to inject..." style="flex:2;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
@@ -20,6 +51,9 @@ export function addLoreEntry() {
   });
 
   container.appendChild(item);
+
+  // Flash the newly added item green
+  flashFeedback(item, 'green');
 }
 
 /**
