@@ -456,7 +456,7 @@ body {
   font-family: var(--font-family-jura);
   font-size: var(--fontsize-body-sm);
   resize: vertical;
-  min-height: 80px;
+  min-height: 120px;
   transition: all 0.2s ease;
 }
 

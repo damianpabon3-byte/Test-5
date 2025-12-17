@@ -37,96 +37,6 @@ import {
 } from './tools/tester.js';
 
 // ============================================
-// PRESET LOADER
-// ============================================
-
-function loadPreset(presetName) {
-  if (presetName === 'slowburn') {
-    document.getElementById('memNamePhrase').value = 'my name is';
-    document.getElementById('memFactsKeywords').value = 'fact, i am, i work as';
-    document.getElementById('memLikesKeywords').value = 'i like, i love, favorite';
-    document.getElementById('memDislikesKeywords').value = 'i hate, i dislike';
-
-    document.getElementById('pacingPhases').innerHTML = '';
-    addPacingPhase();
-    var phases = document.querySelectorAll('#pacingPhases .dynamic-item');
-    phases[0].querySelector('input[placeholder="Min messages"]').value = '1';
-    phases[0].querySelector('input[placeholder="Max messages"]').value = '15';
-    phases[0].querySelector('textarea').value = '{{char}} is cautious and formal, still getting to know {{user}}.';
-
-    addPacingPhase();
-    phases = document.querySelectorAll('#pacingPhases .dynamic-item');
-    phases[1].querySelector('input[placeholder="Min messages"]').value = '16';
-    phases[1].querySelector('input[placeholder="Max messages"]').value = '40';
-    phases[1].querySelector('textarea').value = '{{char}} is warming up, showing more genuine interest.';
-
-    addPacingPhase();
-    phases = document.querySelectorAll('#pacingPhases .dynamic-item');
-    phases[2].querySelector('input[placeholder="Min messages"]').value = '41';
-    phases[2].querySelector('input[placeholder="Max messages"]').value = '999';
-    phases[2].querySelector('textarea').value = '{{char}} feels comfortable and open, deeply engaged.';
-
-    showToast('Slow-Burn Romance preset loaded! Check Memory and Pacing sections.', 'success');
-    document.getElementById('memory').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  } else if (presetName === 'rpg') {
-    document.getElementById('loreEntries').innerHTML = '';
-    addLoreEntry();
-    var entries = document.querySelectorAll('#loreEntries .dynamic-item');
-    entries[0].querySelector('select').value = 'people';
-    entries[0].querySelector('input[placeholder="Keywords (comma-separated)"]').value = 'blacksmith, forge';
-    entries[0].querySelector('textarea').value = 'The blacksmith Gareth runs the forge. He is gruff but fair, known for masterwork weapons.';
-
-    addLoreEntry();
-    entries = document.querySelectorAll('#loreEntries .dynamic-item');
-    entries[1].querySelector('select').value = 'places';
-    entries[1].querySelector('input[placeholder="Keywords (comma-separated)"]').value = 'tavern, inn';
-    entries[1].querySelector('textarea').value = 'The Rusty Tankard tavern is a cozy refuge, always filled with adventurers and rumors.';
-
-    addLoreEntry();
-    entries = document.querySelectorAll('#loreEntries .dynamic-item');
-    entries[2].querySelector('select').value = 'events';
-    entries[2].querySelector('input[placeholder="Keywords (comma-separated)"]').value = 'festival, celebration';
-    entries[2].querySelector('textarea').value = 'The annual Harvest Festival brings music, dancing, and competitions to the town square.';
-
-    showToast('RPG Adventure preset loaded! Check Lorebook section.', 'success');
-    document.getElementById('lorebook').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  } else if (presetName === 'ambient') {
-    document.getElementById('ambientEvents').innerHTML = '';
-    addAmbientEvent();
-    var events = document.querySelectorAll('#ambientEvents .dynamic-item');
-    events[0].querySelector('textarea').value = 'A gentle breeze rustles the curtains.';
-
-    addAmbientEvent();
-    events = document.querySelectorAll('#ambientEvents .dynamic-item');
-    events[1].querySelector('textarea').value = 'The faint sound of traffic hums in the distance.';
-
-    addAmbientEvent();
-    events = document.querySelectorAll('#ambientEvents .dynamic-item');
-    events[2].querySelector('textarea').value = 'Sunlight filters through the window, casting warm patterns.';
-
-    addAmbientEvent();
-    events = document.querySelectorAll('#ambientEvents .dynamic-item');
-    events[3].querySelector('textarea').value = 'The smell of fresh coffee lingers in the air.';
-
-    document.getElementById('ambientProbability').value = '15';
-
-    showToast('Ambient Flavor Pack preset loaded! Check Ambient Events section.', 'success');
-    document.getElementById('ambient').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  } else if (presetName === 'memory') {
-    document.getElementById('memNamePhrase').value = 'my name is';
-    document.getElementById('memFactsKeywords').value = 'fact, i am, i work, i study';
-    document.getElementById('memLikesKeywords').value = 'i like, i love, i enjoy';
-    document.getElementById('memDislikesKeywords').value = 'i hate, i dislike, i don\'t like';
-
-    showToast('Memory Starter preset loaded! Check Memory section.', 'success');
-    document.getElementById('memory').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-}
-
-// ============================================
 // RESET AND BATCH OPERATIONS
 // ============================================
 
@@ -431,7 +341,30 @@ function setupMobileMenu() {
 // SIDEBAR NAVIGATION HELPERS
 // ============================================
 
+// List of module IDs that can be toggled via Control Panel
+var TOGGLEABLE_MODULES = ['lorebook', 'memory', 'pacing', 'tone', 'time', 'ambient', 'random', 'combined', 'scoring'];
+
+/**
+ * Ensure a module section is visible before scrolling to it.
+ * If the module's toggle is OFF, turn it ON (one-way action).
+ * @param {string} sectionId - The section ID to ensure is visible
+ */
+function ensureSectionVisible(sectionId) {
+  // Check if this is a toggleable module
+  if (TOGGLEABLE_MODULES.indexOf(sectionId) !== -1) {
+    var toggle = document.getElementById('toggle-' + sectionId);
+    if (toggle && !toggle.checked) {
+      // Turn ON the toggle and trigger the change event
+      toggle.checked = true;
+      toggle.dispatchEvent(new Event('change'));
+    }
+  }
+}
+
 function scrollToSection(sectionId, clickedElement) {
+  // Ensure the section is visible before scrolling (Smart Navigation)
+  ensureSectionVisible(sectionId);
+
   var element = document.getElementById(sectionId);
   if (element) {
     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -553,14 +486,6 @@ function setupEventListeners() {
     });
   });
 
-  // Preset cards
-  document.querySelectorAll('.preset-card[data-preset]').forEach(function(card) {
-    card.addEventListener('click', function() {
-      var presetName = this.getAttribute('data-preset');
-      loadPreset(presetName);
-    });
-  });
-
   // Module control panel buttons
   document.getElementById('btnCopyAllModules')?.addEventListener('click', generateFinalCombinedScript);
   document.getElementById('btnGenerateAllModules')?.addEventListener('click', generateAllEnabledModules);
@@ -668,7 +593,6 @@ document.addEventListener('DOMContentLoaded', function () {
 // ============================================
 
 window.copyToClipboard = copyToClipboard;
-window.loadPreset = loadPreset;
 window.resetAllFields = resetAllFields;
 window.generateAllEnabledModules = generateAllEnabledModules;
 window.generateFinalCombinedScript = generateFinalCombinedScript;
