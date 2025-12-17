@@ -2081,50 +2081,42 @@ select.flash-red {
 }
 
 /* ============================================
- * SMART CARD LAYOUT (Finalized)
- * Vertical card layout for dynamic entries
+ * SMART CARD LAYOUT - Single Source of Truth
+ * Standardized card layout for dynamic modules
  * ============================================ */
 
-/* 1. Smart Card Entry Container */
+/* 1. The Container (.janitor-card-entry) */
 .janitor-card-entry {
-  position: relative;
+  box-sizing: border-box;
+  padding: 16px;
+  margin-bottom: 20px;
   background: #2f3136;
   border: 1px solid var(--scripts-border-color);
   border-radius: 8px;
-  
-  /* --- SYMMETRY & CHIN FIX --- */
-  /* Top: 1rem */
-  /* Right: 1rem */
-  /* Bottom: 0.75rem (Reduced to remove the "Tall Chin") */
-  /* Left: 1.25rem (Increased to nudge content RIGHT) */
-  padding: 1rem 1rem 0.75rem 1.25rem !important;
-  
-  margin-bottom: 1rem;
-  box-sizing: border-box;
+  position: relative;
 }
 
-/* CRITICAL: Kill the hidden margin on the last item to remove the chin completely */
-.janitor-card-entry > div:last-child,
-.janitor-card-entry textarea:last-child {
-    margin-bottom: 0 !important;
+/* 2. The "Chin" Killer - Remove bottom margin from last child */
+.janitor-card-entry > *:last-child {
+  margin-bottom: 0 !important;
 }
 
-/* 2. Card Header Row (Desktop Default) */
+/* 3. Card Header Row (Desktop Default - Flexbox) */
 .card-header-row {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end; /* Aligns button to bottom baseline */
-  gap: 12px;             /* Consistent gap between items */
-  margin-bottom: 1rem;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 16px;
   width: 100%;
 }
 
-/* 3. Meta Group (Inputs) */
+/* 4. Meta Group (Input Containers) */
 .meta-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  flex: 1;              /* Grow to fill space */
+  flex: 1;
   min-width: 120px;
 }
 
@@ -2138,11 +2130,11 @@ select.flash-red {
   margin-left: 2px;
 }
 
-/* 4. Compact Inputs */
+/* 5. Compact Inputs */
 .compact-input {
   width: 100%;
-  min-height: 42px;     /* Fixed comfortable height */
   height: 42px;
+  min-height: 42px;
   padding: 0 12px;
   background: rgba(255, 255, 255, 0.07);
   color: var(--white-100);
@@ -2153,13 +2145,19 @@ select.flash-red {
   transition: all 0.2s ease;
 }
 
-/* 5. Remove Button (Desktop) */
+.compact-input:focus {
+  border-color: #5865f2;
+  box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
+  outline: none;
+}
+
+/* 6. Remove Button (42px Perfect Square) */
 .btn-remove-icon {
-  width: 42px;          /* Match input height exactly */
+  width: 42px;
   height: 42px;
   min-width: 42px;
   padding: 0;
-  background: rgba(239, 68, 68, 0.15); /* Subtle red bg */
+  background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 6px;
@@ -2176,7 +2174,7 @@ select.flash-red {
   color: white;
 }
 
-/* 6. Card Body & Auto-Expand Content */
+/* 7. Card Body & Auto-Expand Content */
 .card-body-row {
   width: 100%;
 }
@@ -2204,133 +2202,65 @@ select.flash-red {
   font-family: var(--font-family-jura);
   font-size: 0.95rem;
   line-height: 1.6;
-  resize: none;
+  resize: vertical;
   overflow-y: auto;
 }
 
-/* ============================================
- * MOBILE OPTIMIZATIONS (CSS GRID)
- * ============================================ */
-@media (max-width: 768px) {
-  
-  /* 1. Reset container to ensure full width usage */
-  .janitor-card-entry {
-    padding: 1rem !important;
-  }
-
-  /* 2. SWITCH TO GRID LAYOUT */
-  .card-header-row {
-    display: grid !important;
-    /* Column 1: Auto-fill (Input), Column 2: Fixed 42px (Button) */
-    grid-template-columns: 1fr 42px !important; 
-    /* Row 1: Type + Button, Row 2: Keywords */
-    grid-template-rows: auto auto !important;
-    gap: 10px !important;
-    margin-bottom: 12px;
-    align-items: end !important;
-  }
-
-  /* 3. Assign Grid Positions */
-  
-  /* "Type" Input -> Top Left */
-  .meta-group:first-child {
-    grid-column: 1;
-    grid-row: 1;
-    width: 100%;
-  }
-
-  /* Remove Button -> Top Right */
-  .btn-remove-icon {
-    grid-column: 2;
-    grid-row: 1;
-    width: 42px !important;
-    height: 42px !important;
-    /* Ensure it aligns with the input next to it */
-    align-self: end; 
-    margin: 0;
-  }
-
-  /* "Keywords" Input -> Bottom Row (Full Width) */
-  .meta-group:nth-child(2) {
-    grid-column: 1 / -1; /* Span all columns */
-    grid-row: 2;
-    width: 100%;
-  }
-
-  /* 4. Visual Cleanup */
-  .meta-group label {
-    margin-bottom: 4px; /* Tighter labels */
-  }
+.auto-expand-content:focus {
+  border-color: #5865f2;
+  box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
+  outline: none;
 }
 
 /* ============================================
- * MOBILE OPTIMIZATIONS - CSS Grid Refactor
+ * MOBILE GRID LAYOUT (max-width: 768px)
  * ============================================ */
 @media (max-width: 768px) {
-  /* Smart Card Entry Container - Equal padding on all sides */
+  /* Card Container - Symmetric 16px padding */
   .janitor-card-entry {
-    padding: 1rem; /* Symmetric padding - no hacks needed */
-    position: relative;
+    padding: 16px;
   }
 
   /* Card Header Row - CSS Grid Layout */
   .card-header-row {
     display: grid;
-    grid-template-columns: 1fr auto; /* Input takes space, Button is fixed */
-    grid-template-rows: auto auto;   /* Two rows: Type+Button, Keywords */
-    gap: 8px; /* Tight gap fixes "too far apart" issue */
-    align-items: end; /* Aligns button with input baseline */
-    margin-bottom: 0.75rem;
-    /* REMOVED: padding-right hack - Grid handles spacing */
+    grid-template-columns: 1fr 42px;
+    gap: 10px;
+    align-items: end;
+    margin-bottom: 12px;
   }
 
-  /* Type Group - Row 1, Column 1 */
+  /* Type Input - Row 1, Column 1 */
   .meta-group:first-child {
     grid-column: 1;
     grid-row: 1;
-    min-width: 0; /* Allows shrinking in grid */
+    min-width: 0;
   }
 
-  /* Remove Button - Row 1, Column 2 */
+  /* Remove Button - Row 1, Column 2 (42px square aligned to bottom) */
   .btn-remove-icon {
     grid-column: 2;
     grid-row: 1;
-    align-self: end; /* Sits on baseline with Type input */
-    /* REMOVED: position: absolute - Grid handles placement */
-    position: static;
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--scripts-border-color);
-    color: var(--danger);
+    align-self: end;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
   }
 
-  .btn-remove-icon:hover {
-    background: var(--danger);
-    color: white;
-  }
-
-  /* Keywords Group - Row 2, Spans full width */
+  /* Keywords Input - Row 2, Full Width */
   .meta-group:nth-child(2) {
-    grid-column: 1 / -1; /* Spans from column 1 to last */
+    grid-column: 1 / -1;
     grid-row: 2;
     min-width: 0;
   }
 
-  /* Reduce label spacing for compactness */
+  /* Tighter label spacing */
   .meta-group label {
     margin-bottom: 4px;
   }
 
-  /* Inputs take full width */
+  /* Compact inputs full width */
   .compact-input {
     width: 100%;
-  }
-
-  /* Content textarea scroll fix */
-  .auto-expand-content {
-    max-height: 50vh;
-    overflow-y: auto;
   }
 }
