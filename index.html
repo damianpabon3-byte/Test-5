@@ -196,9 +196,12 @@
       <div id="modulepanel" class="card janitor-card">
         <h3>Module Control Panel</h3>
         <div class="debug-toggle">
-          <input type="checkbox" id="debugMode" />
-          <label for="debugMode">
-            <strong>Debug Mode:</strong> Add "(debug: module fired)" notes to scenario output for testing
+          <label class="janitor-switch-container">
+            <div class="janitor-switch md">
+              <input type="checkbox" class="janitor-switch-input" id="debugMode">
+              <span class="janitor-switch-slider"></span>
+            </div>
+            <span class="janitor-switch-label"><strong>Debug Mode:</strong> Add "(debug: module fired)" notes to scenario output for testing</span>
           </label>
         </div>
         <div class="warning-banner">
@@ -207,48 +210,93 @@
         <div id="moduleOrder" class="module-order">
           <div class="order-item" draggable="true" data-module="lorebook">
             <span class="drag-handle">⋮⋮</span>
-            <input type="checkbox" id="toggle-lorebook" checked />
-            <label for="toggle-lorebook">Lorebook</label>
+            <label class="janitor-switch-container">
+              <div class="janitor-switch sm">
+                <input type="checkbox" class="janitor-switch-input" id="toggle-lorebook" checked>
+                <span class="janitor-switch-slider"></span>
+              </div>
+              <span class="janitor-switch-label">Lorebook</span>
+            </label>
           </div>
           <div class="order-item" draggable="true" data-module="memory">
             <span class="drag-handle">⋮⋮</span>
-            <input type="checkbox" id="toggle-memory" checked />
-            <label for="toggle-memory">Memory System</label>
+            <label class="janitor-switch-container">
+              <div class="janitor-switch sm">
+                <input type="checkbox" class="janitor-switch-input" id="toggle-memory" checked>
+                <span class="janitor-switch-slider"></span>
+              </div>
+              <span class="janitor-switch-label">Memory System</span>
+            </label>
           </div>
           <div class="order-item" draggable="true" data-module="pacing">
             <span class="drag-handle">⋮⋮</span>
-            <input type="checkbox" id="toggle-pacing" checked />
-            <label for="toggle-pacing">Pacing</label>
+            <label class="janitor-switch-container">
+              <div class="janitor-switch sm">
+                <input type="checkbox" class="janitor-switch-input" id="toggle-pacing" checked>
+                <span class="janitor-switch-slider"></span>
+              </div>
+              <span class="janitor-switch-label">Pacing</span>
+            </label>
           </div>
           <div class="order-item" draggable="true" data-module="tone">
             <span class="drag-handle">⋮⋮</span>
-            <input type="checkbox" id="toggle-tone" checked />
-            <label for="toggle-tone">Tone/State Engine</label>
+            <label class="janitor-switch-container">
+              <div class="janitor-switch sm">
+                <input type="checkbox" class="janitor-switch-input" id="toggle-tone" checked>
+                <span class="janitor-switch-slider"></span>
+              </div>
+              <span class="janitor-switch-label">Tone/State Engine</span>
+            </label>
           </div>
           <div class="order-item" draggable="true" data-module="time">
             <span class="drag-handle">⋮⋮</span>
-            <input type="checkbox" id="toggle-time" />
-            <label for="toggle-time">Time & Environment</label>
+            <label class="janitor-switch-container">
+              <div class="janitor-switch sm">
+                <input type="checkbox" class="janitor-switch-input" id="toggle-time">
+                <span class="janitor-switch-slider"></span>
+              </div>
+              <span class="janitor-switch-label">Time & Environment</span>
+            </label>
           </div>
           <div class="order-item" draggable="true" data-module="ambient">
             <span class="drag-handle">⋮⋮</span>
-            <input type="checkbox" id="toggle-ambient" />
-            <label for="toggle-ambient">Ambient Events</label>
+            <label class="janitor-switch-container">
+              <div class="janitor-switch sm">
+                <input type="checkbox" class="janitor-switch-input" id="toggle-ambient">
+                <span class="janitor-switch-slider"></span>
+              </div>
+              <span class="janitor-switch-label">Ambient Events</span>
+            </label>
           </div>
           <div class="order-item" draggable="true" data-module="random">
             <span class="drag-handle">⋮⋮</span>
-            <input type="checkbox" id="toggle-random" />
-            <label for="toggle-random">Random Events</label>
+            <label class="janitor-switch-container">
+              <div class="janitor-switch sm">
+                <input type="checkbox" class="janitor-switch-input" id="toggle-random">
+                <span class="janitor-switch-slider"></span>
+              </div>
+              <span class="janitor-switch-label">Random Events</span>
+            </label>
           </div>
           <div class="order-item" draggable="true" data-module="combined">
             <span class="drag-handle">⋮⋮</span>
-            <input type="checkbox" id="toggle-combined" />
-            <label for="toggle-combined">Combined Conditions</label>
+            <label class="janitor-switch-container">
+              <div class="janitor-switch sm">
+                <input type="checkbox" class="janitor-switch-input" id="toggle-combined">
+                <span class="janitor-switch-slider"></span>
+              </div>
+              <span class="janitor-switch-label">Combined Conditions</span>
+            </label>
           </div>
           <div class="order-item" draggable="true" data-module="scoring">
             <span class="drag-handle">⋮⋮</span>
-            <input type="checkbox" id="toggle-scoring" />
-            <label for="toggle-scoring">Scoring Engine (Experimental)</label>
+            <label class="janitor-switch-container">
+              <div class="janitor-switch sm">
+                <input type="checkbox" class="janitor-switch-input" id="toggle-scoring">
+                <span class="janitor-switch-slider"></span>
+              </div>
+              <span class="janitor-switch-label">Scoring Engine (Experimental)</span>
+            </label>
           </div>
         </div>
         <button type="button" class="btn btn-success" id="btnCopyAllModules">
@@ -305,15 +353,23 @@
           </div>
 
           <div class="form-group">
-            <label>
-              <input type="checkbox" id="lorePadded" checked /> Use Padded Matching
+            <label class="janitor-switch-container">
+              <div class="janitor-switch sm">
+                <input type="checkbox" class="janitor-switch-input" id="lorePadded" checked>
+                <span class="janitor-switch-slider"></span>
+              </div>
+              <span class="janitor-switch-label">Use Padded Matching</span>
             </label>
             <div class="help-text">Prevents partial word matches (e.g., "cat" won't trigger on "catch"). Note: Works best with single-word keywords. Multi-word phrases may need exact spacing.</div>
           </div>
 
           <div class="form-group">
-            <label>
-              <input type="checkbox" id="loreBreakEarly" checked /> Break After First Match
+            <label class="janitor-switch-container">
+              <div class="janitor-switch sm">
+                <input type="checkbox" class="janitor-switch-input" id="loreBreakEarly" checked>
+                <span class="janitor-switch-slider"></span>
+              </div>
+              <span class="janitor-switch-label">Break After First Match</span>
             </label>
             <div class="help-text">Stop after the first lore entry triggers (saves tokens, prevents multiple entries firing at once)</div>
           </div>
@@ -458,8 +514,12 @@
           <p>Dynamically shift character personality based on keywords in user messages.</p>
 
           <div class="form-group">
-            <label>
-              <input type="checkbox" id="tonePadded" checked /> Use Padded Matching
+            <label class="janitor-switch-container">
+              <div class="janitor-switch sm">
+                <input type="checkbox" class="janitor-switch-input" id="tonePadded" checked>
+                <span class="janitor-switch-slider"></span>
+              </div>
+              <span class="janitor-switch-label">Use Padded Matching</span>
             </label>
             <div class="help-text">Prevents "angry" matching "danger". Note: Works best with single-word keywords.</div>
           </div>
@@ -719,8 +779,12 @@
           </div>
 
           <div class="form-group">
-            <label>
-              <input type="checkbox" id="testerBatchMode" /> Enable Batch Testing (Multiple Messages)
+            <label class="janitor-switch-container">
+              <div class="janitor-switch sm">
+                <input type="checkbox" class="janitor-switch-input" id="testerBatchMode">
+                <span class="janitor-switch-slider"></span>
+              </div>
+              <span class="janitor-switch-label">Enable Batch Testing (Multiple Messages)</span>
             </label>
             <div class="help-text">Test multiple messages against the same script and see individual results for each</div>
           </div>
