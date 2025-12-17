@@ -2091,7 +2091,7 @@ select.flash-red {
   background: #2f3136;
   border: 1px solid var(--scripts-border-color);
   border-radius: 8px;
-  padding: 1rem;
+  padding: 1rem; /* Equal padding on all sides for symmetry */
   margin-bottom: 1rem;
 }
 
@@ -2099,11 +2099,11 @@ select.flash-red {
   margin-bottom: 0;
 }
 
-/* Card Header Row - Metadata Fields */
+/* Card Header Row - Metadata Fields (Desktop: Flexbox) */
 .card-header-row {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: flex-end; /* Button sits on baseline with inputs */
   gap: 10px;
   margin-bottom: 1rem;
 }
@@ -2128,9 +2128,8 @@ select.flash-red {
 
 /* Compact Input for Header Fields */
 .compact-input {
-  height: 40px;
-  min-height: 40px;
-  max-height: 40px;
+  min-height: 40px; /* Minimum height, allows growth for text */
+  height: auto; /* Auto height prevents text clipping */
   padding: 0.5rem 0.75rem;
   background: var(--white-10, rgba(255, 255, 255, 0.1));
   color: var(--white-100, #fff);
@@ -2138,6 +2137,7 @@ select.flash-red {
   border-radius: 6px;
   font-family: var(--font-family-jura);
   font-size: var(--fontsize-body-sm);
+  line-height: 1.4; /* Ensures proper text vertical centering */
   transition: all 0.2s ease;
 }
 
@@ -2230,60 +2230,71 @@ select.flash-red {
 }
 
 /* ============================================
- * MOBILE OPTIMIZATIONS (Manual Fix - Compact)
+ * MOBILE OPTIMIZATIONS - CSS Grid Refactor
  * ============================================ */
 @media (max-width: 768px) {
+  /* Smart Card Entry Container - Equal padding on all sides */
   .janitor-card-entry {
-    /* 1. Fix "Off Center" Look: Even padding */
-    padding: 1rem !important; 
+    padding: 1rem; /* Symmetric padding - no hacks needed */
     position: relative;
   }
 
+  /* Card Header Row - CSS Grid Layout */
   .card-header-row {
-    flex-direction: column;
-    align-items: stretch;
-    /* REDUCED GAP: Controls space between "Type" and "Keywords" */
-    gap: 0.5rem; 
-    /* REDUCED MARGIN: Controls space between "Keywords" and "Lore Content" */
+    display: grid;
+    grid-template-columns: 1fr auto; /* Input takes space, Button is fixed */
+    grid-template-rows: auto auto;   /* Two rows: Type+Button, Keywords */
+    gap: 8px; /* Tight gap fixes "too far apart" issue */
+    align-items: end; /* Aligns button with input baseline */
     margin-bottom: 0.75rem;
-    
-    /* 2. Fix Overlap: Reserve space on the RIGHT for the button */
-    padding-right: 44px; 
+    /* REMOVED: padding-right hack - Grid handles spacing */
   }
 
-  .meta-group {
-    min-width: 100%;
-  }
-  
-  /* Reduce label bottom margin slightly on mobile for compactness */
-  .meta-group label {
-      margin-bottom: 4px;
+  /* Type Group - Row 1, Column 1 */
+  .meta-group:first-child {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0; /* Allows shrinking in grid */
   }
 
-  .compact-input {
-    width: 100%;
-  }
-
-  /* 3. Fix Button Position: Floating Top-Right Corner */
+  /* Remove Button - Row 1, Column 2 */
   .btn-remove-icon {
-    position: absolute;
-    top: 12px;       /* Align with top padding */
-    right: 12px;     /* Align with right padding */
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    background: rgba(255, 255, 255, 0.05); 
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end; /* Sits on baseline with Type input */
+    /* REMOVED: position: absolute - Grid handles placement */
+    position: static;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--scripts-border-color);
     color: var(--danger);
-    z-index: 10;
   }
-  
+
   .btn-remove-icon:hover {
     background: var(--danger);
     color: white;
   }
-  
-  /* 4. Scroll Fix */
+
+  /* Keywords Group - Row 2, Spans full width */
+  .meta-group:nth-child(2) {
+    grid-column: 1 / -1; /* Spans from column 1 to last */
+    grid-row: 2;
+    min-width: 0;
+  }
+
+  /* Reduce label spacing for compactness */
+  .meta-group label {
+    margin-bottom: 4px;
+  }
+
+  /* Inputs take full width */
+  .compact-input {
+    width: 100%;
+  }
+
+  /* Content textarea scroll fix */
   .auto-expand-content {
     max-height: 50vh;
     overflow-y: auto;
