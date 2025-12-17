@@ -3,52 +3,64 @@
 // Hierarchical Keyword Database
 // ============================================
 
-import { escapeForScript, updateTokenMeter } from '../utils.js';
-
-/**
- * Flash validation feedback on elements.
- * @param {HTMLElement} element - Element to flash
- * @param {string} type - 'green' for success, 'red' for error
- */
-function flashFeedback(element, type) {
-  element.classList.remove('flash-green', 'flash-red');
-  // Trigger reflow to restart animation
-  void element.offsetWidth;
-  element.classList.add('flash-' + type);
-  setTimeout(function() {
-    element.classList.remove('flash-' + type);
-  }, 600);
-}
+import { escapeForScript, updateTokenMeter, flashFeedback, setupAutoExpand } from '../utils.js';
 
 /**
  * Add a new lore entry to the UI.
+ * Smart Card Layout:
+ * - Header: People/Type (Select), Keywords (Input)
+ * - Body: Lore Content (Auto-expand Textarea)
  */
 export function addLoreEntry() {
   var container = document.getElementById('loreEntries');
 
   // Check if the last entry is empty (validation)
-  var existingItems = container.querySelectorAll('.dynamic-item');
+  var existingItems = container.querySelectorAll('.janitor-card-entry');
   if (existingItems.length > 0) {
     var lastItem = existingItems[existingItems.length - 1];
-    var lastKeywords = lastItem.querySelector('input').value.trim();
+    var lastKeywords = lastItem.querySelector('input[type="text"]').value.trim();
     var lastContent = lastItem.querySelector('textarea').value.trim();
 
     if (!lastKeywords && !lastContent) {
       // Flash empty fields red
-      flashFeedback(lastItem.querySelector('input'), 'red');
+      flashFeedback(lastItem.querySelector('input[type="text"]'), 'red');
       flashFeedback(lastItem.querySelector('textarea'), 'red');
       return; // Don't add new entry
     }
   }
 
   var item = document.createElement('div');
-  item.className = 'dynamic-item';
-  item.innerHTML = '<select style="width:120px;"><option value="people">People</option><option value="places">Places</option><option value="objects">Objects</option><option value="moods">Moods</option><option value="events">Events</option></select><input type="text" placeholder="Keywords (comma-separated)" style="flex:1;" /><textarea placeholder="Lore content to inject..." style="flex:2;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
+  item.className = 'janitor-card-entry';
+  item.innerHTML =
+    '<div class="card-header-row">' +
+      '<div class="meta-group" style="flex:0 0 120px;">' +
+        '<label>Type</label>' +
+        '<select class="janitor-input compact-input">' +
+          '<option value="people">People</option>' +
+          '<option value="places">Places</option>' +
+          '<option value="objects">Objects</option>' +
+          '<option value="moods">Moods</option>' +
+          '<option value="events">Events</option>' +
+        '</select>' +
+      '</div>' +
+      '<div class="meta-group">' +
+        '<label>Keywords</label>' +
+        '<input type="text" class="janitor-input compact-input" placeholder="Keywords (comma-separated)">' +
+      '</div>' +
+      '<button type="button" class="btn-remove-icon" title="Remove Entry">✕</button>' +
+    '</div>' +
+    '<div class="card-body-row">' +
+      '<label>Lore Content</label>' +
+      '<textarea class="janitor-input auto-expand-content" placeholder="Lore content to inject when keywords match..."></textarea>' +
+    '</div>';
 
   // Add event listener for remove button
-  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
-    this.parentElement.remove();
+  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
+    this.closest('.janitor-card-entry').remove();
   });
+
+  // Setup auto-expand for the textarea
+  setupAutoExpand(item.querySelector('.auto-expand-content'));
 
   container.appendChild(item);
 
@@ -66,7 +78,7 @@ export function buildLorebookScript(standalone) {
   var breakEarly = document.getElementById('loreBreakEarly').checked;
   var debugMode = document.getElementById('debugMode').checked;
 
-  var entries = document.querySelectorAll('#loreEntries .dynamic-item');
+  var entries = document.querySelectorAll('#loreEntries .janitor-card-entry');
   var lorebook = {
     people: [],
     places: [],
@@ -77,7 +89,7 @@ export function buildLorebookScript(standalone) {
 
   entries.forEach(function(entry) {
     var category = entry.querySelector('select').value;
-    var keywords = entry.querySelector('input').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
+    var keywords = entry.querySelector('input[type="text"]').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
     var content = entry.querySelector('textarea').value.trim();
 
     if (keywords.length > 0 && content) {

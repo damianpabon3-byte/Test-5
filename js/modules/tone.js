@@ -3,50 +3,53 @@
 // Dynamic personality shifts based on keywords
 // ============================================
 
-import { escapeForScript, updateTokenMeter } from '../utils.js';
-
-/**
- * Flash validation feedback on elements.
- * @param {HTMLElement} element - Element to flash
- * @param {string} type - 'green' for success, 'red' for error
- */
-function flashFeedback(element, type) {
-  element.classList.remove('flash-green', 'flash-red');
-  void element.offsetWidth;
-  element.classList.add('flash-' + type);
-  setTimeout(function() {
-    element.classList.remove('flash-' + type);
-  }, 600);
-}
+import { escapeForScript, updateTokenMeter, flashFeedback, setupAutoExpand } from '../utils.js';
 
 /**
  * Add a new tone trigger to the UI.
+ * Smart Card Layout:
+ * - Header: Keywords
+ * - Body: Personality Add-on (Auto-expand Textarea)
  */
 export function addToneTrigger() {
   var container = document.getElementById('toneTriggers');
 
   // Check if the last entry is empty (validation)
-  var existingItems = container.querySelectorAll('.dynamic-item');
+  var existingItems = container.querySelectorAll('.janitor-card-entry');
   if (existingItems.length > 0) {
     var lastItem = existingItems[existingItems.length - 1];
-    var lastKeywords = lastItem.querySelector('input').value.trim();
+    var lastKeywords = lastItem.querySelector('input[type="text"]').value.trim();
     var lastContent = lastItem.querySelector('textarea').value.trim();
 
     if (!lastKeywords && !lastContent) {
-      flashFeedback(lastItem.querySelector('input'), 'red');
+      flashFeedback(lastItem.querySelector('input[type="text"]'), 'red');
       flashFeedback(lastItem.querySelector('textarea'), 'red');
       return;
     }
   }
 
   var item = document.createElement('div');
-  item.className = 'dynamic-item';
-  item.innerHTML = '<input type="text" placeholder="Keywords (comma-separated)" style="flex:1;" /><textarea placeholder="Personality add-on when triggered..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
+  item.className = 'janitor-card-entry';
+  item.innerHTML =
+    '<div class="card-header-row">' +
+      '<div class="meta-group">' +
+        '<label>Keywords</label>' +
+        '<input type="text" class="janitor-input compact-input" placeholder="Keywords (comma-separated)">' +
+      '</div>' +
+      '<button type="button" class="btn-remove-icon" title="Remove Entry">✕</button>' +
+    '</div>' +
+    '<div class="card-body-row">' +
+      '<label>Personality Add-on</label>' +
+      '<textarea class="janitor-input auto-expand-content" placeholder="Personality add-on to inject when keywords match..."></textarea>' +
+    '</div>';
 
   // Add event listener for remove button
-  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
-    this.parentElement.remove();
+  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
+    this.closest('.janitor-card-entry').remove();
   });
+
+  // Setup auto-expand for the textarea
+  setupAutoExpand(item.querySelector('.auto-expand-content'));
 
   container.appendChild(item);
   flashFeedback(item, 'green');
@@ -60,7 +63,7 @@ export function addToneTrigger() {
 export function buildToneScript(standalone) {
   var padded = document.getElementById('tonePadded').checked;
   var debugMode = document.getElementById('debugMode').checked;
-  var triggers = document.querySelectorAll('#toneTriggers .dynamic-item');
+  var triggers = document.querySelectorAll('#toneTriggers .janitor-card-entry');
 
   var script = "// ============================================\n";
   script += "// MODULE: TONE/STATE ENGINE\n";
@@ -69,7 +72,7 @@ export function buildToneScript(standalone) {
   // Check for any valid configuration
   var hasTriggers = false;
   triggers.forEach(function(trigger) {
-    var keywords = trigger.querySelector('input').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
+    var keywords = trigger.querySelector('input[type="text"]').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
     var content = trigger.querySelector('textarea').value.trim();
     if (keywords.length > 0 && content) {
       hasTriggers = true;
@@ -105,7 +108,7 @@ export function buildToneScript(standalone) {
   script += "var toneSet = false;\n\n";
 
   triggers.forEach(function(trigger) {
-    var keywords = trigger.querySelector('input').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
+    var keywords = trigger.querySelector('input[type="text"]').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
     var content = trigger.querySelector('textarea').value.trim();
 
     if (keywords.length > 0 && content) {

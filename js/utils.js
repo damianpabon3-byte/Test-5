@@ -302,3 +302,41 @@ export function switchTab(e, tabName) {
   e.target.classList.add('active');
   document.getElementById(tabName).classList.add('active');
 }
+
+// ============================================
+// SMART CARD HELPERS
+// ============================================
+
+/**
+ * Flash validation feedback on elements.
+ * @param {HTMLElement} element - Element to flash
+ * @param {string} type - 'green' for success, 'red' for error
+ */
+export function flashFeedback(element, type) {
+  element.classList.remove('flash-green', 'flash-red');
+  // Trigger reflow to restart animation
+  void element.offsetWidth;
+  element.classList.add('flash-' + type);
+  setTimeout(function() {
+    element.classList.remove('flash-' + type);
+  }, 600);
+}
+
+/**
+ * Setup auto-expand functionality for a textarea.
+ * Sets height to auto then to scrollHeight for infinite vertical expansion.
+ * @param {HTMLTextAreaElement} textarea - The textarea element to setup
+ */
+export function setupAutoExpand(textarea) {
+  if (!textarea) return;
+
+  // Initial sizing
+  textarea.style.height = 'auto';
+  textarea.style.height = Math.max(120, textarea.scrollHeight) + 'px';
+
+  // Add input event listener for dynamic expansion
+  textarea.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.max(120, this.scrollHeight) + 'px';
+  });
+}
