@@ -3,50 +3,61 @@
 // Sentiment Analysis (Experimental)
 // ============================================
 
-import { escapeForScript, updateTokenMeter } from '../utils.js';
-
-/**
- * Flash validation feedback on elements.
- * @param {HTMLElement} element - Element to flash
- * @param {string} type - 'green' for success, 'red' for error
- */
-function flashFeedback(element, type) {
-  element.classList.remove('flash-green', 'flash-red');
-  void element.offsetWidth;
-  element.classList.add('flash-' + type);
-  setTimeout(function() {
-    element.classList.remove('flash-' + type);
-  }, 600);
-}
+import { escapeForScript, updateTokenMeter, flashFeedback, setupAutoExpand } from '../utils.js';
 
 /**
  * Add a new score threshold to the UI.
+ * Smart Card Layout:
+ * - Header: Operator (Select), Value
+ * - Body: Response (Auto-expand Textarea)
  */
 export function addScoreThreshold() {
   var container = document.getElementById('scoreThresholds');
 
   // Check if the last entry is empty (validation)
-  var existingItems = container.querySelectorAll('.dynamic-item');
+  var existingItems = container.querySelectorAll('.janitor-card-entry');
   if (existingItems.length > 0) {
     var lastItem = existingItems[existingItems.length - 1];
-    var lastValue = lastItem.querySelector('input').value.trim();
+    var lastValue = lastItem.querySelector('input[type="number"]').value.trim();
     var lastResponse = lastItem.querySelector('textarea').value.trim();
 
     if (!lastValue && !lastResponse) {
-      flashFeedback(lastItem.querySelector('input'), 'red');
+      flashFeedback(lastItem.querySelector('input[type="number"]'), 'red');
       flashFeedback(lastItem.querySelector('textarea'), 'red');
       return;
     }
   }
 
   var item = document.createElement('div');
-  item.className = 'dynamic-item';
-  item.innerHTML = '<select style="width:80px;"><option value=">=">>=</option><option value="<="><=</option><option value="==">=</option></select><input type="number" placeholder="Value" style="width:80px;" /><textarea placeholder="Response when score meets this condition..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
+  item.className = 'janitor-card-entry';
+  item.innerHTML =
+    '<div class="card-header-row">' +
+      '<div class="meta-group" style="flex:0 0 80px;">' +
+        '<label>Operator</label>' +
+        '<select class="janitor-input compact-input">' +
+          '<option value=">=">>=</option>' +
+          '<option value="<="><=</option>' +
+          '<option value="==">=</option>' +
+        '</select>' +
+      '</div>' +
+      '<div class="meta-group" style="flex:0 0 80px;">' +
+        '<label>Value</label>' +
+        '<input type="number" class="janitor-input compact-input" placeholder="Score">' +
+      '</div>' +
+      '<button type="button" class="btn-remove-icon" title="Remove Entry">✕</button>' +
+    '</div>' +
+    '<div class="card-body-row">' +
+      '<label>Response</label>' +
+      '<textarea class="janitor-input auto-expand-content" placeholder="Response to inject when score meets this condition..."></textarea>' +
+    '</div>';
 
   // Add event listener for remove button
-  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
-    this.parentElement.remove();
+  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
+    this.closest('.janitor-card-entry').remove();
   });
+
+  // Setup auto-expand for the textarea
+  setupAutoExpand(item.querySelector('.auto-expand-content'));
 
   container.appendChild(item);
   flashFeedback(item, 'green');
@@ -61,7 +72,7 @@ export function buildScoringScript(standalone) {
   var mode = document.getElementById('scoringMode').value;
   var positive = document.getElementById('scoringPositive').value.split(',').map(function(k) { return escapeForScript(k.trim().toLowerCase()); }).filter(Boolean);
   var negative = document.getElementById('scoringNegative').value.split(',').map(function(k) { return escapeForScript(k.trim().toLowerCase()); }).filter(Boolean);
-  var thresholds = document.querySelectorAll('#scoreThresholds .dynamic-item');
+  var thresholds = document.querySelectorAll('#scoreThresholds .janitor-card-entry');
   var debugMode = document.getElementById('debugMode').checked;
 
   var script = "// ============================================\n";
@@ -71,7 +82,7 @@ export function buildScoringScript(standalone) {
   // Check for any valid configuration
   var hasThresholds = false;
   thresholds.forEach(function(threshold) {
-    var value = parseInt(threshold.querySelector('input').value, 10);
+    var value = parseInt(threshold.querySelector('input[type="number"]').value, 10);
     var response = threshold.querySelector('textarea').value.trim();
     if (!isNaN(value) && response) {
       hasThresholds = true;
@@ -146,7 +157,7 @@ export function buildScoringScript(standalone) {
   if (hasThresholds) {
     thresholds.forEach(function(threshold) {
       var operator = threshold.querySelector('select').value;
-      var value = parseInt(threshold.querySelector('input').value, 10);
+      var value = parseInt(threshold.querySelector('input[type="number"]').value, 10);
       var response = threshold.querySelector('textarea').value.trim();
 
       if (!isNaN(value) && response) {
