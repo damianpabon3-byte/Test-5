@@ -3,7 +3,7 @@
 // Weighted Reactions
 // ============================================
 
-import { escapeForScript, updateTokenMeter } from '../utils.js';
+import { escapeForScript, updateTokenMeter, initAutoExpand } from '../utils.js';
 
 /**
  * Add a new random event to the UI.
@@ -33,6 +33,9 @@ export function addRandomEvent() {
   });
 
   container.appendChild(item);
+
+  // Initialize auto-expand on the textarea
+  initAutoExpand(item.querySelector('.card-body textarea'));
 }
 
 /**

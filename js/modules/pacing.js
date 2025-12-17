@@ -3,7 +3,7 @@
 // Message Count Gates
 // ============================================
 
-import { escapeForScript, updateTokenMeter } from '../utils.js';
+import { escapeForScript, updateTokenMeter, initAutoExpand } from '../utils.js';
 
 /**
  * Add a new pacing phase to the UI.
@@ -37,6 +37,9 @@ export function addPacingPhase() {
   });
 
   container.appendChild(item);
+
+  // Initialize auto-expand on the textarea
+  initAutoExpand(item.querySelector('.card-body textarea'));
 }
 
 /**
@@ -67,6 +70,9 @@ export function addOneTimeEvent() {
   });
 
   container.appendChild(item);
+
+  // Initialize auto-expand on the textarea
+  initAutoExpand(item.querySelector('.card-body textarea'));
 }
 
 /**

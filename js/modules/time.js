@@ -3,7 +3,7 @@
 // Hour-based behavior changes
 // ============================================
 
-import { escapeForScript, generateHourInRangeFunction, updateTokenMeter } from '../utils.js';
+import { escapeForScript, generateHourInRangeFunction, updateTokenMeter, initAutoExpand } from '../utils.js';
 
 /**
  * Add a new time slot to the UI.
@@ -37,6 +37,9 @@ export function addTimeSlot() {
   });
 
   container.appendChild(item);
+
+  // Initialize auto-expand on the textarea
+  initAutoExpand(item.querySelector('.card-body textarea'));
 }
 
 /**

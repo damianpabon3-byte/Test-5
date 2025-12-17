@@ -3,7 +3,7 @@
 // Random Flavor Text
 // ============================================
 
-import { updateTokenMeter } from '../utils.js';
+import { updateTokenMeter, initAutoExpand } from '../utils.js';
 
 /**
  * Add a new ambient event to the UI.
@@ -32,6 +32,9 @@ export function addAmbientEvent() {
   });
 
   container.appendChild(item);
+
+  // Initialize auto-expand on the textarea
+  initAutoExpand(item.querySelector('.card-body textarea'));
 }
 
 /**
