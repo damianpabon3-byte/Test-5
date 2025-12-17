@@ -3,113 +3,40 @@
 // Message Count Gates
 // ============================================
 
-import { escapeForScript, updateTokenMeter, flashFeedback, setupAutoExpand } from '../utils.js';
+import { escapeForScript, updateTokenMeter } from '../utils.js';
 
 /**
  * Add a new pacing phase to the UI.
- * Smart Card Layout:
- * - Header: Min Messages, Max Messages
- * - Body: Scenario Add-on (Auto-expand Textarea)
  */
 export function addPacingPhase() {
   var container = document.getElementById('pacingPhases');
-
-  // Check if the last entry is empty (validation)
-  var existingItems = container.querySelectorAll('.janitor-card-entry');
-  if (existingItems.length > 0) {
-    var lastItem = existingItems[existingItems.length - 1];
-    var inputs = lastItem.querySelectorAll('input[type="number"]');
-    var lastMin = inputs[0].value.trim();
-    var lastMax = inputs[1].value.trim();
-    var lastContent = lastItem.querySelector('textarea').value.trim();
-
-    if (!lastMin && !lastMax && !lastContent) {
-      flashFeedback(inputs[0], 'red');
-      flashFeedback(inputs[1], 'red');
-      flashFeedback(lastItem.querySelector('textarea'), 'red');
-      return;
-    }
-  }
-
   var item = document.createElement('div');
-  item.className = 'janitor-card-entry';
-  item.innerHTML =
-    '<div class="card-header-row">' +
-      '<div class="meta-group" style="flex:0 0 120px;">' +
-        '<label>Min Messages</label>' +
-        '<input type="number" class="janitor-input compact-input" placeholder="Min" min="1">' +
-      '</div>' +
-      '<div class="meta-group" style="flex:0 0 120px;">' +
-        '<label>Max Messages</label>' +
-        '<input type="number" class="janitor-input compact-input" placeholder="Max" min="1">' +
-      '</div>' +
-      '<button type="button" class="btn-remove-icon" title="Remove Entry">✕</button>' +
-    '</div>' +
-    '<div class="card-body-row">' +
-      '<label>Scenario Add-on</label>' +
-      '<textarea class="janitor-input auto-expand-content" placeholder="Scenario add-on for this message count phase..."></textarea>' +
-    '</div>';
+  item.className = 'dynamic-item';
+  item.innerHTML = '<input type="number" placeholder="Min messages" min="1" style="width:120px;" /><input type="number" placeholder="Max messages" min="1" style="width:120px;" /><textarea placeholder="Scenario add-on for this phase..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
 
   // Add event listener for remove button
-  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
-    this.closest('.janitor-card-entry').remove();
+  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
+    this.parentElement.remove();
   });
 
-  // Setup auto-expand for the textarea
-  setupAutoExpand(item.querySelector('.auto-expand-content'));
-
   container.appendChild(item);
-  flashFeedback(item, 'green');
 }
 
 /**
  * Add a new one-time event to the UI.
- * Smart Card Layout:
- * - Header: Exact Message #
- * - Body: Event Content (Auto-expand Textarea)
  */
 export function addOneTimeEvent() {
   var container = document.getElementById('oneTimeEvents');
-
-  // Check if the last entry is empty (validation)
-  var existingItems = container.querySelectorAll('.janitor-card-entry');
-  if (existingItems.length > 0) {
-    var lastItem = existingItems[existingItems.length - 1];
-    var lastExact = lastItem.querySelector('input[type="number"]').value.trim();
-    var lastContent = lastItem.querySelector('textarea').value.trim();
-
-    if (!lastExact && !lastContent) {
-      flashFeedback(lastItem.querySelector('input[type="number"]'), 'red');
-      flashFeedback(lastItem.querySelector('textarea'), 'red');
-      return;
-    }
-  }
-
   var item = document.createElement('div');
-  item.className = 'janitor-card-entry';
-  item.innerHTML =
-    '<div class="card-header-row">' +
-      '<div class="meta-group" style="flex:0 0 140px;">' +
-        '<label>Exact Message #</label>' +
-        '<input type="number" class="janitor-input compact-input" placeholder="Message #" min="1">' +
-      '</div>' +
-      '<button type="button" class="btn-remove-icon" title="Remove Entry">✕</button>' +
-    '</div>' +
-    '<div class="card-body-row">' +
-      '<label>Event Content</label>' +
-      '<textarea class="janitor-input auto-expand-content" placeholder="One-time event content to inject at this message number..."></textarea>' +
-    '</div>';
+  item.className = 'dynamic-item';
+  item.innerHTML = '<input type="number" placeholder="Exact message #" min="1" style="width:120px;" /><textarea placeholder="One-time event content..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
 
   // Add event listener for remove button
-  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
-    this.closest('.janitor-card-entry').remove();
+  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
+    this.parentElement.remove();
   });
 
-  // Setup auto-expand for the textarea
-  setupAutoExpand(item.querySelector('.auto-expand-content'));
-
   container.appendChild(item);
-  flashFeedback(item, 'green');
 }
 
 /**
@@ -118,8 +45,8 @@ export function addOneTimeEvent() {
  * @returns {string} - The generated script
  */
 export function buildPacingScript(standalone) {
-  var phases = document.querySelectorAll('#pacingPhases .janitor-card-entry');
-  var events = document.querySelectorAll('#oneTimeEvents .janitor-card-entry');
+  var phases = document.querySelectorAll('#pacingPhases .dynamic-item');
+  var events = document.querySelectorAll('#oneTimeEvents .dynamic-item');
   var debugMode = document.getElementById('debugMode').checked;
 
   var script = "// ============================================\n";
@@ -131,9 +58,8 @@ export function buildPacingScript(standalone) {
   var hasEvents = false;
 
   phases.forEach(function(phase) {
-    var inputs = phase.querySelectorAll('input[type="number"]');
-    var min = parseInt(inputs[0].value, 10);
-    var max = parseInt(inputs[1].value, 10);
+    var min = parseInt(phase.querySelectorAll('input')[0].value, 10);
+    var max = parseInt(phase.querySelectorAll('input')[1].value, 10);
     var content = phase.querySelector('textarea').value.trim();
     if (!isNaN(min) && !isNaN(max) && content) {
       hasPhases = true;
@@ -141,7 +67,7 @@ export function buildPacingScript(standalone) {
   });
 
   events.forEach(function(event) {
-    var exact = parseInt(event.querySelector('input[type="number"]').value, 10);
+    var exact = parseInt(event.querySelector('input').value, 10);
     var content = event.querySelector('textarea').value.trim();
     if (!isNaN(exact) && content) {
       hasEvents = true;
@@ -177,9 +103,8 @@ export function buildPacingScript(standalone) {
   if (hasPhases) {
     script += "// Message Count Phases\n";
     phases.forEach(function(phase) {
-      var inputs = phase.querySelectorAll('input[type="number"]');
-      var min = parseInt(inputs[0].value, 10);
-      var max = parseInt(inputs[1].value, 10);
+      var min = parseInt(phase.querySelectorAll('input')[0].value, 10);
+      var max = parseInt(phase.querySelectorAll('input')[1].value, 10);
       var content = phase.querySelector('textarea').value.trim();
 
       if (!isNaN(min) && !isNaN(max) && content) {
@@ -196,7 +121,7 @@ export function buildPacingScript(standalone) {
   if (hasEvents) {
     script += "// One-Time Events\n";
     events.forEach(function(event) {
-      var exact = parseInt(event.querySelector('input[type="number"]').value, 10);
+      var exact = parseInt(event.querySelector('input').value, 10);
       var content = event.querySelector('textarea').value.trim();
 
       if (!isNaN(exact) && content) {

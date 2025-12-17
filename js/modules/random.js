@@ -3,56 +3,23 @@
 // Weighted Reactions
 // ============================================
 
-import { escapeForScript, updateTokenMeter, flashFeedback, setupAutoExpand } from '../utils.js';
+import { escapeForScript, updateTokenMeter } from '../utils.js';
 
 /**
  * Add a new random event to the UI.
- * Smart Card Layout:
- * - Header: Trigger Phrase
- * - Body: Responses (pipe-separated, Auto-expand Textarea)
  */
 export function addRandomEvent() {
   var container = document.getElementById('randomEvents');
-
-  // Check if the last entry is empty (validation)
-  var existingItems = container.querySelectorAll('.janitor-card-entry');
-  if (existingItems.length > 0) {
-    var lastItem = existingItems[existingItems.length - 1];
-    var lastTrigger = lastItem.querySelector('input[type="text"]').value.trim();
-    var lastResponses = lastItem.querySelector('textarea').value.trim();
-
-    if (!lastTrigger && !lastResponses) {
-      flashFeedback(lastItem.querySelector('input[type="text"]'), 'red');
-      flashFeedback(lastItem.querySelector('textarea'), 'red');
-      return;
-    }
-  }
-
   var item = document.createElement('div');
-  item.className = 'janitor-card-entry';
-  item.innerHTML =
-    '<div class="card-header-row">' +
-      '<div class="meta-group">' +
-        '<label>Trigger Phrase</label>' +
-        '<input type="text" class="janitor-input compact-input" placeholder="Trigger phrase to detect">' +
-      '</div>' +
-      '<button type="button" class="btn-remove-icon" title="Remove Entry">✕</button>' +
-    '</div>' +
-    '<div class="card-body-row">' +
-      '<label>Responses (pipe-separated)</label>' +
-      '<textarea class="janitor-input auto-expand-content" placeholder="option1|option2|option3 - one will be randomly selected"></textarea>' +
-    '</div>';
+  item.className = 'dynamic-item';
+  item.innerHTML = '<input type="text" placeholder="Trigger phrase" style="flex:1;" /><textarea placeholder="Responses (pipe-separated: option1|option2|option3)" style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
 
   // Add event listener for remove button
-  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
-    this.closest('.janitor-card-entry').remove();
+  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
+    this.parentElement.remove();
   });
 
-  // Setup auto-expand for the textarea
-  setupAutoExpand(item.querySelector('.auto-expand-content'));
-
   container.appendChild(item);
-  flashFeedback(item, 'green');
 }
 
 /**
@@ -61,7 +28,7 @@ export function addRandomEvent() {
  * @returns {string} - The generated script
  */
 export function buildRandomScript(standalone) {
-  var events = document.querySelectorAll('#randomEvents .janitor-card-entry');
+  var events = document.querySelectorAll('#randomEvents .dynamic-item');
   var debugMode = document.getElementById('debugMode').checked;
 
   var script = "// ============================================\n";
@@ -71,7 +38,7 @@ export function buildRandomScript(standalone) {
   // Check for any valid configuration
   var hasEvents = false;
   events.forEach(function(event) {
-    var trigger = event.querySelector('input[type="text"]').value.trim().toLowerCase();
+    var trigger = event.querySelector('input').value.trim().toLowerCase();
     var responses = event.querySelector('textarea').value.split('|').map(function(r) { return r.trim(); }).filter(Boolean);
     if (trigger && responses.length > 0) {
       hasEvents = true;
@@ -101,7 +68,7 @@ export function buildRandomScript(standalone) {
   script += "var randomFired = false;\n\n";
 
   events.forEach(function(event) {
-    var trigger = event.querySelector('input[type="text"]').value.trim().toLowerCase();
+    var trigger = event.querySelector('input').value.trim().toLowerCase();
     var responses = event.querySelector('textarea').value.split('|').map(function(r) { return r.trim(); }).filter(Boolean);
 
     if (trigger && responses.length > 0) {

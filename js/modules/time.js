@@ -3,63 +3,23 @@
 // Hour-based behavior changes
 // ============================================
 
-import { escapeForScript, generateHourInRangeFunction, updateTokenMeter, flashFeedback, setupAutoExpand } from '../utils.js';
+import { escapeForScript, generateHourInRangeFunction, updateTokenMeter } from '../utils.js';
 
 /**
  * Add a new time slot to the UI.
- * Smart Card Layout:
- * - Header: Start Hour, End Hour
- * - Body: Scenario Add-on (Auto-expand Textarea)
  */
 export function addTimeSlot() {
   var container = document.getElementById('timeSlots');
-
-  // Check if the last entry is empty (validation)
-  var existingItems = container.querySelectorAll('.janitor-card-entry');
-  if (existingItems.length > 0) {
-    var lastItem = existingItems[existingItems.length - 1];
-    var inputs = lastItem.querySelectorAll('input[type="number"]');
-    var lastStart = inputs[0].value.trim();
-    var lastEnd = inputs[1].value.trim();
-    var lastContent = lastItem.querySelector('textarea').value.trim();
-
-    if (!lastStart && !lastEnd && !lastContent) {
-      flashFeedback(inputs[0], 'red');
-      flashFeedback(inputs[1], 'red');
-      flashFeedback(lastItem.querySelector('textarea'), 'red');
-      return;
-    }
-  }
-
   var item = document.createElement('div');
-  item.className = 'janitor-card-entry';
-  item.innerHTML =
-    '<div class="card-header-row">' +
-      '<div class="meta-group" style="flex:0 0 120px;">' +
-        '<label>Start Hour</label>' +
-        '<input type="number" class="janitor-input compact-input" placeholder="0-23" min="0" max="23">' +
-      '</div>' +
-      '<div class="meta-group" style="flex:0 0 120px;">' +
-        '<label>End Hour</label>' +
-        '<input type="number" class="janitor-input compact-input" placeholder="0-23" min="0" max="23">' +
-      '</div>' +
-      '<button type="button" class="btn-remove-icon" title="Remove Entry">✕</button>' +
-    '</div>' +
-    '<div class="card-body-row">' +
-      '<label>Scenario Add-on</label>' +
-      '<textarea class="janitor-input auto-expand-content" placeholder="Scenario add-on for this time range..."></textarea>' +
-    '</div>';
+  item.className = 'dynamic-item';
+  item.innerHTML = '<input type="number" placeholder="Start hour (0-23)" min="0" max="23" style="width:120px;" /><input type="number" placeholder="End hour (0-23)" min="0" max="23" style="width:120px;" /><textarea placeholder="Scenario add-on for this time range..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
 
   // Add event listener for remove button
-  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
-    this.closest('.janitor-card-entry').remove();
+  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
+    this.parentElement.remove();
   });
 
-  // Setup auto-expand for the textarea
-  setupAutoExpand(item.querySelector('.auto-expand-content'));
-
   container.appendChild(item);
-  flashFeedback(item, 'green');
 }
 
 /**
@@ -70,7 +30,7 @@ export function addTimeSlot() {
 export function buildTimeScript(standalone) {
   var offset = parseInt(document.getElementById('timeOffset').value, 10) || 0;
   var debugMode = document.getElementById('debugMode').checked;
-  var slots = document.querySelectorAll('#timeSlots .janitor-card-entry');
+  var slots = document.querySelectorAll('#timeSlots .dynamic-item');
 
   var script = "// ============================================\n";
   script += "// MODULE: TIME & ENVIRONMENT\n";
@@ -79,9 +39,8 @@ export function buildTimeScript(standalone) {
   // Check for any valid configuration
   var hasSlots = false;
   slots.forEach(function(slot) {
-    var inputs = slot.querySelectorAll('input[type="number"]');
-    var start = parseInt(inputs[0].value, 10);
-    var end = parseInt(inputs[1].value, 10);
+    var start = parseInt(slot.querySelectorAll('input')[0].value, 10);
+    var end = parseInt(slot.querySelectorAll('input')[1].value, 10);
     var content = slot.querySelector('textarea').value.trim();
     if (!isNaN(start) && !isNaN(end) && content) {
       hasSlots = true;
@@ -112,9 +71,8 @@ export function buildTimeScript(standalone) {
   script += "var timeSet = false;\n\n";
 
   slots.forEach(function(slot) {
-    var inputs = slot.querySelectorAll('input[type="number"]');
-    var start = parseInt(inputs[0].value, 10);
-    var end = parseInt(inputs[1].value, 10);
+    var start = parseInt(slot.querySelectorAll('input')[0].value, 10);
+    var end = parseInt(slot.querySelectorAll('input')[1].value, 10);
     var content = slot.querySelector('textarea').value.trim();
 
     if (!isNaN(start) && !isNaN(end) && content) {

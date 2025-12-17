@@ -3,68 +3,23 @@
 // Multi-Trigger Rules
 // ============================================
 
-import { escapeForScript, generateHourInRangeFunction, updateTokenMeter, flashFeedback, setupAutoExpand } from '../utils.js';
+import { escapeForScript, generateHourInRangeFunction, updateTokenMeter } from '../utils.js';
 
 /**
  * Add a new combined rule to the UI.
- * Smart Card Layout:
- * - Header: Keywords, Min Hour, Max Hour, Min Messages
- * - Body: Result (Auto-expand Textarea)
  */
 export function addCombinedRule() {
   var container = document.getElementById('combinedRules');
-
-  // Check if the last entry is empty (validation)
-  var existingItems = container.querySelectorAll('.janitor-card-entry');
-  if (existingItems.length > 0) {
-    var lastItem = existingItems[existingItems.length - 1];
-    var lastKeywords = lastItem.querySelector('input[type="text"]').value.trim();
-    var lastResult = lastItem.querySelector('textarea').value.trim();
-
-    if (!lastKeywords && !lastResult) {
-      flashFeedback(lastItem.querySelector('input[type="text"]'), 'red');
-      flashFeedback(lastItem.querySelector('textarea'), 'red');
-      return;
-    }
-  }
-
   var item = document.createElement('div');
-  item.className = 'janitor-card-entry';
-  item.innerHTML =
-    '<div class="card-header-row">' +
-      '<div class="meta-group">' +
-        '<label>Keywords</label>' +
-        '<input type="text" class="janitor-input compact-input" placeholder="Keywords (comma-separated)">' +
-      '</div>' +
-      '<div class="meta-group" style="flex:0 0 80px;">' +
-        '<label>Min Hour</label>' +
-        '<input type="number" class="janitor-input compact-input" placeholder="0-23" min="0" max="23">' +
-      '</div>' +
-      '<div class="meta-group" style="flex:0 0 80px;">' +
-        '<label>Max Hour</label>' +
-        '<input type="number" class="janitor-input compact-input" placeholder="0-23" min="0" max="23">' +
-      '</div>' +
-      '<div class="meta-group" style="flex:0 0 100px;">' +
-        '<label>Min Messages</label>' +
-        '<input type="number" class="janitor-input compact-input" placeholder="Min" min="1">' +
-      '</div>' +
-      '<button type="button" class="btn-remove-icon" title="Remove Entry">✕</button>' +
-    '</div>' +
-    '<div class="card-body-row">' +
-      '<label>Result</label>' +
-      '<textarea class="janitor-input auto-expand-content" placeholder="Result to inject when all conditions are met..."></textarea>' +
-    '</div>';
+  item.className = 'dynamic-item';
+  item.innerHTML = '<input type="text" placeholder="Keywords (comma-separated)" style="flex:1;" /><input type="number" placeholder="Min hour" min="0" max="23" style="width:80px;" /><input type="number" placeholder="Max hour" min="0" max="23" style="width:80px;" /><input type="number" placeholder="Min messages" min="1" style="width:100px;" /><textarea placeholder="Result when all conditions met..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
 
   // Add event listener for remove button
-  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
-    this.closest('.janitor-card-entry').remove();
+  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
+    this.parentElement.remove();
   });
 
-  // Setup auto-expand for the textarea
-  setupAutoExpand(item.querySelector('.auto-expand-content'));
-
   container.appendChild(item);
-  flashFeedback(item, 'green');
 }
 
 /**
@@ -73,7 +28,7 @@ export function addCombinedRule() {
  * @returns {string} - The generated script
  */
 export function buildCombinedConditionsScript(standalone) {
-  var rules = document.querySelectorAll('#combinedRules .janitor-card-entry');
+  var rules = document.querySelectorAll('#combinedRules .dynamic-item');
   var debugMode = document.getElementById('debugMode').checked;
   var offset = parseInt(document.getElementById('timeOffset').value, 10) || 0;
 
@@ -84,7 +39,7 @@ export function buildCombinedConditionsScript(standalone) {
   // Check for any valid configuration
   var hasRules = false;
   rules.forEach(function(rule) {
-    var keywords = rule.querySelector('input[type="text"]').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
+    var keywords = rule.querySelector('input').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
     var result = rule.querySelector('textarea').value.trim();
     if (keywords.length > 0 && result) {
       hasRules = true;
@@ -126,7 +81,7 @@ export function buildCombinedConditionsScript(standalone) {
   script += "var combinedFired = false;\n\n";
 
   rules.forEach(function(rule, index) {
-    var keywords = rule.querySelector('input[type="text"]').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
+    var keywords = rule.querySelector('input').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
     var inputs = rule.querySelectorAll('input[type="number"]');
     var minHour = parseInt(inputs[0].value, 10);
     var maxHour = parseInt(inputs[1].value, 10);
