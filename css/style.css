@@ -1,5 +1,5 @@
 /* ============================================
- * JanitorAI Script Builder v0.2.6
+ * JanitorAI Script Builder
  * ============================================ */
 
 /* ============================================
@@ -154,6 +154,10 @@ html, body {
   background-color: var(--bg-primary) !important;
   margin: 0;
   padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -548,7 +552,7 @@ body {
 }
 
 /* ============================================
- * SWITCHES
+ * SWITCHES - JanitorAI Native Toggle Style
  * ============================================ */
 .janitor-switch-container {
   display: flex;
@@ -557,9 +561,10 @@ body {
 }
 
 .janitor-switch-label {
-  font-size: var(--fontsize-body-sm);
+  font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
+  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -621,27 +626,30 @@ body {
   height: 1rem;
   width: 1rem;
   left: 0.1875rem;
+  bottom: 0.1875rem;
 }
 
 .janitor-switch.md .janitor-switch-slider:before {
   height: 1.25rem;
   width: 1.25rem;
   left: 0.1875rem;
+  bottom: 0.1875rem;
 }
 
 .janitor-switch.lg .janitor-switch-slider:before {
   height: 1.5rem;
   width: 1.5rem;
   left: 0.25rem;
+  bottom: 0.25rem;
 }
 
 .janitor-switch-input:checked + .janitor-switch-slider {
-  background-color: var(--purple-600);
-  border-color: var(--purple-700);
+  background-color: var(--purple-600, #6b46c1);
+  border-color: var(--purple-700, #553c9a);
 }
 
 .janitor-switch-input:checked + .janitor-switch-slider:before {
-  background-color: var(--white-100);
+  background-color: #fff;
 }
 
 .janitor-switch.sm .janitor-switch-input:checked + .janitor-switch-slider:before {
@@ -671,6 +679,18 @@ body {
 .janitor-switch-input:disabled + .janitor-switch-slider {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.janitor-switch-input:disabled + .janitor-switch-slider:before {
+  cursor: not-allowed;
+}
+
+/* Switch Group - Left Alignment */
+.switch-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
 }
 
 /* ============================================
@@ -786,12 +806,23 @@ body {
   color: var(--warning);
 }
 
+/* Scroll Spy Layout - All panels visible and stacked */
 .tab-panel, .janitor-tab-panel {
-  display: none;
+  display: block;
+  margin-bottom: 2.5rem;
+  padding-top: 1rem;
+  scroll-margin-top: 1rem;
 }
 
-.tab-panel.active, .janitor-tab-panel.active {
-  display: block;
+.tab-panel:last-child, .janitor-tab-panel:last-child {
+  margin-bottom: 0;
+}
+
+/* Section divider between modules */
+.tab-panel + .tab-panel,
+.janitor-tab-panel + .janitor-tab-panel {
+  border-top: 1px solid var(--scripts-border-color);
+  padding-top: 2rem;
 }
 
 /* ============================================
@@ -1782,6 +1813,55 @@ body {
   }
 }
 
+@media (max-width: 768px) {
+  /* Responsive switch sizes */
+  .janitor-switch-label {
+    font-size: 0.8rem;
+  }
+
+  .janitor-switch.sm {
+    width: 2.25rem;
+    height: 1.25rem;
+  }
+
+  .janitor-switch.md {
+    width: 2.75rem;
+    height: 1.5rem;
+  }
+
+  .janitor-switch.lg {
+    width: 3.25rem;
+    height: 1.875rem;
+  }
+
+  .janitor-switch.sm .janitor-switch-slider:before {
+    height: 0.875rem;
+    width: 0.875rem;
+  }
+
+  .janitor-switch.md .janitor-switch-slider:before {
+    height: 1.125rem;
+    width: 1.125rem;
+  }
+
+  .janitor-switch.lg .janitor-switch-slider:before {
+    height: 1.375rem;
+    width: 1.375rem;
+  }
+
+  .janitor-switch.sm .janitor-switch-input:checked + .janitor-switch-slider:before {
+    transform: translate(0.9375rem, -50%);
+  }
+
+  .janitor-switch.md .janitor-switch-input:checked + .janitor-switch-slider:before {
+    transform: translate(1.1875rem, -50%);
+  }
+
+  .janitor-switch.lg .janitor-switch-input:checked + .janitor-switch-slider:before {
+    transform: translate(1.3125rem, -50%);
+  }
+}
+
 @media (max-width: 480px) {
   .janitor-sidebar-header {
     padding: 1rem;
@@ -1813,7 +1893,7 @@ body {
   }
 
   .janitor-switch-label {
-    font-size: var(--fontsize-body-ty);
+    font-size: 0.75rem;
   }
 
   .janitor-switch-container {
@@ -1854,6 +1934,11 @@ body {
   .janitor-modal-overlay,
   .janitor-modal-container {
     animation: none;
+  }
+
+  /* Disable smooth scrolling for reduced motion */
+  html {
+    scroll-behavior: auto;
   }
 }
 
