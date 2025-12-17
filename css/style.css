@@ -2229,34 +2229,63 @@ select.flash-red {
   animation: flash-red 0.6s ease;
 }
 
-/* Mobile Responsive for Smart Cards */
+/* ============================================
+ * MOBILE OPTIMIZATIONS (Manual Fix - Compact)
+ * ============================================ */
 @media (max-width: 768px) {
+  .janitor-card-entry {
+    /* 1. Fix "Off Center" Look: Even padding */
+    padding: 1rem !important; 
+    position: relative;
+  }
+
   .card-header-row {
     flex-direction: column;
     align-items: stretch;
-    padding-right: 50px; /* Prevents overlap with the absolute positioned Remove button */
+    /* REDUCED GAP: Controls space between "Type" and "Keywords" */
+    gap: 0.5rem; 
+    /* REDUCED MARGIN: Controls space between "Keywords" and "Lore Content" */
+    margin-bottom: 0.75rem;
+    
+    /* 2. Fix Overlap: Reserve space on the RIGHT for the button */
+    padding-right: 44px; 
   }
 
   .meta-group {
-    width: 100%;
-    min-width: auto;
+    min-width: 100%;
+  }
+  
+  /* Reduce label bottom margin slightly on mobile for compactness */
+  .meta-group label {
+      margin-bottom: 4px;
   }
 
   .compact-input {
     width: 100%;
   }
 
+  /* 3. Fix Button Position: Floating Top-Right Corner */
   .btn-remove-icon {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 40px;
-    height: 40px;
+    top: 12px;       /* Align with top padding */
+    right: 12px;     /* Align with right padding */
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    background: rgba(255, 255, 255, 0.05); 
+    border: 1px solid var(--scripts-border-color);
+    color: var(--danger);
+    z-index: 10;
   }
-
-  .janitor-card-entry {
-    padding: 0.875rem;
-    margin-left: 0.5rem; /* Adds breathing room from screen edges */
-    margin-right: 0.5rem;
+  
+  .btn-remove-icon:hover {
+    background: var(--danger);
+    color: white;
+  }
+  
+  /* 4. Scroll Fix */
+  .auto-expand-content {
+    max-height: 50vh;
+    overflow-y: auto;
   }
 }
