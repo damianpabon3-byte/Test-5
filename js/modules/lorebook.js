@@ -11,12 +11,35 @@ import { escapeForScript, updateTokenMeter } from '../utils.js';
 export function addLoreEntry() {
   var container = document.getElementById('loreEntries');
   var item = document.createElement('div');
-  item.className = 'dynamic-item';
-  item.innerHTML = '<select style="width:120px;"><option value="people">People</option><option value="places">Places</option><option value="objects">Objects</option><option value="moods">Moods</option><option value="events">Events</option></select><input type="text" placeholder="Keywords (comma-separated)" style="flex:1;" /><textarea placeholder="Lore content to inject..." style="flex:2;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
+  item.className = 'janitor-card-entry';
+  item.innerHTML = `
+    <div class="card-header-grid">
+      <div class="meta-field">
+        <label>Type</label>
+        <select class="janitor-input">
+          <option value="people">People</option>
+          <option value="places">Places</option>
+          <option value="objects">Objects</option>
+          <option value="moods">Moods</option>
+          <option value="events">Events</option>
+        </select>
+      </div>
+      <button class="btn-remove-icon" title="Remove">✕</button>
+    </div>
+    <div class="card-keywords">
+      <label>Keywords</label>
+      <input type="text" class="janitor-input" placeholder="Keywords (comma-separated)" />
+    </div>
+    <div class="card-body">
+      <label>Content</label>
+      <p class="field-subtext">Example: The Golden Inn is a rowdy tavern located in...</p>
+      <textarea class="janitor-input auto-expand" placeholder="Lore content to inject..."></textarea>
+    </div>
+  `;
 
   // Add event listener for remove button
-  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
-    this.parentElement.remove();
+  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
+    this.closest('.janitor-card-entry').remove();
   });
 
   container.appendChild(item);
@@ -32,7 +55,7 @@ export function buildLorebookScript(standalone) {
   var breakEarly = document.getElementById('loreBreakEarly').checked;
   var debugMode = document.getElementById('debugMode').checked;
 
-  var entries = document.querySelectorAll('#loreEntries .dynamic-item');
+  var entries = document.querySelectorAll('#loreEntries .janitor-card-entry');
   var lorebook = {
     people: [],
     places: [],
@@ -43,8 +66,8 @@ export function buildLorebookScript(standalone) {
 
   entries.forEach(function(entry) {
     var category = entry.querySelector('select').value;
-    var keywords = entry.querySelector('input').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
-    var content = entry.querySelector('textarea').value.trim();
+    var keywords = entry.querySelector('.card-keywords input').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
+    var content = entry.querySelector('.card-body textarea').value.trim();
 
     if (keywords.length > 0 && content) {
       lorebook[category].push({

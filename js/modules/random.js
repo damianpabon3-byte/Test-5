@@ -11,12 +11,25 @@ import { escapeForScript, updateTokenMeter } from '../utils.js';
 export function addRandomEvent() {
   var container = document.getElementById('randomEvents');
   var item = document.createElement('div');
-  item.className = 'dynamic-item';
-  item.innerHTML = '<input type="text" placeholder="Trigger phrase" style="flex:1;" /><textarea placeholder="Responses (pipe-separated: option1|option2|option3)" style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
+  item.className = 'janitor-card-entry';
+  item.innerHTML = `
+    <div class="card-header-grid">
+      <div class="meta-field">
+        <label>Trigger Phrase</label>
+        <input type="text" class="janitor-input" placeholder="Trigger phrase" />
+      </div>
+      <button class="btn-remove-icon" title="Remove">✕</button>
+    </div>
+    <div class="card-body">
+      <label>Content</label>
+      <p class="field-subtext">Example: I agree|I disagree|Maybe (Pipe separated)</p>
+      <textarea class="janitor-input auto-expand" placeholder="Responses (pipe-separated: option1|option2|option3)"></textarea>
+    </div>
+  `;
 
   // Add event listener for remove button
-  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
-    this.parentElement.remove();
+  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
+    this.closest('.janitor-card-entry').remove();
   });
 
   container.appendChild(item);
@@ -28,7 +41,7 @@ export function addRandomEvent() {
  * @returns {string} - The generated script
  */
 export function buildRandomScript(standalone) {
-  var events = document.querySelectorAll('#randomEvents .dynamic-item');
+  var events = document.querySelectorAll('#randomEvents .janitor-card-entry');
   var debugMode = document.getElementById('debugMode').checked;
 
   var script = "// ============================================\n";
@@ -38,8 +51,8 @@ export function buildRandomScript(standalone) {
   // Check for any valid configuration
   var hasEvents = false;
   events.forEach(function(event) {
-    var trigger = event.querySelector('input').value.trim().toLowerCase();
-    var responses = event.querySelector('textarea').value.split('|').map(function(r) { return r.trim(); }).filter(Boolean);
+    var trigger = event.querySelector('.card-header-grid input').value.trim().toLowerCase();
+    var responses = event.querySelector('.card-body textarea').value.split('|').map(function(r) { return r.trim(); }).filter(Boolean);
     if (trigger && responses.length > 0) {
       hasEvents = true;
     }
@@ -68,8 +81,8 @@ export function buildRandomScript(standalone) {
   script += "var randomFired = false;\n\n";
 
   events.forEach(function(event) {
-    var trigger = event.querySelector('input').value.trim().toLowerCase();
-    var responses = event.querySelector('textarea').value.split('|').map(function(r) { return r.trim(); }).filter(Boolean);
+    var trigger = event.querySelector('.card-header-grid input').value.trim().toLowerCase();
+    var responses = event.querySelector('.card-body textarea').value.split('|').map(function(r) { return r.trim(); }).filter(Boolean);
 
     if (trigger && responses.length > 0) {
       script += "// Random Event: " + trigger + "\n";

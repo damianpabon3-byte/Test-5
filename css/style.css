@@ -1941,3 +1941,146 @@ body {
   max-width: 100%;
   margin: 0;
 }
+
+/* ============================================
+ * JANITOR SMART CARD - Vertical Card Layout
+ * ============================================ */
+.janitor-card-entry {
+  background: #2f3136;
+  border: 1px solid var(--scripts-border-color);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.janitor-card-entry:last-child {
+  margin-bottom: 0;
+}
+
+.card-header-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.card-header-grid .meta-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-header-grid .meta-field label {
+  font-family: var(--font-family-jura);
+  font-size: var(--fontsize-body-ty);
+  font-weight: var(--font-weight-semibold);
+  color: var(--white-70);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-header-grid .janitor-input {
+  width: 100%;
+}
+
+.btn-remove-icon {
+  background: var(--danger);
+  color: var(--white-100);
+  border: none;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-remove-icon:hover {
+  background: #dc2626;
+  transform: scale(1.05);
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body > label {
+  font-family: var(--font-family-jura);
+  font-size: var(--fontsize-body-ty);
+  font-weight: var(--font-weight-semibold);
+  color: var(--white-70);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.field-subtext {
+  font-family: var(--font-family-jura);
+  font-size: var(--fontsize-body-ty);
+  color: var(--white-50);
+  margin: 0 0 8px 0;
+  font-style: italic;
+}
+
+.card-body .janitor-input.auto-expand {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.card-body > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Multi-field cards (e.g., Pacing with min/max inputs) */
+.card-header-grid.multi-field {
+  grid-template-columns: 1fr 1fr auto;
+}
+
+/* Keywords field for cards that need it */
+.card-keywords {
+  margin-bottom: 16px;
+}
+
+.card-keywords label {
+  display: block;
+  font-family: var(--font-family-jura);
+  font-size: var(--fontsize-body-ty);
+  font-weight: var(--font-weight-semibold);
+  color: var(--white-70);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+/* Responsive adjustments for Smart Cards */
+@media (max-width: 768px) {
+  .card-header-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .card-header-grid.multi-field {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .btn-remove-icon {
+    width: 100%;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .janitor-card-entry {
+    padding: 12px;
+  }
+
+  .card-header-grid.multi-field {
+    grid-template-columns: 1fr;
+  }
+}

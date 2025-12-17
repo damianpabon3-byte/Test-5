@@ -11,12 +11,25 @@ import { escapeForScript, updateTokenMeter } from '../utils.js';
 export function addToneTrigger() {
   var container = document.getElementById('toneTriggers');
   var item = document.createElement('div');
-  item.className = 'dynamic-item';
-  item.innerHTML = '<input type="text" placeholder="Keywords (comma-separated)" style="flex:1;" /><textarea placeholder="Personality add-on when triggered..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
+  item.className = 'janitor-card-entry';
+  item.innerHTML = `
+    <div class="card-header-grid">
+      <div class="meta-field">
+        <label>Keywords</label>
+        <input type="text" class="janitor-input" placeholder="Keywords (comma-separated)" />
+      </div>
+      <button class="btn-remove-icon" title="Remove">✕</button>
+    </div>
+    <div class="card-body">
+      <label>Content</label>
+      <p class="field-subtext">Example: {{char}} speaks in short, angry sentences.</p>
+      <textarea class="janitor-input auto-expand" placeholder="Personality add-on when triggered..."></textarea>
+    </div>
+  `;
 
   // Add event listener for remove button
-  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
-    this.parentElement.remove();
+  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
+    this.closest('.janitor-card-entry').remove();
   });
 
   container.appendChild(item);
@@ -30,7 +43,7 @@ export function addToneTrigger() {
 export function buildToneScript(standalone) {
   var padded = document.getElementById('tonePadded').checked;
   var debugMode = document.getElementById('debugMode').checked;
-  var triggers = document.querySelectorAll('#toneTriggers .dynamic-item');
+  var triggers = document.querySelectorAll('#toneTriggers .janitor-card-entry');
 
   var script = "// ============================================\n";
   script += "// MODULE: TONE/STATE ENGINE\n";
@@ -39,8 +52,8 @@ export function buildToneScript(standalone) {
   // Check for any valid configuration
   var hasTriggers = false;
   triggers.forEach(function(trigger) {
-    var keywords = trigger.querySelector('input').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
-    var content = trigger.querySelector('textarea').value.trim();
+    var keywords = trigger.querySelector('.card-header-grid input').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
+    var content = trigger.querySelector('.card-body textarea').value.trim();
     if (keywords.length > 0 && content) {
       hasTriggers = true;
     }
@@ -75,8 +88,8 @@ export function buildToneScript(standalone) {
   script += "var toneSet = false;\n\n";
 
   triggers.forEach(function(trigger) {
-    var keywords = trigger.querySelector('input').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
-    var content = trigger.querySelector('textarea').value.trim();
+    var keywords = trigger.querySelector('.card-header-grid input').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
+    var content = trigger.querySelector('.card-body textarea').value.trim();
 
     if (keywords.length > 0 && content) {
       script += "// Tone Trigger: " + keywords.join(', ') + "\n";

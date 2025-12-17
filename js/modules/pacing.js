@@ -11,12 +11,29 @@ import { escapeForScript, updateTokenMeter } from '../utils.js';
 export function addPacingPhase() {
   var container = document.getElementById('pacingPhases');
   var item = document.createElement('div');
-  item.className = 'dynamic-item';
-  item.innerHTML = '<input type="number" placeholder="Min messages" min="1" style="width:120px;" /><input type="number" placeholder="Max messages" min="1" style="width:120px;" /><textarea placeholder="Scenario add-on for this phase..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
+  item.className = 'janitor-card-entry';
+  item.innerHTML = `
+    <div class="card-header-grid multi-field">
+      <div class="meta-field">
+        <label>Min Messages</label>
+        <input type="number" class="janitor-input" placeholder="Min" min="1" />
+      </div>
+      <div class="meta-field">
+        <label>Max Messages</label>
+        <input type="number" class="janitor-input" placeholder="Max" min="1" />
+      </div>
+      <button class="btn-remove-icon" title="Remove">✕</button>
+    </div>
+    <div class="card-body">
+      <label>Content</label>
+      <p class="field-subtext">Example: {{char}} begins to open up about their past...</p>
+      <textarea class="janitor-input auto-expand" placeholder="Scenario add-on for this phase..."></textarea>
+    </div>
+  `;
 
   // Add event listener for remove button
-  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
-    this.parentElement.remove();
+  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
+    this.closest('.janitor-card-entry').remove();
   });
 
   container.appendChild(item);
@@ -28,12 +45,25 @@ export function addPacingPhase() {
 export function addOneTimeEvent() {
   var container = document.getElementById('oneTimeEvents');
   var item = document.createElement('div');
-  item.className = 'dynamic-item';
-  item.innerHTML = '<input type="number" placeholder="Exact message #" min="1" style="width:120px;" /><textarea placeholder="One-time event content..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
+  item.className = 'janitor-card-entry';
+  item.innerHTML = `
+    <div class="card-header-grid">
+      <div class="meta-field">
+        <label>Message Number</label>
+        <input type="number" class="janitor-input" placeholder="Exact message #" min="1" />
+      </div>
+      <button class="btn-remove-icon" title="Remove">✕</button>
+    </div>
+    <div class="card-body">
+      <label>Content</label>
+      <p class="field-subtext">Example: {{char}} begins to open up about their past...</p>
+      <textarea class="janitor-input auto-expand" placeholder="One-time event content..."></textarea>
+    </div>
+  `;
 
   // Add event listener for remove button
-  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
-    this.parentElement.remove();
+  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
+    this.closest('.janitor-card-entry').remove();
   });
 
   container.appendChild(item);
@@ -45,8 +75,8 @@ export function addOneTimeEvent() {
  * @returns {string} - The generated script
  */
 export function buildPacingScript(standalone) {
-  var phases = document.querySelectorAll('#pacingPhases .dynamic-item');
-  var events = document.querySelectorAll('#oneTimeEvents .dynamic-item');
+  var phases = document.querySelectorAll('#pacingPhases .janitor-card-entry');
+  var events = document.querySelectorAll('#oneTimeEvents .janitor-card-entry');
   var debugMode = document.getElementById('debugMode').checked;
 
   var script = "// ============================================\n";
@@ -58,17 +88,18 @@ export function buildPacingScript(standalone) {
   var hasEvents = false;
 
   phases.forEach(function(phase) {
-    var min = parseInt(phase.querySelectorAll('input')[0].value, 10);
-    var max = parseInt(phase.querySelectorAll('input')[1].value, 10);
-    var content = phase.querySelector('textarea').value.trim();
+    var inputs = phase.querySelectorAll('.card-header-grid input');
+    var min = parseInt(inputs[0].value, 10);
+    var max = parseInt(inputs[1].value, 10);
+    var content = phase.querySelector('.card-body textarea').value.trim();
     if (!isNaN(min) && !isNaN(max) && content) {
       hasPhases = true;
     }
   });
 
   events.forEach(function(event) {
-    var exact = parseInt(event.querySelector('input').value, 10);
-    var content = event.querySelector('textarea').value.trim();
+    var exact = parseInt(event.querySelector('.card-header-grid input').value, 10);
+    var content = event.querySelector('.card-body textarea').value.trim();
     if (!isNaN(exact) && content) {
       hasEvents = true;
     }
@@ -103,9 +134,10 @@ export function buildPacingScript(standalone) {
   if (hasPhases) {
     script += "// Message Count Phases\n";
     phases.forEach(function(phase) {
-      var min = parseInt(phase.querySelectorAll('input')[0].value, 10);
-      var max = parseInt(phase.querySelectorAll('input')[1].value, 10);
-      var content = phase.querySelector('textarea').value.trim();
+      var inputs = phase.querySelectorAll('.card-header-grid input');
+      var min = parseInt(inputs[0].value, 10);
+      var max = parseInt(inputs[1].value, 10);
+      var content = phase.querySelector('.card-body textarea').value.trim();
 
       if (!isNaN(min) && !isNaN(max) && content) {
         script += "if (count >= " + min + " && count <= " + max + ") {\n";
@@ -121,8 +153,8 @@ export function buildPacingScript(standalone) {
   if (hasEvents) {
     script += "// One-Time Events\n";
     events.forEach(function(event) {
-      var exact = parseInt(event.querySelector('input').value, 10);
-      var content = event.querySelector('textarea').value.trim();
+      var exact = parseInt(event.querySelector('.card-header-grid input').value, 10);
+      var content = event.querySelector('.card-body textarea').value.trim();
 
       if (!isNaN(exact) && content) {
         script += "if (count === " + exact + ") {\n";
