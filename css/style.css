@@ -1960,7 +1960,7 @@ body {
 .card-header-grid {
   display: grid;
   grid-template-columns: 1fr auto;
-  align-items: end;
+  align-items: center;
   gap: 12px;
   margin-bottom: 16px;
 }
@@ -1998,6 +1998,7 @@ body {
   justify-content: center;
   transition: all 0.2s ease;
   flex-shrink: 0;
+  align-self: center;
 }
 
 .btn-remove-icon:hover {
@@ -2029,7 +2030,7 @@ body {
 }
 
 .card-body .janitor-input.auto-expand {
-  min-height: 80px;
+  min-height: 140px;
   resize: vertical;
 }
 
