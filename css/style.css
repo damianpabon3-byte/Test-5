@@ -2091,10 +2091,22 @@ select.flash-red {
   background: #2f3136;
   border: 1px solid var(--scripts-border-color);
   border-radius: 8px;
-  /* SYMMETRY FIX: Explicit equal padding on all sides */
-  padding: 1rem 1rem 1rem 1rem !important; 
+  
+  /* --- SYMMETRY & CHIN FIX --- */
+  /* Top: 1rem */
+  /* Right: 1rem */
+  /* Bottom: 0.75rem (Reduced to remove the "Tall Chin") */
+  /* Left: 1.25rem (Increased to nudge content RIGHT) */
+  padding: 1rem 1rem 0.75rem 1.25rem !important;
+  
   margin-bottom: 1rem;
-  box-sizing: border-box; /* Ensures padding doesn't affect width */
+  box-sizing: border-box;
+}
+
+/* CRITICAL: Kill the hidden margin on the last item to remove the chin completely */
+.janitor-card-entry > div:last-child,
+.janitor-card-entry textarea:last-child {
+    margin-bottom: 0 !important;
 }
 
 /* 2. Card Header Row (Desktop Default) */
