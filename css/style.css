@@ -1129,25 +1129,18 @@ body {
  * MODULE CONTROL PANEL
  * ============================================ */
 .debug-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
   padding: 1rem;
   background: var(--colour-grey-700);
   border-radius: 8px;
   margin-bottom: 1rem;
 }
 
-.debug-toggle input[type="checkbox"] {
-  width: auto;
-  margin: 0;
-  accent-color: var(--colour-pink-500);
+.debug-toggle .janitor-switch-container {
+  width: 100%;
 }
 
-.debug-toggle label {
-  margin: 0;
-  font-family: var(--font-family-jura);
-  font-size: var(--fontsize-body-sm);
+.debug-toggle .janitor-switch-label {
+  flex: 1;
   color: var(--white-80);
 }
 
@@ -1181,15 +1174,11 @@ body {
   margin-bottom: 0;
 }
 
-.order-item input[type="checkbox"] {
-  width: auto;
-  margin: 0;
-  accent-color: var(--colour-pink-500);
+.order-item .janitor-switch-container {
+  flex: 1;
 }
 
-.order-item label {
-  flex: 1;
-  margin: 0;
+.order-item .janitor-switch-label {
   font-family: var(--font-family-jura);
   font-weight: var(--font-weight-regular);
   color: var(--white-90);
@@ -1281,6 +1270,11 @@ body {
   max-height: 350px;
   overflow-y: auto;
   background: var(--colour-grey-800);
+}
+
+/* Hide empty dynamic lists to prevent black bar bug */
+.dynamic-list:empty {
+  display: none;
 }
 
 .dynamic-item {
