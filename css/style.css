@@ -2044,3 +2044,12 @@ select.flash-red {
   max-width: 100%;
   margin: 0;
 }
+/* --- MANUAL FIX FOR TEXT BOXES --- */
+/* Forces all input boxes to be tall and spacious */
+textarea.janitor-input {
+    min-height: 150px !important; /* Force override of rows="3" */
+    height: auto;
+    resize: vertical;
+    line-height: 1.5;
+    padding: 12px;
+}
