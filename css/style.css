@@ -445,6 +445,15 @@ body {
   max-width: 120px;
 }
 
+/* Force textareas to be tall and spacious */
+textarea.janitor-input {
+  min-height: 120px;       /* Overrides the rows="3" attribute */
+  height: auto;            /* Allows it to grow */
+  resize: vertical;        /* Allows user to drag it larger */
+  line-height: 1.5;        /* Better readability */
+  padding: 12px;           /* Comfortable inner spacing */
+}
+
 /* Textarea */
 .janitor-textarea, .form-group textarea {
   width: 100%;
