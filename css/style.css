@@ -2081,89 +2081,77 @@ select.flash-red {
 }
 
 /* ============================================
- * SMART CARD LAYOUT
+ * SMART CARD LAYOUT (Finalized)
  * Vertical card layout for dynamic entries
  * ============================================ */
 
-/* Smart Card Entry Container */
+/* 1. Smart Card Entry Container */
 .janitor-card-entry {
   position: relative;
   background: #2f3136;
   border: 1px solid var(--scripts-border-color);
   border-radius: 8px;
-  padding: 1rem; /* Equal padding on all sides for symmetry */
+  /* SYMMETRY FIX: Explicit equal padding on all sides */
+  padding: 1rem 1rem 1rem 1rem !important; 
   margin-bottom: 1rem;
+  box-sizing: border-box; /* Ensures padding doesn't affect width */
 }
 
-.janitor-card-entry:last-child {
-  margin-bottom: 0;
-}
-
-/* Card Header Row - Metadata Fields (Desktop: Flexbox) */
+/* 2. Card Header Row (Desktop Default) */
 .card-header-row {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end; /* Button sits on baseline with inputs */
-  gap: 10px;
+  align-items: flex-end; /* Aligns button to bottom baseline */
+  gap: 12px;             /* Consistent gap between items */
   margin-bottom: 1rem;
+  width: 100%;
 }
 
-/* Meta Group - Label + Input pairs */
+/* 3. Meta Group (Inputs) */
 .meta-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  flex: 1;
-  min-width: 100px;
+  gap: 6px;
+  flex: 1;              /* Grow to fill space */
+  min-width: 120px;
 }
 
 .meta-group label {
   font-family: var(--font-family-jura);
-  font-size: var(--fontsize-body-ty);
-  font-weight: var(--font-weight-semibold);
+  font-size: 0.75rem;
+  font-weight: 600;
   color: var(--white-70);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin-left: 2px;
 }
 
-/* Compact Input for Header Fields */
+/* 4. Compact Inputs */
 .compact-input {
-  min-height: 40px; /* Minimum height, allows growth for text */
-  height: auto; /* Auto height prevents text clipping */
-  padding: 0.5rem 0.75rem;
-  background: var(--white-10, rgba(255, 255, 255, 0.1));
-  color: var(--white-100, #fff);
-  border: 1px solid var(--scripts-border-color, #40444b);
+  width: 100%;
+  min-height: 42px;     /* Fixed comfortable height */
+  height: 42px;
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--white-100);
+  border: 1px solid var(--scripts-border-color);
   border-radius: 6px;
   font-family: var(--font-family-jura);
-  font-size: var(--fontsize-body-sm);
-  line-height: 1.4; /* Ensures proper text vertical centering */
+  font-size: 0.9rem;
   transition: all 0.2s ease;
 }
 
-.compact-input:focus {
-  border-color: #5865f2;
-  box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
-  outline: none;
-}
-
-.compact-input::placeholder {
-  color: #72767d;
-}
-
-/* Remove Button Icon */
+/* 5. Remove Button (Desktop) */
 .btn-remove-icon {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
+  width: 42px;          /* Match input height exactly */
+  height: 42px;
+  min-width: 42px;
   padding: 0;
-  background: var(--danger);
-  color: var(--white-100);
-  border: none;
+  background: rgba(239, 68, 68, 0.15); /* Subtle red bg */
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 6px;
   cursor: pointer;
-  font-size: 1.25rem;
-  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2172,11 +2160,11 @@ select.flash-red {
 }
 
 .btn-remove-icon:hover {
-  background: #dc2626;
-  transform: scale(1.05);
+  background: #ef4444;
+  color: white;
 }
 
-/* Card Body Row - Content Fields */
+/* 6. Card Body & Auto-Expand Content */
 .card-body-row {
   width: 100%;
 }
@@ -2184,49 +2172,83 @@ select.flash-red {
 .card-body-row label {
   display: block;
   font-family: var(--font-family-jura);
-  font-size: var(--fontsize-body-ty);
-  font-weight: var(--font-weight-semibold);
+  font-size: 0.75rem;
+  font-weight: 600;
   color: var(--white-70);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  margin-left: 2px;
 }
 
-/* Auto-Expand Content Textarea */
 .auto-expand-content {
   width: 100%;
   min-height: 120px;
-  max-height: 60vh; /* Caps size at 60% of viewport to prevent infinite growth */
-  padding: 0.75rem 1rem;
-  background: var(--white-10, rgba(255, 255, 255, 0.1));
-  color: var(--white-100, #fff);
-  border: 1px solid var(--scripts-border-color, #40444b);
+  max-height: 50vh;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--white-100);
+  border: 1px solid var(--scripts-border-color);
   border-radius: 6px;
   font-family: var(--font-family-jura);
-  font-size: var(--fontsize-body-sm);
-  line-height: 1.5;
+  font-size: 0.95rem;
+  line-height: 1.6;
   resize: none;
-  overflow-y: auto; /* Shows scrollbar when content exceeds max-height */
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  overflow-y: auto;
 }
 
-.auto-expand-content:focus {
-  border-color: #5865f2;
-  box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
-  outline: none;
-}
+/* ============================================
+ * MOBILE OPTIMIZATIONS (CSS GRID)
+ * ============================================ */
+@media (max-width: 768px) {
+  
+  /* 1. Reset container to ensure full width usage */
+  .janitor-card-entry {
+    padding: 1rem !important;
+  }
 
-.auto-expand-content::placeholder {
-  color: #72767d;
-}
+  /* 2. SWITCH TO GRID LAYOUT */
+  .card-header-row {
+    display: grid !important;
+    /* Column 1: Auto-fill (Input), Column 2: Fixed 42px (Button) */
+    grid-template-columns: 1fr 42px !important; 
+    /* Row 1: Type + Button, Row 2: Keywords */
+    grid-template-rows: auto auto !important;
+    gap: 10px !important;
+    margin-bottom: 12px;
+    align-items: end !important;
+  }
 
-/* Flash animations for Smart Cards */
-.janitor-card-entry.flash-green {
-  animation: flash-green 0.6s ease;
-}
+  /* 3. Assign Grid Positions */
+  
+  /* "Type" Input -> Top Left */
+  .meta-group:first-child {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+  }
 
-.janitor-card-entry.flash-red {
-  animation: flash-red 0.6s ease;
+  /* Remove Button -> Top Right */
+  .btn-remove-icon {
+    grid-column: 2;
+    grid-row: 1;
+    width: 42px !important;
+    height: 42px !important;
+    /* Ensure it aligns with the input next to it */
+    align-self: end; 
+    margin: 0;
+  }
+
+  /* "Keywords" Input -> Bottom Row (Full Width) */
+  .meta-group:nth-child(2) {
+    grid-column: 1 / -1; /* Span all columns */
+    grid-row: 2;
+    width: 100%;
+  }
+
+  /* 4. Visual Cleanup */
+  .meta-group label {
+    margin-bottom: 4px; /* Tighter labels */
+  }
 }
 
 /* ============================================
