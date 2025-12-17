@@ -6,10 +6,37 @@
 import { updateTokenMeter } from '../utils.js';
 
 /**
+ * Flash validation feedback on elements.
+ * @param {HTMLElement} element - Element to flash
+ * @param {string} type - 'green' for success, 'red' for error
+ */
+function flashFeedback(element, type) {
+  element.classList.remove('flash-green', 'flash-red');
+  void element.offsetWidth;
+  element.classList.add('flash-' + type);
+  setTimeout(function() {
+    element.classList.remove('flash-' + type);
+  }, 600);
+}
+
+/**
  * Add a new ambient event to the UI.
  */
 export function addAmbientEvent() {
   var container = document.getElementById('ambientEvents');
+
+  // Check if the last entry is empty (validation)
+  var existingItems = container.querySelectorAll('.dynamic-item');
+  if (existingItems.length > 0) {
+    var lastItem = existingItems[existingItems.length - 1];
+    var lastContent = lastItem.querySelector('textarea').value.trim();
+
+    if (!lastContent) {
+      flashFeedback(lastItem.querySelector('textarea'), 'red');
+      return;
+    }
+  }
+
   var item = document.createElement('div');
   item.className = 'dynamic-item';
   item.innerHTML = '<textarea placeholder="Ambient event description..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
@@ -20,6 +47,7 @@ export function addAmbientEvent() {
   });
 
   container.appendChild(item);
+  flashFeedback(item, 'green');
 }
 
 /**

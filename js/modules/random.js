@@ -6,10 +6,39 @@
 import { escapeForScript, updateTokenMeter } from '../utils.js';
 
 /**
+ * Flash validation feedback on elements.
+ * @param {HTMLElement} element - Element to flash
+ * @param {string} type - 'green' for success, 'red' for error
+ */
+function flashFeedback(element, type) {
+  element.classList.remove('flash-green', 'flash-red');
+  void element.offsetWidth;
+  element.classList.add('flash-' + type);
+  setTimeout(function() {
+    element.classList.remove('flash-' + type);
+  }, 600);
+}
+
+/**
  * Add a new random event to the UI.
  */
 export function addRandomEvent() {
   var container = document.getElementById('randomEvents');
+
+  // Check if the last entry is empty (validation)
+  var existingItems = container.querySelectorAll('.dynamic-item');
+  if (existingItems.length > 0) {
+    var lastItem = existingItems[existingItems.length - 1];
+    var lastTrigger = lastItem.querySelector('input').value.trim();
+    var lastResponses = lastItem.querySelector('textarea').value.trim();
+
+    if (!lastTrigger && !lastResponses) {
+      flashFeedback(lastItem.querySelector('input'), 'red');
+      flashFeedback(lastItem.querySelector('textarea'), 'red');
+      return;
+    }
+  }
+
   var item = document.createElement('div');
   item.className = 'dynamic-item';
   item.innerHTML = '<input type="text" placeholder="Trigger phrase" style="flex:1;" /><textarea placeholder="Responses (pipe-separated: option1|option2|option3)" style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
@@ -20,6 +49,7 @@ export function addRandomEvent() {
   });
 
   container.appendChild(item);
+  flashFeedback(item, 'green');
 }
 
 /**

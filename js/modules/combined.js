@@ -6,10 +6,40 @@
 import { escapeForScript, generateHourInRangeFunction, updateTokenMeter } from '../utils.js';
 
 /**
+ * Flash validation feedback on elements.
+ * @param {HTMLElement} element - Element to flash
+ * @param {string} type - 'green' for success, 'red' for error
+ */
+function flashFeedback(element, type) {
+  element.classList.remove('flash-green', 'flash-red');
+  void element.offsetWidth;
+  element.classList.add('flash-' + type);
+  setTimeout(function() {
+    element.classList.remove('flash-' + type);
+  }, 600);
+}
+
+/**
  * Add a new combined rule to the UI.
  */
 export function addCombinedRule() {
   var container = document.getElementById('combinedRules');
+
+  // Check if the last entry is empty (validation)
+  var existingItems = container.querySelectorAll('.dynamic-item');
+  if (existingItems.length > 0) {
+    var lastItem = existingItems[existingItems.length - 1];
+    var inputs = lastItem.querySelectorAll('input');
+    var lastKeywords = inputs[0].value.trim();
+    var lastResult = lastItem.querySelector('textarea').value.trim();
+
+    if (!lastKeywords && !lastResult) {
+      flashFeedback(inputs[0], 'red');
+      flashFeedback(lastItem.querySelector('textarea'), 'red');
+      return;
+    }
+  }
+
   var item = document.createElement('div');
   item.className = 'dynamic-item';
   item.innerHTML = '<input type="text" placeholder="Keywords (comma-separated)" style="flex:1;" /><input type="number" placeholder="Min hour" min="0" max="23" style="width:80px;" /><input type="number" placeholder="Max hour" min="0" max="23" style="width:80px;" /><input type="number" placeholder="Min messages" min="1" style="width:100px;" /><textarea placeholder="Result when all conditions met..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
@@ -20,6 +50,7 @@ export function addCombinedRule() {
   });
 
   container.appendChild(item);
+  flashFeedback(item, 'green');
 }
 
 /**
