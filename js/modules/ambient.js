@@ -11,12 +11,24 @@ import { updateTokenMeter } from '../utils.js';
 export function addAmbientEvent() {
   var container = document.getElementById('ambientEvents');
   var item = document.createElement('div');
-  item.className = 'dynamic-item';
-  item.innerHTML = '<textarea placeholder="Ambient event description..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
+  item.className = 'janitor-card-entry';
+  item.innerHTML = `
+    <div class="card-header-grid">
+      <div class="meta-field" style="flex:1;">
+        <label>Ambient Event</label>
+      </div>
+      <button class="btn-remove-icon" title="Remove">✕</button>
+    </div>
+    <div class="card-body">
+      <label>Content</label>
+      <p class="field-subtext">Example: A distant dog barks.</p>
+      <textarea class="janitor-input auto-expand" placeholder="Ambient event description..."></textarea>
+    </div>
+  `;
 
   // Add event listener for remove button
-  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
-    this.parentElement.remove();
+  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
+    this.closest('.janitor-card-entry').remove();
   });
 
   container.appendChild(item);
@@ -29,12 +41,12 @@ export function addAmbientEvent() {
  */
 export function buildAmbientScript(standalone) {
   var probability = parseInt(document.getElementById('ambientProbability').value, 10) || 10;
-  var events = document.querySelectorAll('#ambientEvents .dynamic-item');
+  var events = document.querySelectorAll('#ambientEvents .janitor-card-entry');
   var debugMode = document.getElementById('debugMode').checked;
 
   var eventList = [];
   events.forEach(function(event) {
-    var content = event.querySelector('textarea').value.trim();
+    var content = event.querySelector('.card-body textarea').value.trim();
     if (content) {
       eventList.push(content);
     }
