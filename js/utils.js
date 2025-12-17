@@ -280,6 +280,43 @@ export function generateHourInRangeFunction() {
 }
 
 // ============================================
+// AUTO-EXPAND TEXTAREA
+// ============================================
+
+/**
+ * Auto-expand a textarea to fit its content.
+ * @param {HTMLTextAreaElement} textarea - The textarea element to expand
+ */
+export function autoExpandTextarea(textarea) {
+  if (!textarea) return;
+
+  // Reset height to auto to get accurate scrollHeight
+  textarea.style.height = 'auto';
+
+  // Set height to scrollHeight, respecting min-height from CSS
+  var minHeight = 150; // Match CSS min-height
+  var newHeight = Math.max(textarea.scrollHeight, minHeight);
+  textarea.style.height = newHeight + 'px';
+}
+
+/**
+ * Initialize auto-expand behavior on a textarea.
+ * Attaches input listener and triggers initial sizing.
+ * @param {HTMLTextAreaElement} textarea - The textarea element to initialize
+ */
+export function initAutoExpand(textarea) {
+  if (!textarea) return;
+
+  // Add input listener for auto-expansion on typing
+  textarea.addEventListener('input', function() {
+    autoExpandTextarea(this);
+  });
+
+  // Trigger initial sizing
+  autoExpandTextarea(textarea);
+}
+
+// ============================================
 // TAB SWITCHING
 // ============================================
 

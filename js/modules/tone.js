@@ -3,7 +3,7 @@
 // Dynamic personality shifts based on keywords
 // ============================================
 
-import { escapeForScript, updateTokenMeter } from '../utils.js';
+import { escapeForScript, updateTokenMeter, initAutoExpand } from '../utils.js';
 
 /**
  * Add a new tone trigger to the UI.
@@ -33,6 +33,9 @@ export function addToneTrigger() {
   });
 
   container.appendChild(item);
+
+  // Initialize auto-expand on the textarea
+  initAutoExpand(item.querySelector('.card-body textarea'));
 }
 
 /**

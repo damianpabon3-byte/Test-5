@@ -1267,9 +1267,8 @@ body {
   border-radius: 8px;
   padding: 1rem;
   margin-top: 0.75rem;
-  max-height: 350px;
-  overflow-y: auto;
   background: var(--colour-grey-800);
+  /* No max-height - allow natural expansion so main page scrolls */
 }
 
 /* Hide empty dynamic lists to prevent black bar bug */
@@ -1960,7 +1959,7 @@ body {
 .card-header-grid {
   display: grid;
   grid-template-columns: 1fr auto;
-  align-items: end;
+  align-items: center;
   gap: 12px;
   margin-bottom: 16px;
 }
@@ -1998,6 +1997,7 @@ body {
   justify-content: center;
   transition: all 0.2s ease;
   flex-shrink: 0;
+  align-self: center;
 }
 
 .btn-remove-icon:hover {
@@ -2029,7 +2029,15 @@ body {
 }
 
 .card-body .janitor-input.auto-expand {
-  min-height: 80px;
+  min-height: 150px;
+  height: auto;
+  resize: vertical;
+}
+
+/* Force larger starting size for card content textareas */
+.janitor-card-entry .card-body textarea {
+  min-height: 150px !important;
+  height: auto;
   resize: vertical;
 }
 

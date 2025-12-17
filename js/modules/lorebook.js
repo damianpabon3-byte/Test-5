@@ -3,7 +3,7 @@
 // Hierarchical Keyword Database
 // ============================================
 
-import { escapeForScript, updateTokenMeter } from '../utils.js';
+import { escapeForScript, updateTokenMeter, initAutoExpand } from '../utils.js';
 
 /**
  * Add a new lore entry to the UI.
@@ -43,6 +43,9 @@ export function addLoreEntry() {
   });
 
   container.appendChild(item);
+
+  // Initialize auto-expand on the textarea
+  initAutoExpand(item.querySelector('.card-body textarea'));
 }
 
 /**
