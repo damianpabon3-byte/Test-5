@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>JanitorAI Script Builder v0.2.6 – Production Ready</title>
+  <title>JanitorAI Script Builder – Production Ready</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -19,7 +19,7 @@
   <aside class="janitor-sidebar" id="janitorSidebar">
     <div class="janitor-sidebar-header">
       <img class="janitor-sidebar-logo" src="logo2x-1_ia066y.png" alt="Janitor AI Logo">
-      <p class="janitor-sidebar-title">Script Builder v0.2.6</p>
+      <p class="janitor-sidebar-title">Script Builder</p>
     </div>
     <nav class="janitor-sidebar-nav">
       <div class="janitor-nav-section">
@@ -48,34 +48,34 @@
       </div>
       <div class="janitor-nav-section">
         <h3 class="janitor-nav-section-title">Modules</h3>
-        <button class="janitor-nav-item" data-tab="lorebook">
+        <button class="janitor-nav-item" data-scroll="lorebook">
           Lorebook
         </button>
-        <button class="janitor-nav-item" data-tab="memory">
+        <button class="janitor-nav-item" data-scroll="memory">
           Memory
         </button>
-        <button class="janitor-nav-item" data-tab="pacing">
+        <button class="janitor-nav-item" data-scroll="pacing">
           Pacing
         </button>
-        <button class="janitor-nav-item" data-tab="tone">
+        <button class="janitor-nav-item" data-scroll="tone">
           Tone/State
         </button>
-        <button class="janitor-nav-item" data-tab="time">
+        <button class="janitor-nav-item" data-scroll="time">
           Time & Environment
         </button>
-        <button class="janitor-nav-item" data-tab="ambient">
+        <button class="janitor-nav-item" data-scroll="ambient">
           Ambient Events
         </button>
-        <button class="janitor-nav-item" data-tab="random">
+        <button class="janitor-nav-item" data-scroll="random">
           Random Events
         </button>
-        <button class="janitor-nav-item" data-tab="combined">
+        <button class="janitor-nav-item" data-scroll="combined">
           Combined Conditions
         </button>
-        <button class="janitor-nav-item experimental" data-tab="scoring">
+        <button class="janitor-nav-item experimental" data-scroll="scoring">
           Scoring (Experimental)
         </button>
-        <button class="janitor-nav-item experimental" data-tab="tester">
+        <button class="janitor-nav-item experimental" data-scroll="tester">
           Script Tester
         </button>
       </div>
@@ -102,7 +102,7 @@
         </div>
       </div>
 
-      <h1 class="page-title">Janitor Script Builder v0.2.6</h1>
+      <h1 class="page-title">Janitor Script Builder</h1>
       <p class="page-subtitle">Advanced scripts made easy – fill out simple forms, get copy-paste-ready code.</p>
 
       <!-- Stateless 101 Onboarding -->
@@ -293,23 +293,10 @@
         </div>
       </div>
 
-      <!-- Module Tabs -->
+      <!-- Module Sections (Scroll Spy Layout) -->
       <div id="moduletabs" class="card janitor-card">
-        <div class="tabs">
-          <button class="tab-btn active" data-tab-switch="lorebook">Lorebook</button>
-          <button class="tab-btn" data-tab-switch="memory">Memory</button>
-          <button class="tab-btn" data-tab-switch="pacing">Pacing</button>
-          <button class="tab-btn" data-tab-switch="tone">Tone/State</button>
-          <button class="tab-btn" data-tab-switch="time">Time & Environment</button>
-          <button class="tab-btn" data-tab-switch="ambient">Ambient Events</button>
-          <button class="tab-btn" data-tab-switch="random">Random Events</button>
-          <button class="tab-btn" data-tab-switch="combined">Combined Conditions</button>
-          <button class="tab-btn experimental" data-tab-switch="scoring">Scoring (Experimental)</button>
-          <button class="tab-btn experimental" data-tab-switch="tester">Script Tester</button>
-        </div>
-
-        <!-- LOREBOOK TAB -->
-        <div id="lorebook" class="tab-panel active">
+        <!-- LOREBOOK SECTION -->
+        <div id="lorebook" class="tab-panel">
           <h3>Lorebook (Hierarchical Keyword Database)</h3>
           <p>Create a rich world with people, places, objects, moods, and events that trigger based on keywords.</p>
 
