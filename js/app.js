@@ -41,10 +41,10 @@ import {
 // ============================================
 
 /**
- * Syncs the visibility of module sections with their toggle switches.
+ * Syncs module visibility and sidebar visuals with toggle state.
  */
 function updateModuleVisibility() {
-  // Map of Toggle IDs to Section IDs
+  // Map Toggle IDs -> Section IDs
   const modules = {
     'toggle-lorebook': 'lorebook',
     'toggle-memory': 'memory',
@@ -60,12 +60,25 @@ function updateModuleVisibility() {
   for (const [toggleId, sectionId] of Object.entries(modules)) {
     const toggle = document.getElementById(toggleId);
     const section = document.getElementById(sectionId);
+    const navItem = document.querySelector(`.janitor-nav-item[data-scroll="${sectionId}"]`);
 
     if (toggle && section) {
-      if (toggle.checked) {
+      const isEnabled = toggle.checked;
+
+      // 1. Toggle Section Visibility
+      if (isEnabled) {
         section.classList.remove('hidden-module');
       } else {
         section.classList.add('hidden-module');
+      }
+
+      // 2. Toggle Sidebar Visuals
+      if (navItem) {
+        if (isEnabled) {
+          navItem.classList.add('module-enabled');
+        } else {
+          navItem.classList.remove('module-enabled');
+        }
       }
     }
   }
