@@ -2076,7 +2076,39 @@ select.flash-red {
   animation: flash-red 0.6s ease-out;
 }
 
-/* Utility to hide disabled modules */
+/* ============================================
+ * VISIBILITY UTILITY
+ * ============================================ */
 .hidden-module {
   display: none !important;
+}
+
+/* ============================================
+ * SMART SIDEBAR STATES
+ * ============================================ */
+/* Base State (Disabled/Off) - Overwrites default if needed */
+.janitor-nav-item {
+  color: var(--white-40);
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.janitor-nav-item:hover {
+  color: var(--white-80);
+  background: var(--white-opacity-5);
+}
+
+/* Enabled State (On but not currently viewing) */
+.janitor-nav-item.module-enabled {
+  color: var(--white-100);
+  border-left-color: var(--white-40);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+}
+
+/* Active State (Currently Viewing - overrides Enabled) */
+.janitor-nav-item.active {
+  color: var(--colour-pink-500) !important;
+  border-left-color: var(--colour-pink-500) !important;
+  background: linear-gradient(90deg, rgba(247, 134, 244, 0.15), transparent);
+  text-shadow: none;
 }
