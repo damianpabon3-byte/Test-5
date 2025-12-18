@@ -3,46 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JanitorAI Script Builder: Official User Guide</title>
+    <title>JanitorAI Script Builder: User Manual</title>
+    <link rel="stylesheet" href="css/style.css">
     <style>
         /* ========================================
-           BASE STYLES
+           GUIDE-SPECIFIC LAYOUT
            ======================================== */
-        :root {
-            --color-primary: #2c3e50;
-            --color-secondary: #3498db;
-            --color-accent: #e74c3c;
-            --color-text: #333;
-            --color-text-light: #666;
-            --color-bg: #fff;
-            --color-bg-alt: #f8f9fa;
-            --color-border: #e1e4e8;
-            --color-code-bg: #f4f4f4;
-            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            --font-mono: "SF Mono", "Consolas", "Liberation Mono", Menlo, monospace;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            font-size: 16px;
-        }
-
         body {
-            font-family: var(--font-sans);
-            line-height: 1.7;
-            color: var(--color-text);
-            background-color: var(--color-bg);
-            margin: 0;
-            padding: 0;
+            background-color: var(--bg-primary);
         }
 
-        /* ========================================
-           LAYOUT
-           ======================================== */
-        .container {
+        .guide-container {
             max-width: 800px;
             margin: 0 auto;
             padding: 2rem;
@@ -51,212 +22,143 @@
         /* ========================================
            TYPOGRAPHY
            ======================================== */
-        h1, h2, h3, h4 {
-            color: var(--color-primary);
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            line-height: 1.3;
-        }
-
-        h1 {
-            font-size: 2.25rem;
-            border-bottom: 3px solid var(--color-secondary);
+        .guide-container h1 {
+            font-family: var(--font-family-jura);
+            font-size: 2rem;
+            font-weight: var(--font-weight-bold);
+            color: var(--white-100);
+            margin: 0 0 1rem 0;
             padding-bottom: 0.75rem;
-            margin-top: 0;
+            border-bottom: 3px solid var(--colour-pink-500);
         }
 
-        .subtitle {
-            font-size: 1.1rem;
-            color: var(--color-text-light);
-            font-style: italic;
-            margin-top: -0.5rem;
-            margin-bottom: 2rem;
-        }
-
-        h2 {
+        .guide-container h2 {
+            font-family: var(--font-family-jura);
             font-size: 1.5rem;
-            border-bottom: 1px solid var(--color-border);
+            font-weight: var(--font-weight-semibold);
+            color: var(--colour-pink-400);
+            margin: 2.5rem 0 1rem 0;
             padding-bottom: 0.5rem;
-            margin-top: 3rem;
+            border-bottom: 1px solid var(--scripts-border-color);
         }
 
-        h3 {
+        .guide-container h3 {
+            font-family: var(--font-family-jura);
             font-size: 1.25rem;
-            color: var(--color-secondary);
+            font-weight: var(--font-weight-semibold);
+            color: var(--colour-purple-400);
+            margin: 1.5rem 0 0.75rem 0;
         }
 
-        h4 {
-            font-size: 1.1rem;
-            color: var(--color-text-light);
-        }
-
-        p {
+        .guide-container p {
+            font-family: var(--font-family-jura);
+            font-size: var(--fontsize-body-sm);
+            color: var(--white-80);
+            line-height: 1.7;
             margin: 1rem 0;
+        }
+
+        .guide-container > p:first-of-type {
+            font-size: var(--fontsize-body-md);
+            color: var(--white-70);
         }
 
         /* ========================================
            LISTS
            ======================================== */
-        ul, ol {
+        .guide-container ul,
+        .guide-container ol {
+            font-family: var(--font-family-jura);
+            font-size: var(--fontsize-body-sm);
+            color: var(--white-80);
+            line-height: 1.7;
             margin: 1rem 0;
             padding-left: 1.5rem;
         }
 
-        li {
+        .guide-container li {
             margin: 0.5rem 0;
         }
 
-        li strong {
-            color: var(--color-primary);
+        .guide-container li strong {
+            color: var(--white-100);
+        }
+
+        .guide-container li em {
+            color: var(--white-60);
+            font-style: italic;
         }
 
         /* ========================================
-           SPECIAL ELEMENTS
+           CODE
            ======================================== */
-        .callout {
-            background-color: var(--color-bg-alt);
-            border-left: 4px solid var(--color-secondary);
-            padding: 1rem 1.25rem;
-            margin: 1.5rem 0;
-            border-radius: 0 4px 4px 0;
+        .guide-container code {
+            font-family: var(--font-family-jura);
+            font-size: 0.9em;
+            background: var(--colour-grey-700);
+            color: var(--colour-pink-300);
+            padding: 0.2em 0.5em;
+            border-radius: 4px;
         }
 
-        .callout-title {
-            font-weight: 600;
-            color: var(--color-secondary);
+        /* ========================================
+           CALLOUT CARDS
+           ======================================== */
+        .guide-container .janitor-card {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--colour-grey-700);
+            border: 1px solid var(--scripts-border-color);
+            border-radius: 8px;
+        }
+
+        .guide-container .janitor-card strong {
+            font-family: var(--font-family-jura);
+            color: var(--colour-pink-400);
+            display: block;
             margin-bottom: 0.5rem;
         }
 
-        .warning {
-            border-left-color: var(--color-accent);
+        .guide-container .janitor-card p {
+            margin: 0;
         }
 
-        .warning .callout-title {
-            color: var(--color-accent);
-        }
-
-        code {
-            font-family: var(--font-mono);
-            font-size: 0.9em;
-            background-color: var(--color-code-bg);
-            padding: 0.2em 0.4em;
-            border-radius: 3px;
-        }
-
-        .tag {
-            display: inline-block;
-            background-color: #e8f4fc;
-            color: var(--color-secondary);
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.2em 0.6em;
-            border-radius: 3px;
-            text-transform: uppercase;
-            margin-left: 0.5rem;
-        }
-
-        .tag.experimental {
-            background-color: #fef3e2;
-            color: #d68910;
+        /* Warning variant */
+        .guide-container .janitor-card.warning {
+            border-left: 3px solid var(--colour-pink-500);
         }
 
         /* ========================================
-           WORKFLOW SUMMARY
+           WORKFLOW LIST
            ======================================== */
-        .workflow {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border: 1px solid var(--color-border);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .workflow h3 {
-            margin-top: 0;
-        }
-
-        .workflow ol {
-            margin-bottom: 0;
-        }
-
-        .workflow li {
-            padding: 0.25rem 0;
-        }
-
-        /* ========================================
-           TABLE OF CONTENTS
-           ======================================== */
-        .toc {
-            background-color: var(--color-bg-alt);
-            border: 1px solid var(--color-border);
-            border-radius: 6px;
-            padding: 1.25rem 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .toc h2 {
-            font-size: 1rem;
-            border: none;
-            margin: 0 0 0.75rem 0;
-            padding: 0;
-        }
-
-        .toc ul {
+        .guide-container ol.workflow {
+            counter-reset: workflow;
             list-style: none;
             padding-left: 0;
-            margin: 0;
         }
 
-        .toc li {
-            margin: 0.4rem 0;
+        .guide-container ol.workflow li {
+            counter-increment: workflow;
+            position: relative;
+            padding-left: 2.5rem;
+            margin: 0.75rem 0;
         }
 
-        .toc a {
-            color: var(--color-secondary);
-            text-decoration: none;
-        }
-
-        .toc a:hover {
-            text-decoration: underline;
-        }
-
-        .toc ul ul {
-            padding-left: 1.25rem;
-        }
-
-        .toc ul ul li {
-            font-size: 0.9rem;
-        }
-
-        /* ========================================
-           HEADER & FOOTER
-           ======================================== */
-        header {
-            background-color: var(--color-primary);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        header h1 {
-            color: white;
-            border: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        header .subtitle {
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 0;
-        }
-
-        footer {
-            text-align: center;
-            padding: 2rem;
-            color: var(--color-text-light);
-            font-size: 0.9rem;
-            border-top: 1px solid var(--color-border);
-            margin-top: 3rem;
+        .guide-container ol.workflow li::before {
+            content: counter(workflow);
+            position: absolute;
+            left: 0;
+            width: 1.75rem;
+            height: 1.75rem;
+            background: linear-gradient(135deg, var(--colour-pink-600), var(--colour-purple-600));
+            color: var(--white-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-family-jura);
+            font-size: var(--fontsize-body-ty);
+            font-weight: var(--font-weight-bold);
         }
 
         /* ========================================
@@ -266,312 +168,211 @@
             /* Page setup */
             @page {
                 size: letter;
-                margin: 1in;
+                margin: 0.75in;
             }
 
-            /* Reset colors for print */
+            /* Reset to print-friendly colors */
             body {
+                background: #fff !important;
+                color: #000 !important;
                 font-size: 11pt;
                 line-height: 1.5;
-                color: #000;
-                background: #fff;
             }
 
-            .container {
+            .guide-container {
                 max-width: 100%;
                 padding: 0;
             }
 
-            /* Header adjustments for print */
-            header {
-                background-color: #fff !important;
+            /* Typography adjustments */
+            .guide-container h1 {
                 color: #000 !important;
-                padding: 0 0 1rem 0;
-                border-bottom: 2px solid #000;
+                font-size: 22pt;
+                border-bottom-color: #333 !important;
+                text-shadow: none !important;
+            }
+
+            .guide-container h2 {
+                color: #000 !important;
+                font-size: 16pt;
+                border-bottom-color: #ccc !important;
+                page-break-after: avoid;
+            }
+
+            .guide-container h3 {
+                color: #333 !important;
+                font-size: 13pt;
+                page-break-after: avoid;
+            }
+
+            .guide-container p,
+            .guide-container li {
+                color: #000 !important;
+            }
+
+            .guide-container li strong {
+                color: #000 !important;
+            }
+
+            .guide-container li em {
+                color: #555 !important;
+            }
+
+            .guide-container > p:first-of-type {
+                color: #333 !important;
+            }
+
+            /* Code blocks */
+            .guide-container code {
+                background: #f0f0f0 !important;
+                color: #333 !important;
+                border: 1px solid #ccc;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
 
-            header h1 {
+            /* Callout cards */
+            .guide-container .janitor-card {
+                background: #f9f9f9 !important;
+                border: 1px solid #ccc !important;
+                border-left: 3px solid #666 !important;
+                page-break-inside: avoid;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .guide-container .janitor-card.warning {
+                border-left-color: #333 !important;
+            }
+
+            .guide-container .janitor-card strong {
                 color: #000 !important;
-                font-size: 24pt;
             }
 
-            header .subtitle {
-                color: #333 !important;
+            .guide-container .janitor-card p {
+                color: #000 !important;
             }
 
-            /* Typography for print */
-            h1 {
-                font-size: 20pt;
-            }
-
-            h2 {
-                font-size: 16pt;
-            }
-
-            h3 {
-                font-size: 13pt;
-            }
-
-            h4 {
-                font-size: 11pt;
+            /* Workflow list */
+            .guide-container ol.workflow li::before {
+                background: #333 !important;
+                color: #fff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
 
             /* Page break controls */
-            h2 {
+            .guide-container h2 {
                 page-break-before: auto;
-                page-break-after: avoid;
             }
 
-            h3, h4 {
-                page-break-after: avoid;
+            .guide-container ul,
+            .guide-container ol {
+                page-break-inside: avoid;
             }
 
-            p, li {
+            /* Orphan/widow control */
+            .guide-container p,
+            .guide-container li {
                 orphans: 3;
                 widows: 3;
             }
 
-            /* Prevent breaks inside these elements */
-            .callout,
-            .workflow,
-            .toc,
-            ul,
-            ol {
-                page-break-inside: avoid;
-            }
-
-            /* Section breaks */
-            section {
-                page-break-inside: avoid;
-            }
-
             /* Keep headers with following content */
-            h2 + *,
-            h3 + *,
-            h4 + * {
+            .guide-container h2 + *,
+            .guide-container h3 + * {
                 page-break-before: avoid;
-            }
-
-            /* Callout print styles */
-            .callout {
-                border: 1px solid #ccc;
-                border-left-width: 4px;
-                background-color: #f9f9f9 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            /* Code print styles */
-            code {
-                background-color: #eee !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            /* Links: show URL in print */
-            a[href]:after {
-                content: " (" attr(href) ")";
-                font-size: 0.8em;
-                color: #666;
-            }
-
-            .toc a[href]:after {
-                content: none;
-            }
-
-            /* Hide elements not needed in print */
-            footer {
-                display: none;
-            }
-
-            /* Tags print styling */
-            .tag {
-                border: 1px solid #999;
-                background-color: transparent !important;
-                color: #333 !important;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>JanitorAI Script Builder</h1>
-        <p class="subtitle">Official User Guide</p>
-    </header>
+    <div class="guide-container">
+        <h1>JanitorAI Script Builder: User Manual</h1>
+        <p>This tool provides a visual interface for creating "Icehellionx Standard" scripts. It automatically handles variable scoping, regular expressions, and stateless logic generation.</p>
 
-    <div class="container">
-        <p class="subtitle">The GUI Companion to the Icehellionx Scripting Standard</p>
+        <h2>1. Core Concepts</h2>
 
-        <!-- Table of Contents -->
-        <nav class="toc">
-            <h2>Table of Contents</h2>
-            <ul>
-                <li><a href="#introduction">1. Introduction</a></li>
-                <li><a href="#core-modules">2. The Core Modules (Foundation)</a>
-                    <ul>
-                        <li><a href="#lorebook">Lorebook</a></li>
-                        <li><a href="#memory-system">Memory System</a></li>
-                    </ul>
-                </li>
-                <li><a href="#life-layer">3. The Life Layer (Dynamic Modules)</a>
-                    <ul>
-                        <li><a href="#tone-state">Tone/State Engine</a></li>
-                        <li><a href="#time-environment">Time &amp; Environment</a></li>
-                        <li><a href="#ambient-events">Ambient Events</a></li>
-                        <li><a href="#random-events">Random Events</a></li>
-                    </ul>
-                </li>
-                <li><a href="#logic-layer">4. The Logic Layer (Advanced)</a>
-                    <ul>
-                        <li><a href="#combined-conditions">Combined Conditions</a></li>
-                        <li><a href="#scoring-engine">Scoring Engine</a></li>
-                    </ul>
-                </li>
-                <li><a href="#verification">5. Verification (Exclusive Features)</a>
-                    <ul>
-                        <li><a href="#trigger-analyzer">The Trigger Analyzer</a></li>
-                        <li><a href="#script-tester">The Script Tester</a></li>
-                    </ul>
-                </li>
-                <li><a href="#workflow">Summary: The Ideal Workflow</a></li>
-            </ul>
-        </nav>
+        <h3>Stateless Execution & Runtime Injection</h3>
+        <p>JanitorAI scripts execute fresh on every message generation. They do not persist variables (like <code>var score = 10;</code>) between turns.</p>
+        <div class="janitor-card">
+            <strong>How "Memory" Works:</strong>
+            <p>Scripts cannot permanently write to the character's database. Instead, they use <strong>Runtime Injection</strong>. The script scans the chat history every turn, finds relevant details (like a name), and injects them into the context specifically for the current reply.</p>
+        </div>
 
-        <!-- Section 1: Introduction -->
-        <section id="introduction">
-            <h2>1. Introduction</h2>
+        <h3>Interface Overview</h3>
+        <ul>
+            <li><strong>Sidebar Navigation:</strong> Displays available modules. Disabled modules appear dimmed; enabled modules appear bright. Clicking a disabled module will automatically enable it.</li>
+            <li><strong>Module Control Panel:</strong> The master list of modules. The order here determines execution order in the final script.</li>
+            <li><strong>Token Meter:</strong> Monitors script size. Recommended limit is ~10,000 characters.</li>
+        </ul>
 
-            <p>Scripting for JanitorAI allows for incredible depth, but writing safe, stateless JavaScript by hand is difficult and error-prone. One missing bracket or a "dirty" string match can break an entire character.</p>
+        <h2>2. Modules</h2>
 
-            <p>The Script Builder is a visual interface for the <strong>Icehellionx Scripting Standard</strong>. It allows you to create complex, "smart" characters without writing a single line of code. The tool automatically generates clean, optimized JavaScript that handles variable scoping, safe matching, and stateless logic for you.</p>
+        <h3>Lorebook</h3>
+        <p>Triggers descriptions based on keywords.</p>
+        <ul>
+            <li><strong>Padded Matching:</strong> Adds invisible spaces to prevent partial matches (e.g., "cat" matching inside "catch"). Recommended ON for single words.</li>
+            <li><strong>Break After First Match:</strong> Stops scanning after finding one entry to save tokens.</li>
+        </ul>
 
-            <div class="callout warning">
-                <div class="callout-title">The "Stateless" Philosophy</div>
-                <p>It is critical to remember that JanitorAI scripts run fresh on every single message. Variables like <code>var score = 0</code> do not persist between turns. This tool is built entirely around "Stateless Logic"—it reads the current context (the user's last message, the time, the history) to make decisions in the moment, rather than relying on fragile variables.</p>
-            </div>
+        <h3>Memory System</h3>
+        <p>Scans the user's last message for patterns.</p>
+        <ul>
+            <li><strong>Name Detection:</strong> Captures text following a trigger phrase (e.g., "my name is").</li>
+            <li><strong>Fact Extraction:</strong> Captures sentences starting with specific keywords (e.g., "I love") and injects them into the context.</li>
+        </ul>
 
-            <h3>The Workspace</h3>
-            <ul>
-                <li><strong>The Smart Sidebar:</strong> Use this to navigate between modules. Dimmed items are disabled; bright items are enabled. <em>Tip: Clicking a dimmed item automatically enables it.</em></li>
-                <li><strong>The Module Control Panel:</strong> The "Brain" of your script. Toggle modules on/off here. The order of modules determines the execution order in the final script.</li>
-                <li><strong>The Token Meter:</strong> Keep an eye on the bar at the bottom. Aim to keep your total script size efficient (under 10,000 characters).</li>
-            </ul>
-        </section>
+        <h3>Pacing</h3>
+        <p>Gates content based on message count.</p>
+        <ul>
+            <li><strong>Phases:</strong> Active for a specific range (e.g., 1-10).</li>
+            <li><strong>One-Time Events:</strong> Triggers exactly once on a specific count.</li>
+            <li><em>Note: Rerolling a response does not increment the count.</em></li>
+        </ul>
 
-        <!-- Section 2: Core Modules -->
-        <section id="core-modules">
-            <h2>2. The Core Modules (Foundation)</h2>
+        <h3>Tone & State</h3>
+        <p>Temporarily overrides personality.</p>
+        <ul>
+            <li><strong>Function:</strong> Appends text to the personality field for the current turn only.</li>
+        </ul>
 
-            <h3 id="lorebook">1. Lorebook (Hierarchical Keyword Database)</h3>
-            <p>Instead of writing complex JSON objects, you simply create "Cards" for each person, place, or event.</p>
-            <ul>
-                <li><strong>Keywords:</strong> Enter words separated by commas (e.g., <code>king, castle, throne</code>).</li>
-                <li><strong>Toggle: "Use Padded Matching":</strong> Adds invisible spaces around keywords. Ensures "cat" doesn't match "catch". <em>Recommended: ON for single words.</em></li>
-                <li><strong>Toggle: "Break After First Match":</strong> Tells the script to stop scanning after finding one relevant entry to save tokens. <em>Recommended: ON.</em></li>
-            </ul>
+        <h3>Time & Environment</h3>
+        <p>Injects time-of-day descriptions.</p>
+        <div class="janitor-card warning">
+            <strong>Timezone Offset:</strong>
+            <p>Server time is UTC. You must set an offset (e.g., -5 for EST) to match your local time.</p>
+        </div>
 
-            <h3 id="memory-system">2. Memory System (Automated Recall)</h3>
-            <p>Automates "Fake Memory"—scanning the user's message for patterns.</p>
-            <ul>
-                <li><strong>Name Detection:</strong> Provide a phrase like <code>my name is</code>. The tool captures whatever comes after it.</li>
-                <li><strong>Fact Scrapers:</strong> Provide phrases like <code>I love</code>, <code>I enjoy</code>. The tool saves the rest of the sentence as a permanent fact.</li>
-            </ul>
-        </section>
+        <h3>Ambient & Random Events</h3>
+        <ul>
+            <li><strong>Ambient:</strong> Flavor text based on probability %.</li>
+            <li><strong>Random:</strong> Weighted reactions to specific user phrases.</li>
+        </ul>
 
-        <!-- Section 3: Life Layer -->
-        <section id="life-layer">
-            <h2>3. The Life Layer (Dynamic Modules)</h2>
+        <h3>Combined Conditions</h3>
+        <p>Creates AND-logic rules. All filled fields (Keyword + Time + Count) must be true for the rule to fire.</p>
 
-            <h3 id="tone-state">1. Tone/State Engine (Dynamic Personality)</h3>
-            <p>Handles "Shifts"—temporarily overriding personality.</p>
-            <ul>
-                <li><strong>How it works:</strong> You define keywords (e.g., <code>insult</code>) and a reaction (e.g., <code>{{char}} becomes angry</code>).</li>
-                <li><strong>The Result:</strong> The LLM treats this as the most recent instruction, overriding the default personality for this turn.</li>
-            </ul>
+        <h2>3. Validation Tools</h2>
 
-            <h3 id="time-environment">2. Time &amp; Environment</h3>
-            <p>Gives the bot awareness of time.</p>
-            <ul>
-                <li><strong>Timezone Offset:</strong> Crucial. If you are EST (-5), enter <code>-5</code>.</li>
-                <li><strong>Wrap-Around:</strong> Supports night shifts (e.g., Start: 22, End: 5).</li>
-                <li><strong>Output:</strong> Injects descriptions like <code>"It is currently dark"</code> into the Scenario.</li>
-            </ul>
+        <h3>Trigger Analyzer</h3>
+        <p>Scans for conflicts (same keyword in multiple modules) and overlaps (substring matches).</p>
 
-            <h3 id="ambient-events">3. Ambient Events (Flavor Text)</h3>
-            <p>Random, small details (e.g., "A dog barks").</p>
-            <ul>
-                <li><strong>Trigger Probability:</strong> Chance per message (1-100%). Keep this low (&lt;20%) to avoid spam.</li>
-            </ul>
+        <h3>Script Tester</h3>
+        <p>Simulates the JanitorAI environment.</p>
+        <div class="janitor-card">
+            <strong>Workflow:</strong>
+            <p>You must click <strong>"Generate All Enabled Modules"</strong> before running the tester. The tester runs against the generated output.</p>
+        </div>
 
-            <h3 id="random-events">4. Random Events (Reactions)</h3>
-            <p>Reactions to specific user inputs.</p>
-            <ul>
-                <li><strong>Trigger Phrase:</strong> e.g., <code>what do you think</code>.</li>
-                <li><strong>Responses:</strong> Pipe-separated list: <code>I love it|I hate it</code>. The bot picks one at random.</li>
-            </ul>
-        </section>
-
-        <!-- Section 4: Logic Layer -->
-        <section id="logic-layer">
-            <h2>4. The Logic Layer (Advanced)</h2>
-
-            <h3 id="combined-conditions">1. Combined Conditions (The "AND" Gate)</h3>
-            <p>Complex triggers like: "If X happens AND it is Y time."</p>
-            <ul>
-                <li><strong>Strict Filtering:</strong> Every filled field must be true. If you set Keyword <code>love</code> and Hour <code>20</code>, the user must say "love" AFTER 8 PM for it to fire.</li>
-            </ul>
-
-            <h3 id="scoring-engine">2. Scoring Engine <span class="tag experimental">Experimental</span></h3>
-            <ul>
-                <li><strong>Stateless Mode (Recommended):</strong> Calculates score based only on the current message.</li>
-                <li><strong>Persistent Mode:</strong> Tries to hide scores in chat history tags. Fragile; use with caution.</li>
-            </ul>
-        </section>
-
-        <!-- Section 5: Verification -->
-        <section id="verification">
-            <h2>5. Verification (Exclusive Features)</h2>
-
-            <h3 id="trigger-analyzer">1. The Trigger Analyzer</h3>
-            <p>Scans for conflicts.</p>
-            <ul>
-                <li><strong>Conflicts:</strong> Same keyword used in two modules.</li>
-                <li><strong>Overlaps:</strong> Short keyword matching inside a longer one.</li>
-            </ul>
-
-            <h3 id="script-tester">2. The Script Tester</h3>
-            <p>Simulates the JanitorAI environment.</p>
-
-            <div class="callout">
-                <div class="callout-title">Important</div>
-                <p>You must click <strong>Generate</strong> on your modules before testing.</p>
-            </div>
-
-            <ul>
-                <li><strong>Batch Mode:</strong> Test multiple messages instantly to see how the script handles different inputs.</li>
-                <li><strong>Custom Script:</strong> You can also paste external scripts to test them in the sandbox.</li>
-            </ul>
-        </section>
-
-        <!-- Workflow Summary -->
-        <section id="workflow">
-            <div class="workflow">
-                <h3>Summary: The Ideal Workflow</h3>
-                <ol>
-                    <li><strong>Draft:</strong> Enable modules and fill content.</li>
-                    <li><strong>Generate:</strong> Click "Generate All Enabled Modules".</li>
-                    <li><strong>Analyze:</strong> Run Trigger Analyzer.</li>
-                    <li><strong>Test:</strong> Use Script Tester to verify triggers.</li>
-                    <li><strong>Deploy:</strong> Copy code to JanitorAI.</li>
-                </ol>
-            </div>
-        </section>
+        <h2>4. Recommended Workflow</h2>
+        <ol class="workflow">
+            <li><strong>Configure:</strong> Enable modules and input data.</li>
+            <li><strong>Analyze:</strong> Check for keyword conflicts.</li>
+            <li><strong>Generate:</strong> Create the script.</li>
+            <li><strong>Test:</strong> Verify triggers in the sandbox.</li>
+            <li><strong>Deploy:</strong> Copy final output to JanitorAI.</li>
+        </ol>
     </div>
-
-    <footer>
-        <p>JanitorAI Script Builder User Guide &bull; Icehellionx Scripting Standard</p>
-    </footer>
 </body>
 </html>
