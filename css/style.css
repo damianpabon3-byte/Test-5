@@ -2075,3 +2075,8 @@ textarea.flash-red,
 select.flash-red {
   animation: flash-red 0.6s ease-out;
 }
+
+/* Utility to hide disabled modules */
+.hidden-module {
+  display: none !important;
+}

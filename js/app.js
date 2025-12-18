@@ -37,6 +37,41 @@ import {
 } from './tools/tester.js';
 
 // ============================================
+// MODULE VISIBILITY
+// ============================================
+
+/**
+ * Syncs the visibility of module sections with their toggle switches.
+ */
+function updateModuleVisibility() {
+  // Map of Toggle IDs to Section IDs
+  const modules = {
+    'toggle-lorebook': 'lorebook',
+    'toggle-memory': 'memory',
+    'toggle-pacing': 'pacing',
+    'toggle-tone': 'tone',
+    'toggle-time': 'time',
+    'toggle-ambient': 'ambient',
+    'toggle-random': 'random',
+    'toggle-combined': 'combined',
+    'toggle-scoring': 'scoring'
+  };
+
+  for (const [toggleId, sectionId] of Object.entries(modules)) {
+    const toggle = document.getElementById(toggleId);
+    const section = document.getElementById(sectionId);
+
+    if (toggle && section) {
+      if (toggle.checked) {
+        section.classList.remove('hidden-module');
+      } else {
+        section.classList.add('hidden-module');
+      }
+    }
+  }
+}
+
+// ============================================
 // INPUT VALIDATION HELPERS
 // ============================================
 
@@ -146,6 +181,9 @@ function resetAllFields() {
   document.getElementById('toggle-random').checked = false;
   document.getElementById('toggle-combined').checked = false;
   document.getElementById('toggle-scoring').checked = false;
+
+  // Update module visibility after resetting toggles
+  updateModuleVisibility();
 
   // Add one default entry for each
   addLoreEntry();
@@ -473,12 +511,27 @@ function setupScrollSpy() {
 // ============================================
 
 function setupEventListeners() {
-  // Sidebar navigation - scroll buttons (all navigation now uses scroll)
+  // Sidebar Navigation with Auto-Enable
   document.querySelectorAll('.janitor-nav-item[data-scroll]').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var sectionId = this.getAttribute('data-scroll');
+
+      // Auto-Enable Logic
+      var toggleId = 'toggle-' + sectionId;
+      var toggle = document.getElementById(toggleId);
+      if (toggle && !toggle.checked) {
+        toggle.checked = true; // Turn it on
+        updateModuleVisibility(); // Reveal the UI
+        showToast(sectionId.charAt(0).toUpperCase() + sectionId.slice(1) + ' module enabled', 'success');
+      }
+
       scrollToSection(sectionId, this);
     });
+  });
+
+  // Module Toggle Listeners
+  document.querySelectorAll('.janitor-switch-input').forEach(function(toggle) {
+    toggle.addEventListener('change', updateModuleVisibility);
   });
 
   // Module control panel buttons
@@ -549,6 +602,9 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('toggle-random').checked = false;
   document.getElementById('toggle-combined').checked = false;
   document.getElementById('toggle-scoring').checked = false;
+
+  // Apply initial module visibility based on toggle states
+  updateModuleVisibility();
 
   // Ensure outputs start clean (helps with bfcache / reloads)
   var outputs = [
