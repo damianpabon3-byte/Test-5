@@ -2037,6 +2037,8 @@ body {
 /* Force larger starting size for card content textareas */
 .janitor-card-entry .card-body textarea {
   min-height: 150px !important;
+  max-height: 500px !important;  /* Stop growing at 500px */
+  overflow-y: auto !important;   /* Show scrollbar when full */
   height: auto;
   resize: vertical;
 }
