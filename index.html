@@ -92,6 +92,11 @@
   <!-- Main Content -->
   <main class="janitor-main">
     <div class="janitor-content shell">
+      <!-- Help Button (Top Right) -->
+      <div class="header-help-container">
+        <button id="btnHelpTrigger" class="btn-help-trigger" title="User Guide">?</button>
+      </div>
+
       <!-- Header Banner -->
       <div class="header-banner-wrap">
         <img class="header-logo" src="logo2x-1_ia066y.png" alt="Janitor AI Logo">
@@ -864,6 +869,108 @@
 
     </div>
   </main>
+</div>
+
+<!-- Help Modal -->
+<div id="helpModal" class="janitor-modal-backdrop">
+  <div class="janitor-modal-content">
+    <div class="janitor-modal-header">
+      <h3 class="janitor-modal-title">User Guide</h3>
+      <button id="btnHelpClose" class="btn-modal-close" title="Close">&times;</button>
+    </div>
+    <div class="janitor-modal-body">
+      <!-- Introduction -->
+      <h2>Introduction</h2>
+      <p>This tool provides a visual interface for creating "Icehellionx Standard" scripts. It automatically handles variable scoping, regular expressions, and stateless logic generation.</p>
+
+      <!-- Core Concepts -->
+      <h2>1. Core Concepts</h2>
+
+      <h3>Stateless Execution & Runtime Injection</h3>
+      <p>JanitorAI scripts execute fresh on every message generation. They do not persist variables (like <code>var score = 10;</code>) between turns.</p>
+      <div class="guide-callout">
+        <strong>How "Memory" Works:</strong>
+        <p>Scripts cannot permanently write to the character's database. Instead, they use <strong>Runtime Injection</strong>. The script scans the chat history every turn, finds relevant details (like a name), and injects them into the context specifically for the current reply.</p>
+      </div>
+
+      <h3>Interface Overview</h3>
+      <ul>
+        <li><strong>Sidebar Navigation:</strong> Displays available modules. Disabled modules appear dimmed; enabled modules appear bright. Clicking a disabled module will automatically enable it.</li>
+        <li><strong>Module Control Panel:</strong> The master list of modules. The order here determines execution order in the final script.</li>
+        <li><strong>Token Meter:</strong> Monitors script size. Recommended limit is ~10,000 characters.</li>
+      </ul>
+
+      <!-- Modules -->
+      <h2>2. Modules</h2>
+
+      <h3>Lorebook</h3>
+      <p>Triggers descriptions based on keywords.</p>
+      <ul>
+        <li><strong>Padded Matching:</strong> Adds invisible spaces to prevent partial matches (e.g., "cat" matching inside "catch"). Recommended ON for single words.</li>
+        <li><strong>Break After First Match:</strong> Stops scanning after finding one entry to save tokens.</li>
+      </ul>
+
+      <h3>Memory System</h3>
+      <p>Scans the user's last message for patterns.</p>
+      <ul>
+        <li><strong>Name Detection:</strong> Captures text following a trigger phrase (e.g., "my name is").</li>
+        <li><strong>Fact Extraction:</strong> Captures sentences starting with specific keywords (e.g., "I love") and injects them into the context.</li>
+      </ul>
+
+      <h3>Pacing</h3>
+      <p>Gates content based on message count.</p>
+      <ul>
+        <li><strong>Phases:</strong> Active for a specific range (e.g., 1-10).</li>
+        <li><strong>One-Time Events:</strong> Triggers exactly once on a specific count.</li>
+        <li><em>Note: Rerolling a response does not increment the count.</em></li>
+      </ul>
+
+      <h3>Tone & State</h3>
+      <p>Temporarily overrides personality.</p>
+      <ul>
+        <li><strong>Function:</strong> Appends text to the personality field for the current turn only.</li>
+      </ul>
+
+      <h3>Time & Environment</h3>
+      <p>Injects time-of-day descriptions.</p>
+      <div class="guide-callout warning">
+        <strong>Timezone Offset:</strong>
+        <p>Server time is UTC. You must set an offset (e.g., -5 for EST) to match your local time.</p>
+      </div>
+
+      <h3>Ambient & Random Events</h3>
+      <ul>
+        <li><strong>Ambient:</strong> Flavor text based on probability %.</li>
+        <li><strong>Random:</strong> Weighted reactions to specific user phrases.</li>
+      </ul>
+
+      <h3>Combined Conditions</h3>
+      <p>Creates AND-logic rules. All filled fields (Keyword + Time + Count) must be true for the rule to fire.</p>
+
+      <!-- Validation Tools -->
+      <h2>3. Validation Tools</h2>
+
+      <h3>Trigger Analyzer</h3>
+      <p>Scans for conflicts (same keyword in multiple modules) and overlaps (substring matches).</p>
+
+      <h3>Script Tester</h3>
+      <p>Simulates the JanitorAI environment.</p>
+      <div class="guide-callout">
+        <strong>Workflow:</strong>
+        <p>You must click <strong>"Generate All Enabled Modules"</strong> before running the tester. The tester runs against the generated output.</p>
+      </div>
+
+      <!-- Recommended Workflow -->
+      <h2>4. Recommended Workflow</h2>
+      <ol class="workflow-list">
+        <li><strong>Configure:</strong> Enable modules and input data.</li>
+        <li><strong>Analyze:</strong> Check for keyword conflicts.</li>
+        <li><strong>Generate:</strong> Create the script.</li>
+        <li><strong>Test:</strong> Verify triggers in the sandbox.</li>
+        <li><strong>Deploy:</strong> Copy final output to JanitorAI.</li>
+      </ol>
+    </div>
+  </div>
 </div>
 
 <script type="module" src="js/app.js"></script>

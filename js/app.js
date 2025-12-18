@@ -408,6 +408,26 @@ function setupDragAndDrop() {
 }
 
 // ============================================
+// HELP MODAL
+// ============================================
+
+export function openHelpModal() {
+  const modal = document.getElementById('helpModal');
+  if (modal) {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+  }
+}
+
+export function closeHelpModal() {
+  const modal = document.getElementById('helpModal');
+  if (modal) {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+// ============================================
 // MOBILE MENU
 // ============================================
 
@@ -597,6 +617,26 @@ function setupEventListeners() {
   document.getElementById('btnRunBatchTests')?.addEventListener('click', runBatchTests);
   document.getElementById('btnClearBatchResults')?.addEventListener('click', clearBatchResults);
   document.getElementById('btnClearBatchMessages')?.addEventListener('click', clearBatchMessages);
+
+  // Help Modal Triggers
+  const helpBtn = document.getElementById('btnHelpTrigger');
+  const closeBtn = document.getElementById('btnHelpClose');
+  const backdrop = document.getElementById('helpModal');
+
+  if (helpBtn) helpBtn.addEventListener('click', openHelpModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeHelpModal);
+
+  // Close when clicking outside modal content
+  if (backdrop) {
+    backdrop.addEventListener('click', function(e) {
+      if (e.target === backdrop) closeHelpModal();
+    });
+  }
+
+  // Close on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeHelpModal();
+  });
 }
 
 // ============================================
@@ -686,3 +726,5 @@ window.addBatchTestMessage = addBatchTestMessage;
 window.clearBatchMessages = clearBatchMessages;
 window.clearBatchResults = clearBatchResults;
 window.runBatchTests = runBatchTests;
+window.openHelpModal = openHelpModal;
+window.closeHelpModal = closeHelpModal;
