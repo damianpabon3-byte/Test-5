@@ -2287,29 +2287,30 @@ select.flash-red {
   box-shadow: 0 0 8px rgba(247, 134, 244, 0.4);
 }
 
-/* The Help Trigger Button */
+/* --- High-Visibility Help Trigger --- */
 .btn-help-trigger {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: transparent;
-  border: 2px solid var(--colour-grey-500);
-  color: var(--colour-grey-400);
+  background: rgba(247, 134, 244, 0.1); /* Subtle pink tint */
+  border: 2px solid var(--colour-pink-500); /* Bright Pink Border */
+  color: var(--colour-pink-500); /* Bright Pink Text */
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-family-jura);
-  font-size: 1.125rem;
-  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(247, 134, 244, 0.3); /* Permanent Glow */
+  z-index: 50;
 }
 
 .btn-help-trigger:hover {
-  border-color: var(--colour-pink-500);
-  color: var(--colour-pink-500);
-  box-shadow: 0 0 10px rgba(236, 72, 153, 0.2);
+  background: var(--colour-pink-500);
+  color: var(--white-100);
+  box-shadow: 0 0 15px rgba(247, 134, 244, 0.6);
+  transform: scale(1.1);
 }
 
 /* Help button container in header */
