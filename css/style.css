@@ -1220,46 +1220,6 @@ body {
 }
 
 /* ============================================
- * PRESET GRID
- * ============================================ */
-.preset-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.preset-card {
-  background: var(--colour-grey-700);
-  border: 2px solid var(--scripts-border-color);
-  border-radius: 10px;
-  padding: 1.25rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.preset-card:hover {
-  border-color: var(--colour-pink-500);
-  background: var(--colour-grey-600);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(247, 134, 244, 0.15);
-}
-
-.preset-card h4 {
-  margin: 0 0 0.5rem 0;
-  font-family: var(--font-family-jura);
-  font-size: var(--fontsize-body-md);
-  color: var(--colour-pink-400);
-}
-
-.preset-card p {
-  margin: 0;
-  font-family: var(--font-family-jura);
-  font-size: var(--fontsize-body-ty);
-  color: var(--white-60);
-}
-
-/* ============================================
  * DYNAMIC LIST
  * ============================================ */
 .dynamic-list {
@@ -1763,10 +1723,6 @@ body {
   }
 
   .onboarding-examples {
-    grid-template-columns: 1fr;
-  }
-
-  .preset-grid {
     grid-template-columns: 1fr;
   }
 
