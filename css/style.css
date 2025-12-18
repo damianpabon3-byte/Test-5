@@ -1959,7 +1959,7 @@ body {
 .card-header-grid {
   display: grid;
   grid-template-columns: 1fr auto;
-  align-items: center;
+  align-items: flex-end;
   gap: 12px;
   margin-bottom: 16px;
 }
@@ -2071,8 +2071,9 @@ body {
 /* Responsive adjustments for Smart Cards */
 @media (max-width: 768px) {
   .card-header-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: 1fr auto !important;
+    gap: 8px;
+    align-items: flex-end !important;
   }
 
   .card-header-grid.multi-field {
@@ -2080,8 +2081,8 @@ body {
   }
 
   .btn-remove-icon {
-    width: 100%;
-    height: 40px;
+    width: 36px !important;
+    height: 36px !important;
   }
 }
 
