@@ -37,6 +37,66 @@ import {
 } from './tools/tester.js';
 
 // ============================================
+// INPUT VALIDATION HELPERS
+// ============================================
+
+/**
+ * Checks if the last entry in a container is valid (has content).
+ * Flashes empty fields red if invalid.
+ */
+function validateContainer(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container || container.children.length === 0) return true;
+
+  const lastEntry = container.lastElementChild;
+  // Find required inputs (text, number, textarea)
+  const inputs = lastEntry.querySelectorAll('input[type="text"], input[type="number"], textarea, select');
+
+  let isValid = true;
+  inputs.forEach(input => {
+    // Skip optional fields if needed, but generally check for non-empty
+    if (!input.value.trim()) {
+      isValid = false;
+      input.classList.add('flash-red');
+      setTimeout(() => input.classList.remove('flash-red'), 600);
+    }
+  });
+
+  return isValid;
+}
+
+/**
+ * Flashes the newly added entry green.
+ */
+function flashNewEntry(containerId) {
+  // Wait 1 tick for the DOM to update
+  setTimeout(() => {
+    const container = document.getElementById(containerId);
+    if (container && container.lastElementChild) {
+      container.lastElementChild.classList.add('flash-green');
+      setTimeout(() => container.lastElementChild.classList.remove('flash-green'), 600);
+    }
+  }, 10);
+}
+
+/**
+ * Wraps an add function with validation.
+ * If the last entry is invalid, flashes red and stops.
+ * If valid, adds a new entry and flashes it green.
+ */
+function attachValidatedAdd(btnId, containerId, addFn) {
+  const btn = document.getElementById(btnId);
+  if (btn) {
+    btn.addEventListener('click', function() {
+      if (validateContainer(containerId)) {
+        addFn();
+        flashNewEntry(containerId);
+      }
+    });
+  }
+}
+
+// ============================================
 // RESET AND BATCH OPERATIONS
 // ============================================
 
@@ -426,16 +486,19 @@ function setupEventListeners() {
   document.getElementById('btnGenerateAllModules')?.addEventListener('click', generateAllEnabledModules);
   document.getElementById('btnResetAll')?.addEventListener('click', resetAllFields);
 
-  // Add entry buttons
-  document.getElementById('btnAddLoreEntry')?.addEventListener('click', addLoreEntry);
-  document.getElementById('btnAddPacingPhase')?.addEventListener('click', addPacingPhase);
-  document.getElementById('btnAddOneTimeEvent')?.addEventListener('click', addOneTimeEvent);
-  document.getElementById('btnAddToneTrigger')?.addEventListener('click', addToneTrigger);
-  document.getElementById('btnAddTimeSlot')?.addEventListener('click', addTimeSlot);
-  document.getElementById('btnAddAmbientEvent')?.addEventListener('click', addAmbientEvent);
-  document.getElementById('btnAddRandomEvent')?.addEventListener('click', addRandomEvent);
-  document.getElementById('btnAddCombinedRule')?.addEventListener('click', addCombinedRule);
-  document.getElementById('btnAddScoreThreshold')?.addEventListener('click', addScoreThreshold);
+  // Add entry buttons with validation wrapper
+  attachValidatedAdd('btnAddLoreEntry', 'loreEntries', addLoreEntry);
+  attachValidatedAdd('btnAddPacingPhase', 'pacingPhases', addPacingPhase);
+  attachValidatedAdd('btnAddOneTimeEvent', 'oneTimeEvents', addOneTimeEvent);
+  attachValidatedAdd('btnAddToneTrigger', 'toneTriggers', addToneTrigger);
+  attachValidatedAdd('btnAddTimeSlot', 'timeSlots', addTimeSlot);
+  attachValidatedAdd('btnAddAmbientEvent', 'ambientEvents', addAmbientEvent);
+  attachValidatedAdd('btnAddRandomEvent', 'randomEvents', addRandomEvent);
+  attachValidatedAdd('btnAddCombinedRule', 'combinedRules', addCombinedRule);
+  attachValidatedAdd('btnAddScoreThreshold', 'scoreThresholds', addScoreThreshold);
+
+  // Batch test messages
+  attachValidatedAdd('btnAddBatchMessage', 'batchTestMessages', addBatchTestMessage);
 
   // Generate script buttons
   document.getElementById('btnGenerateLorebook')?.addEventListener('click', generateLorebookScript);
@@ -467,7 +530,6 @@ function setupEventListeners() {
   document.getElementById('btnClearTestResults')?.addEventListener('click', clearTestResults);
   document.getElementById('btnRunBatchTests')?.addEventListener('click', runBatchTests);
   document.getElementById('btnClearBatchResults')?.addEventListener('click', clearBatchResults);
-  document.getElementById('btnAddBatchMessage')?.addEventListener('click', addBatchTestMessage);
   document.getElementById('btnClearBatchMessages')?.addEventListener('click', clearBatchMessages);
 }
 
