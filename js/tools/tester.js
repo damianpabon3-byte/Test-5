@@ -305,28 +305,31 @@ export function toggleBatchMode() {
  * @returns {HTMLElement} - The created item element
  */
 export function addBatchTestMessage(prefillText) {
+  // Fix: Handle case where prefillText is a MouseEvent (when called via click handler)
+  var text = (typeof prefillText === 'string') ? prefillText : '';
+
   batchMessageCounter++;
   var container = document.getElementById('batchTestMessages');
   var item = document.createElement('div');
-  item.className = 'dynamic-item';
-  item.style.flexDirection = 'column';
-  item.style.alignItems = 'stretch';
+  item.className = 'janitor-card-entry';
   item.innerHTML =
-    '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">' +
-      '<span style="font-weight: 600; color: var(--accent);">Message #' + batchMessageCounter + '</span>' +
-      '<button type="button" class="remove-batch-btn" style="padding: 4px 8px; background: var(--danger); color: var(--text-primary); border: none; border-radius: 3px; cursor: pointer; font-size: 0.8rem;">Remove</button>' +
+    '<div class="card-header-grid">' +
+      '<span class="meta-field" style="font-weight: 600; color: var(--accent);">Message #' + batchMessageCounter + '</span>' +
+      '<button class="btn-remove-icon" title="Remove">✕</button>' +
     '</div>' +
-    '<textarea class="batch-message-input" rows="2" placeholder="Enter test message..." style="width: 100%; font-family: inherit; resize: vertical;"></textarea>';
+    '<div class="card-body">' +
+      '<textarea class="janitor-input auto-expand batch-message-input" rows="2" placeholder="Enter test message..."></textarea>' +
+    '</div>';
   container.appendChild(item);
 
   // Add event listener for remove button
-  item.querySelector('.remove-batch-btn').addEventListener('click', function() {
-    this.closest('.dynamic-item').remove();
+  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
+    item.remove();
   });
 
   // Prefill if text provided
-  if (prefillText) {
-    item.querySelector('textarea').value = prefillText;
+  if (text) {
+    item.querySelector('textarea').value = text;
   }
 
   return item;

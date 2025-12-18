@@ -11,12 +11,24 @@ import { escapeForScript, generateHourInRangeFunction, updateTokenMeter } from '
 export function addCombinedRule() {
   var container = document.getElementById('combinedRules');
   var item = document.createElement('div');
-  item.className = 'dynamic-item';
-  item.innerHTML = '<input type="text" placeholder="Keywords (comma-separated)" style="flex:1;" /><input type="number" placeholder="Min hour" min="0" max="23" style="width:80px;" /><input type="number" placeholder="Max hour" min="0" max="23" style="width:80px;" /><input type="number" placeholder="Min messages" min="1" style="width:100px;" /><textarea placeholder="Result when all conditions met..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
+  item.className = 'janitor-card-entry';
+  item.innerHTML =
+    '<div class="card-header-grid">' +
+      '<div class="meta-field" style="flex-direction: row; flex-wrap: wrap; gap: 8px; align-items: flex-end;">' +
+        '<input type="text" placeholder="Keywords" class="janitor-input" style="flex: 2; min-width: 150px;">' +
+        '<input type="number" placeholder="Min Hr" class="janitor-input" style="width: 70px;" min="0" max="23">' +
+        '<input type="number" placeholder="Max Hr" class="janitor-input" style="width: 70px;" min="0" max="23">' +
+        '<input type="number" placeholder="Min Msgs" class="janitor-input" style="width: 80px;" min="1">' +
+      '</div>' +
+      '<button class="btn-remove-icon" title="Remove">✕</button>' +
+    '</div>' +
+    '<div class="card-body">' +
+      '<textarea class="janitor-input auto-expand" placeholder="Result..."></textarea>' +
+    '</div>';
 
   // Add event listener for remove button
-  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
-    this.parentElement.remove();
+  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
+    item.remove();
   });
 
   container.appendChild(item);
@@ -28,7 +40,7 @@ export function addCombinedRule() {
  * @returns {string} - The generated script
  */
 export function buildCombinedConditionsScript(standalone) {
-  var rules = document.querySelectorAll('#combinedRules .dynamic-item');
+  var rules = document.querySelectorAll('#combinedRules .janitor-card-entry');
   var debugMode = document.getElementById('debugMode').checked;
   var offset = parseInt(document.getElementById('timeOffset').value, 10) || 0;
 
@@ -39,7 +51,8 @@ export function buildCombinedConditionsScript(standalone) {
   // Check for any valid configuration
   var hasRules = false;
   rules.forEach(function(rule) {
-    var keywords = rule.querySelector('input').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
+    var inputs = rule.querySelectorAll('input');
+    var keywords = inputs[0].value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
     var result = rule.querySelector('textarea').value.trim();
     if (keywords.length > 0 && result) {
       hasRules = true;
@@ -81,11 +94,11 @@ export function buildCombinedConditionsScript(standalone) {
   script += "var combinedFired = false;\n\n";
 
   rules.forEach(function(rule, index) {
-    var keywords = rule.querySelector('input').value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
-    var inputs = rule.querySelectorAll('input[type="number"]');
-    var minHour = parseInt(inputs[0].value, 10);
-    var maxHour = parseInt(inputs[1].value, 10);
-    var minMessages = parseInt(inputs[2].value, 10);
+    var inputs = rule.querySelectorAll('input');
+    var keywords = inputs[0].value.split(',').map(function(k) { return k.trim().toLowerCase(); }).filter(Boolean);
+    var minHour = parseInt(inputs[1].value, 10);
+    var maxHour = parseInt(inputs[2].value, 10);
+    var minMessages = parseInt(inputs[3].value, 10);
     var result = rule.querySelector('textarea').value.trim();
 
     if (keywords.length > 0 && result) {

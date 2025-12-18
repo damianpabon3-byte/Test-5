@@ -11,12 +11,26 @@ import { escapeForScript, updateTokenMeter } from '../utils.js';
 export function addScoreThreshold() {
   var container = document.getElementById('scoreThresholds');
   var item = document.createElement('div');
-  item.className = 'dynamic-item';
-  item.innerHTML = '<select style="width:80px;"><option value=">=">>=</option><option value="<="><=</option><option value="==">=</option></select><input type="number" placeholder="Value" style="width:80px;" /><textarea placeholder="Response when score meets this condition..." style="flex:1;"></textarea><button type="button" class="remove-entry-btn">Remove</button>';
+  item.className = 'janitor-card-entry';
+  item.innerHTML =
+    '<div class="card-header-grid">' +
+      '<div class="meta-field" style="flex-direction: row; gap: 8px;">' +
+        '<select class="janitor-input" style="width: 80px;">' +
+          '<option value=">=">>=</option>' +
+          '<option value="<="><=</option>' +
+          '<option value="==">=</option>' +
+        '</select>' +
+        '<input type="number" class="janitor-input" placeholder="Value" style="width: 100px;">' +
+      '</div>' +
+      '<button class="btn-remove-icon" title="Remove">✕</button>' +
+    '</div>' +
+    '<div class="card-body">' +
+      '<textarea class="janitor-input auto-expand" placeholder="Response..."></textarea>' +
+    '</div>';
 
   // Add event listener for remove button
-  item.querySelector('.remove-entry-btn').addEventListener('click', function() {
-    this.parentElement.remove();
+  item.querySelector('.btn-remove-icon').addEventListener('click', function() {
+    item.remove();
   });
 
   container.appendChild(item);
@@ -31,7 +45,7 @@ export function buildScoringScript(standalone) {
   var mode = document.getElementById('scoringMode').value;
   var positive = document.getElementById('scoringPositive').value.split(',').map(function(k) { return escapeForScript(k.trim().toLowerCase()); }).filter(Boolean);
   var negative = document.getElementById('scoringNegative').value.split(',').map(function(k) { return escapeForScript(k.trim().toLowerCase()); }).filter(Boolean);
-  var thresholds = document.querySelectorAll('#scoreThresholds .dynamic-item');
+  var thresholds = document.querySelectorAll('#scoreThresholds .janitor-card-entry');
   var debugMode = document.getElementById('debugMode').checked;
 
   var script = "// ============================================\n";
